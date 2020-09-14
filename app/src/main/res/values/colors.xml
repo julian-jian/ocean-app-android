@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="bg_activity2">
+        #F4F6F8
+    </color>
+    <color name="text_black">
+        #333333
+    </color>
+    <color name="empty_image">#F5F5F5</color>
+    <color name="common_red">#EB0000</color>
+    <color name="bottom_icon_up">#b5b5b5</color>
+    <color name="common_line_two">#dcdcdc</color>
+    <color name="TextColorGrey66">#666666</color>
+    <color name="TextColorGrey99">#999999</color>
+    <!-- 文字颜色-->
+    <color name="TextColorBlack">#333333</color>
+    <color name="TextColorDisable">#B8B8B8</color>
+    <color name="TextColorWhite">#FFFFFF</color>
+    <color name="line"> #EEEEEE</color>
+
+
+    <color name="title_bg">#F4F6F8</color>
+</resources>
+

@@ -1,0 +1,151 @@
+apply plugin: 'com.android.application'
+
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd-ss", TimeZone.getTimeZone("UTC"))
+}
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.sky.lamp"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 16
+        versionName "1.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+//        multiDexEnabled true
+    }
+
+
+    signingConfigs {
+        release {
+            keyAlias 'key0'
+            keyPassword 'xjk2017'
+            storeFile file('key.jks')
+            storePassword 'xjk2017'
+        }
+
+        debug {
+            keyAlias 'key0'
+            keyPassword 'xjk2017'
+            storeFile file('key.jks')
+            storePassword 'xjk2017'
+        }
+
+    }
+    buildTypes {
+        release {
+//            minifyEnabled true
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            signingConfig signingConfigs.release
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            ndk {
+//                abiFilters "x86"
+                abiFilters 'armeabi',"x86"
+            }
+        }
+        debug {
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            minifyEnabled false
+//            zipAlignEnabled false
+//            shrinkResources false
+            signingConfig signingConfigs.debug
+            ndk {
+                abiFilters 'armeabi',"x86"
+            }
+        }
+
+
+
+    }
+    buildToolsVersion '27.0.0'
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == 'release') {
+            variant.outputs.all {
+                def apkName = "power_${variant.versionCode}"
+                def num = 1
+                if (!variant.flavorName.isEmpty()) {
+                    apkName += "_${variant.flavorName}"
+                    def fileApk = file(apkName + "_${releaseTime()}_" + num + ".apk")
+                    println 'zfy A message which is logged at QUIET level';
+
+                    if (fileApk.exists()) {
+                        ++num
+                        fileApk = file(apkName + "_${releaseTime()}_" + num + ".apk")
+                        println 'zfy92 A message which is logged at QUIET level';
+                    }
+                }
+                outputFileName = apkName + "_${releaseTime()}.apk"
+            }
+        }
+    }
+}
+
+
+android {
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+
+
+
+allprojects {
+    repositories {
+        jcenter()
+        google()
+        maven {
+            url "https://jitpack.io"
+        }
+    }
+}
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    //    androidTestCompile 'com.android.support.test:runner:0.3'
+    compile 'com.orhanobut:logger:1.10'
+    compile 'com.squareup.retrofit2:retrofit:2.0.1'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.1'
+    compile 'com.squareup.retrofit2:converter-scalars:2.0.1'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'io.reactivex:rxjava:1.1.2'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.2.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile 'com.android.support:design:26.1.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.github.jdsjlzx:LRecyclerView:1.5.0'
+    //    compile 'com.github.vondear:RxTools:v1.7.6'
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.github.czy1121:bannerview:1.0.2'
+    // add library
+    implementation files('libs/imagelibrary.jar')
+    implementation project(':customDialogLibray')
+    compile 'com.android.support:appcompat-v7:26.0.1'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.bm.photoview:library:1.4.1'
+    implementation project(':RxTools-library')
+    implementation 'me.jessyan:autosize:1.1.2'
+    compile 'org.raphets:roundimageview:1.2.0'
+    implementation 'cn.bingoogolapple:bga-banner:2.2.7'
+    implementation 'com.android.support:support-v4:26.1.0'
+    compile 'com.jwkj:commwebview:v1.2.6'
+    implementation 'com.hacknife:immersive:1.1.0'
+    compile 'com.githang:status-bar-compat:0.7'
+    implementation files('libs/x5.jar')
+}

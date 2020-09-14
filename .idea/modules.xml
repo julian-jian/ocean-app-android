@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/RxTools-library/RxTools-library.iml" filepath="$PROJECT_DIR$/RxTools-library/RxTools-library.iml" group="lamp/RxTools-library" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="lamp/app" />
+      <module fileurl="file://$PROJECT_DIR$/customDialogLibray/customDialogLibray.iml" filepath="$PROJECT_DIR$/customDialogLibray/customDialogLibray.iml" group="lamp/customDialogLibray" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/lamp.iml" filepath="$PROJECT_DIR$/.idea/modules/lamp.iml" group="lamp" />
+      <module fileurl="file://$PROJECT_DIR$/ucrop/ucrop.iml" filepath="$PROJECT_DIR$/ucrop/ucrop.iml" group="lamp/ucrop" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_30">
+        15sp
+    </dimen>
+    <dimen name="text_33">
+        16.5sp
+    </dimen>
+    <dimen name="margin_15">
+        7.5sp
+    </dimen>
+    <dimen name="margin_20">
+        20dp
+    </dimen>
+    <dimen name="margin_10">
+        10dp
+    </dimen>
+    <dimen name="margin_16">
+        10dp
+    </dimen>
+    <dimen name="ic_margin">
+        8dp
+    </dimen>
+    <dimen name="title_height">
+        44dp
+    </dimen>
+    <dimen name="text_24">
+        12sp
+    </dimen>
+    <dimen name="bg_height">
+        170dp
+    </dimen>
+    <dimen name="edit_height">
+        44dp
+    </dimen>
+
+    <dimen name="edit_margin_left">
+        47.5dp
+    </dimen>
+    <dimen name="text_28">
+        14sp
+    </dimen>
+    <dimen name="margin_top_30">
+        30dp
+    </dimen>
+    <dimen name="default_divider_height" >1dp</dimen>
+    <dimen name="header_icon_size">45dp</dimen>
+
+</resources>

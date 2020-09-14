@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="true"
+                android:background="@color/bg_activity2"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="#ff3488ea"
+            android:layout_height="88dp"/>
+
+    <TextView
+            android:id="@+id/titleTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:text="学习园地"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="11dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            />
+
+    <LinearLayout
+            android:layout_below="@id/titleTv"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+        <cn.bingoogolapple.bgabanner.BGABanner
+                android:id="@+id/bannerView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/bg_height"
+                android:background="@color/white"
+                app:banner_pageChangeDuration="1000"
+                android:layout_below="@+id/searchEt"
+                app:banner_indicatorGravity="bottom|center_horizontal"
+                app:banner_isNeedShowIndicatorOnOnlyOnePage="true"
+                app:banner_isNumberIndicator="false"
+                app:banner_pointAutoPlayAble="true"
+                app:banner_pointContainerBackground="@android:color/transparent"
+                app:banner_pointDrawable="@drawable/bga_banner_selector_point_hollow"
+                app:banner_transitionEffect="defaultEffect"/>
+
+        <com.github.jdsjlzx.recyclerview.LRecyclerView
+                android:id="@+id/recyleListView"
+                android:layout_below="@+id/bannerView"
+                android:layout_width="match_parent"
+                android:layout_marginTop="12dp"
+                android:layout_height="match_parent"
+                />
+    </LinearLayout>
+</RelativeLayout>

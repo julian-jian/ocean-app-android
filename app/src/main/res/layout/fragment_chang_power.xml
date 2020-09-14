@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/tx_bg"
+            android:layout_height="262dp"/>
+
+    <LinearLayout
+            android:id="@+id/searchLL"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
+            android:layout_marginBottom="@dimen/margin_10"
+            android:orientation="horizontal">
+
+        <EditText
+                android:id="@+id/searchEt"
+                android:layout_width="match_parent"
+                android:background="@drawable/bg_rectangle_with_arc"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                style="@style/Edit"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:imeOptions="actionSearch"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/TextColorGrey66"
+                android:hint="请输入你想要搜索的内容"
+                android:textSize="18sp"
+                />
+    </LinearLayout>
+
+    <com.github.jdsjlzx.recyclerview.LRecyclerView
+            android:id="@+id/recyleListView"
+            android:layout_marginLeft="7.5dp"
+            android:layout_marginRight="7.5dp"
+            android:layout_below="@+id/searchLL"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+</RelativeLayout>

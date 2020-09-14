@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="cc.solart:turbo-recyclerview-helper-1.0.3-beta">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/20263df453efd802615131135af1e514827c0e4d/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/20263df453efd802615131135af1e514827c0e4d/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/cc.solart/turbo-recyclerview-helper/1.0.3-beta/499112ed18dba3c090525586a302f48cafdf329a/turbo-recyclerview-helper-1.0.3-beta-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

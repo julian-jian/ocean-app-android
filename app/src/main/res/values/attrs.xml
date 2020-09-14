@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TabContainerViewStyle">
+        <attr name="tabTextSize" format="dimension"/>
+        <attr name="tabTextColor" format="color"/>
+        <attr name="selectedTextColor" format="color"/>
+        <attr name="drawablePadding" format="dimension"/>
+        <attr name="iconHeight" format="dimension"/>
+        <attr name="iconWidth" format="dimension"/>
+        <attr name="divideLineColor" format="color"/>
+        <attr name="divideLineHeight" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="RoundImageView">
+        <attr name="ri_borderWidth" format="reference|dimension">
+        </attr>
+        <attr name="ri_borderRadius" format="reference|dimension">
+        </attr>
+        <attr name="ri_borderColor" format="reference|color">
+        </attr>
+        <attr name="ri_hoverColor" format="reference|color">
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="RoundedImageView">
+    <attr name="corner_radius" format="dimension" />
+    <attr name="border_width" format="dimension" />
+    <attr name="border_color" format="color" />
+    <attr name="mutate_background" format="boolean" />
+    <attr name="oval" format="boolean" />
+    <attr name="android:scaleType" />
+    </declare-styleable>
+    <!--    <declare-styleable name="XEditText">
+            <attr name="x_separator" format="string"/>
+            <attr name="x_disableClear" format="boolean"/>
+            <attr name="x_clearDrawable" format="reference"/>
+            <attr name="x_showPwdDrawable" format="reference"/>
+            <attr name="x_hidePwdDrawable" format="reference"/>
+            <attr name="x_disableEmoji" format="boolean"/>
+            <attr name="x_disableTogglePwdDrawable" format="boolean"/>
+        </declare-styleable>-->
+</resources>

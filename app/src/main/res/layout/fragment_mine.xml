@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:background="@color/bg_activity2"
+        android:layout_height="match_parent">
+
+    <View
+            android:layout_width="match_parent"
+            android:background="@drawable/mine_bg"
+            android:layout_height="258dp"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:layout_width="match_parent"
+                  android:orientation="vertical"
+                  android:layout_height="match_parent"
+            >
+
+        <TextView
+                android:id="@+id/titleTv"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="11dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="我的"
+                android:layout_centerHorizontal="true"
+                android:textColor="#ffffffff"
+                android:textSize="18sp"
+                />
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <RelativeLayout
+                    android:layout_marginTop="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="170dp">
+
+                <ImageView
+                        android:id="@+id/logoIv"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@drawable/logo"
+                        />
+
+                <TextView
+                        android:id="@+id/userNameTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/logoIv"
+                        android:layout_marginTop="44dp"
+                        android:layout_marginLeft="15dp"
+                        tools:text="本白设计"
+                        android:textColor="#ffffffff"
+                        android:textSize="18sp"
+                        />
+
+                <ImageView
+                        android:layout_marginTop="52dp"
+                        android:layout_width="8dp"
+                        android:scaleType="fitXY"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toRightOf="@+id/userNameTv"
+                        android:src="@drawable/btn_arrowr_right_white"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:id="@+id/telTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="13515608638"
+                        android:visibility="gone"
+                        android:layout_marginLeft="15dp"
+                        android:layout_toRightOf="@+id/logoIv"
+                        android:layout_marginTop="64dp"
+                        android:textColor="#ffffffff"
+                        android:textSize="14sp"
+                        />
+
+            </RelativeLayout>
+
+
+            <android.support.v7.widget.CardView
+                    android:layout_width="345dp"
+                    app:cardCornerRadius="8dp"
+                    android:layout_marginTop="112dp"
+                    android:elevation="1dp"
+                    app:cardElevation="1dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="120dp">
+
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                            android:id="@+id/editPweRl"
+                            android:layout_width="match_parent"
+                            android:layout_height="59dp">
+
+                        <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="16dp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="15dp"
+                                android:src="@drawable/icon_my_password"
+                                />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="修改密码"
+                                android:layout_marginLeft="50dp"
+                                android:layout_centerVertical="true"
+                                android:textColor="#ff333333"
+                                android:textSize="16sp"
+                                />
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/btn_arrow"
+                                />
+
+                    </RelativeLayout>
+
+                    <View
+                            android:layout_width="match_parent"
+                            android:background="#ffe6e6e6"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_height="1dp"/>
+
+                    <RelativeLayout
+                            android:id="@+id/aboutRl"
+                            android:layout_width="match_parent"
+                            android:layout_height="59dp">
+
+                        <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="16dp"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="15dp"
+                                android:src="@drawable/icon_my_about"
+                                />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="关于我们"
+                                android:layout_marginLeft="50dp"
+                                android:layout_centerVertical="true"
+                                android:textColor="#ff333333"
+                                android:textSize="16sp"
+                                />
+
+                        <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="15dp"
+                                android:src="@drawable/btn_arrow"
+                                />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+
+        <Button
+                android:id="@+id/logOutBtn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:textColor="#ffee4138"
+                android:textSize="18sp"
+                android:background="@drawable/bg_rectangle_with_arc"
+                android:layout_marginTop="@dimen/margin_top_30"
+                android:text="注销"
+                />
+    </LinearLayout>
+</RelativeLayout>

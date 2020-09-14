@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="oval">
+    // rectangle \ oval \ line \ ring
+    //corners  四个角度
+
+    //solid 纯色填充
+    <solid
+            android:color="@color/white"
+            />
+    //stroke shape描边
+    <stroke
+            android:color="#fff"
+            android:dashWidth="3dp"
+            android:dashGap="30dp"
+            android:width="3dp"
+            />
+    //padding 背景空白大小
+    <padding
+            android:left="3dp"
+            android:bottom="3dp"
+            android:right="2dp"
+            android:top="4dp"
+            />
+    //size 固有宽度 高度
+
+</shape>
