@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:drawable="@color/TextColorDisable"/>
+    <item>
+        <shape>
+            <!-- 实心 -->
+            <!-- 渐变 -->
+            <solid  android:color="@color/white"></solid>
+            <!-- 描边 -->
+        <stroke
+                    android:width="2dp"
+                    android:color="#B2B2B2" />
+            <!-- 圆角 -->
+            <corners
+                    android:radius="2dp" />
+        </shape>
+    </item>
+
+
+</selector>

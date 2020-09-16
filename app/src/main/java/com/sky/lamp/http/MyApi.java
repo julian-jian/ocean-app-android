@@ -41,4 +41,10 @@ public interface MyApi {
     @GET("/index//searchGoods")
     Observable<ProductListResponse> searchGoods(@Query("page") int page, @Query("key") String key);
 
+
+    @GET("/api/login/userRegister")
+    Observable<RegResponse> reg(@Query("loginName") String loginName, @Query("loginPassword") String loginPassword);
+
+
+
 }

@@ -31,7 +31,7 @@
         170dp
     </dimen>
     <dimen name="edit_height">
-        44dp
+        40dp
     </dimen>
 
     <dimen name="edit_margin_left">
@@ -45,5 +45,6 @@
     </dimen>
     <dimen name="default_divider_height" >1dp</dimen>
     <dimen name="header_icon_size">45dp</dimen>
+    <dimen name="text_et">15sp</dimen>
 
 </resources>

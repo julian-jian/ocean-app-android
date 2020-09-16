@@ -23,13 +23,13 @@
 
     <style name="Edit">
         <item name="android:background">
-            @null
+            @drawable/bg_edit2
         </item>
         <item name="android:layout_height">
             @dimen/edit_height
         </item>
         <item name="android:textSize">
-            @dimen/text_30
+            @dimen/text_et
         </item>
         <item name="android:paddingLeft">
             @dimen/ic_margin

@@ -51,6 +51,11 @@
         <activity
             android:name="com.sky.lamp.ui.ProductListActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+                android:name=".ui.act.RegActivity"
+                android:exported="true"
+                android:screenOrientation="portrait" />
         <activity
             android:name="com.sky.lamp.ui.SplashActivity"
             android:screenOrientation="portrait"
