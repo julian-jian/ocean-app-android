@@ -18,7 +18,7 @@ public class AppService {
     //测试地址
 //    public static final String BASETESTURL = "http://117.48.214.179:8080/AppSys/";
     //    public static final String BASETESTURL = "http://xiaojinku.dzedai.com.cn:8080/AppSys/";
-    public static final String BASETESTURL = "http://59.110.168.144/";
+    public static final String BASETESTURL = "http://59.110.168.144:8080/";
     //
     public static OkHttpClient okHttpClient;
     public static Retrofit retrofit;

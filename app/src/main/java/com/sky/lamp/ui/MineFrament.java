@@ -52,7 +52,7 @@ public class MineFrament extends DelayBaseFragment {
             public void onClick(View view) {
                 //CLEAR CACHE
                 RxSPUtilTool.remove(MyApplication.getInstance(), "phone");
-                getActivity().startActivity(new Intent(getActivity(), LoginAcitivty.class));
+//                getActivity().startActivity(new Intent(getActivity(), LoginAcitivty.class));
                 getActivity().finish();
             }
         });

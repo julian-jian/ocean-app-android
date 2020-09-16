@@ -46,5 +46,6 @@
     <dimen name="default_divider_height" >1dp</dimen>
     <dimen name="header_icon_size">45dp</dimen>
     <dimen name="text_et">15sp</dimen>
+    <dimen name="text_18">18sp</dimen>
 
 </resources>

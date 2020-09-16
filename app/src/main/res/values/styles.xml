@@ -7,6 +7,8 @@
             @style/DialogStyleLight
         </item>
 
+        <item name="windowActionBar">true</item>
+
         <!-- API 21 theme customizations can go here. -->
         <!--<item name="android:windowTranslucentStatus">true</item>-->
         <!--<item name="android:windowTranslucentNavigation">false</item>-->
@@ -59,8 +61,9 @@
             @color/white
         </item>
         <item name="android:textSize">
-            @dimen/text_30
+            18sp
         </item>
+
     </style>
 
 

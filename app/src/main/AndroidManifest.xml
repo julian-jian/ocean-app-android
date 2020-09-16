@@ -29,7 +29,7 @@
         <activity
             android:name="com.sky.lamp.MainActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.sky.lamp.ui.LoginAcitivty">
+        <activity android:name=".ui.act.LoginAct" android:exported="true">
             android:screenOrientation="portrait"
             <!--
              <intent-filter>

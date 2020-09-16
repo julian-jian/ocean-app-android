@@ -1,6 +1,8 @@
 package com.sky.lamp.http;
 
 import com.sky.lamp.response.*;
+
+import okhttp3.RequestBody;
 import retrofit2.http.*;
 import rx.Observable;
 
@@ -41,10 +43,10 @@ public interface MyApi {
     @GET("/index//searchGoods")
     Observable<ProductListResponse> searchGoods(@Query("page") int page, @Query("key") String key);
 
+    @POST("/api/login/userRegister")
+    Observable<RegResponse> reg(@Body RequestBody route);
 
-    @GET("/api/login/userRegister")
-    Observable<RegResponse> reg(@Query("loginName") String loginName, @Query("loginPassword") String loginPassword);
-
-
+    @POST("/api/login/userLogin")
+    Observable<RegResponse> login(@Body RequestBody body);
 
 }

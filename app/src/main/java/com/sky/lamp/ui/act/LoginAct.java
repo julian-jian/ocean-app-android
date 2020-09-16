@@ -13,12 +13,14 @@ import com.sky.lamp.utils.TAStringUtils;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,7 +28,7 @@ import okhttp3.RequestBody;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class RegActivity extends BaseActivity {
+public class LoginAct extends BaseActivity {
     @BindView(R.id.actionBar)
     TitleBar actionBar;
     @BindView(R.id.et_email)
@@ -35,46 +37,42 @@ public class RegActivity extends BaseActivity {
     EditText etPwd;
     @BindView(R.id.iv_pwd_show)
     ImageView ivPwdShow;
-    @BindView(R.id.et_confirm)
-    EditText etConfirm;
-    @BindView(R.id.iv_pwd_confirm_show)
-    ImageView ivPwdConfirmShow;
-    @BindView(R.id.btn_Reg)
-    Button btnReg;
+    @BindView(R.id.btn_login)
+    Button btnLogin;
+    @BindView(R.id.tv_reg)
+    TextView tvReg;
+    @BindView(R.id.tv_forgetPwd)
+    TextView tvForgetPwd;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reg);
+        setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        actionBar.setTitle("注册");
-        actionBar.initLeftImageView(this);
-
     }
 
-    @OnClick({R.id.iv_pwd_show, R.id.iv_pwd_confirm_show, R.id.btn_Reg})
+    @OnClick({R.id.iv_pwd_show, R.id.btn_login, R.id.tv_reg, R.id.tv_forgetPwd})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_pwd_show:
                 break;
-            case R.id.iv_pwd_confirm_show:
+            case R.id.btn_login:
+                loginClick();
                 break;
-            case R.id.btn_Reg:
-                checkAndSubmit();
+            case R.id.tv_reg:
+                Intent intent = new Intent(this,RegActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.tv_forgetPwd:
                 break;
         }
     }
 
-    private void checkAndSubmit() {
+    private void loginClick() {
         String email = etEmail.getText().toString();
         String pwd = etPwd.getText().toString();
-        String confirmPwd = etConfirm.getText().toString();
         if (!TAStringUtils.isEmail(email)) {
             RxToast.showToastShort("邮箱格式不对");
-            return;
-        }
-        if (!pwd.equals(confirmPwd)) {
-            RxToast.showToastShort("二次密码不一致");
             return;
         }
         HashMap<String, Object> map = new HashMap<>();
@@ -82,7 +80,7 @@ public class RegActivity extends BaseActivity {
         map.put("loginPassword", pwd);
         String strEntity = HttpUtil.getRequestString(map);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"),strEntity);
-        AppService.createApi(MyApi.class).reg(body).subscribeOn(Schedulers.io()).observeOn(
+        AppService.createApi(MyApi.class).login(body).subscribeOn(Schedulers.io()).observeOn(
                 AndroidSchedulers.mainThread()).subscribe(new MySubscriber<RegResponse>() {
             @Override
             public void onStart() {
@@ -104,12 +102,11 @@ public class RegActivity extends BaseActivity {
             @Override
             public void onNext(final RegResponse response) {
                 if (response.status == 0) {
-                    RxToast.showToast("注册成功");
+                    RxToast.showToast("登录成功");
                 }  else {
-                    RxToast.error("注册失败");
+                    RxToast.error("登录失败");
                 }
             }
         });
     }
-
 }

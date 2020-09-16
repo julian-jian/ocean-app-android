@@ -63,6 +63,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
 public class HttpUtil {
 	/**
 	 * Send a get request
@@ -354,5 +356,10 @@ public class HttpUtil {
 			out.append(new String(b, 0, n));
 		}
 		return out.toString();
+	}
+
+	static public String getRequestString(HashMap<String, Object> map) {
+		Gson gson = new Gson();
+		return gson.toJson(map);
 	}
 }

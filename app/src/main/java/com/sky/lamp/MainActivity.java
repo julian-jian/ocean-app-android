@@ -33,9 +33,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_main);
-        StatusBarCompat.setStatusBarColor(this, getResources().getColor(android.R.color.holo_red_dark));
-//        Immersive.setContentView(this,R.layout.activity_main,android.R.color.transparent,R.color.red
-//        , true, false);
+//        StatusBarCompat.setStatusBarColor(this, getResources().getColor(android.R.color.holo_red_dark));
         ButterKnife.bind(this);
         mainViewAdapter = new MainViewAdapter(getSupportFragmentManager(), new Fragment[]{new IndexFragment()
                 , new Index2Fragment(),new Index3Fragment()});
