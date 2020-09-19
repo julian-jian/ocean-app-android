@@ -25,5 +25,7 @@
         android:right="2dp"
         android:top="2dp" />
     <!-- corners设置圆角，只适用于rectangle -->
-    <corners android:radius="25dp" />
+    <corners android:radius="10dp" />
+
+    <stroke android:color="#1a000000" android:width="1dp"/>
 </shape>

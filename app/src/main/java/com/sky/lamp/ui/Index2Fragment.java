@@ -1,7 +1,5 @@
 package com.sky.lamp.ui;
 
-import org.greenrobot.eventbus.EventBus;
-
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.ProductListAdapter;
 
@@ -22,7 +20,7 @@ public class Index2Fragment extends DelayBaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frament_index1, null);
+        View view = inflater.inflate(R.layout.frament_index2, null);
         return view;
     }
 

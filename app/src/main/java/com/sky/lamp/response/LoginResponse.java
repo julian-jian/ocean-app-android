@@ -7,10 +7,12 @@ package com.sky.lamp.response;
 public class LoginResponse {
 
     /**
-     * code : 200
-     * message : 登录成功
+     * status : 0
+     * userID : 2df35b45-bcd8-43d1-8d69-8fd080fe4caa
+     * result :
      */
 
-    public int code;
-    public String message;
+    public int status;
+    public String userID;
+    public String result;
 }

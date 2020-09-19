@@ -1,19 +1,26 @@
 package com.sky.lamp;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import com.chenxi.tabview.adapter.MainViewAdapter;
 import com.chenxi.tabview.listener.OnTabSelectedListener;
 import com.chenxi.tabview.widget.Tab;
 import com.chenxi.tabview.widget.TabContainerView;
 import com.githang.statusbar.StatusBarCompat;
-import com.hacknife.immersive.Immersive;
+import com.sky.lamp.event.LoginOutEvent;
 import com.sky.lamp.ui.Index2Fragment;
 import com.sky.lamp.ui.Index3Fragment;
 import com.sky.lamp.ui.IndexFragment;
+import com.sky.lamp.ui.act.LoginAct;
+import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -33,27 +40,36 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_main);
-//        StatusBarCompat.setStatusBarColor(this, getResources().getColor(android.R.color.holo_red_dark));
+        boolean skip = getIntent().getBooleanExtra("skip", false);
+        if (!MyApplication.getInstance().isLogin() && !skip) {
+            startActivity(new Intent(this,LoginAct.class));
+            finish();
+            return;
+        }
+        changeStatusColor(0);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         mainViewAdapter = new MainViewAdapter(getSupportFragmentManager(), new Fragment[]{new IndexFragment()
                 , new Index2Fragment(),new Index3Fragment()});
         mainViewAdapter.setHasMsgIndex(3);
         tabContainer.setAdapter(mainViewAdapter);
         actionBar.getRootView().setVisibility(View.VISIBLE);
-        actionBar.getTitleTextView().setText("首页");
+//        actionBar.initLeftImageView(this);
+        actionBar.getTitleTextView().setText("ReeSun LED");
         tabContainer.setOnTabSelectedListener(new OnTabSelectedListener() {
             /**
              * @param tab
              */
             @Override
             public void onTabSelected(Tab tab) {
+                changeStatusColor(tab.getIndex());
                 switch (tab.getIndex()) {
                     case 0:
-                        actionBar.getRootView().setVisibility(View.GONE);
-                        actionBar.getTitleTextView().setText("首页");
+                        actionBar.getRootView().setVisibility(View.VISIBLE);
+                        actionBar.getTitleTextView().setText("ReeSun LED");
                         break;
                     case 1:
-                        actionBar.getRootView().setVisibility(View.GONE);
+                        actionBar.getRootView().setVisibility(View.VISIBLE);
                         actionBar.getTitleTextView().setText("设备");
                         break;
                     case 2:
@@ -75,6 +91,14 @@ public class MainActivity extends BaseActivity {
 //                }
 //            }
 //        });
+    }
+
+    private void changeStatusColor(int index) {
+        if (index == 2) {
+            StatusBarCompat.setStatusBarColor(this, getResources().getColor(R.color.mine_blue));
+        } else {
+            StatusBarCompat.setStatusBarColor(this, getResources().getColor(android.R.color.white));
+        }
     }
 
     public void tabSelect(int index){
@@ -106,11 +130,16 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Subscribe
+    public void onLoginOut(LoginOutEvent event) {
+        startActivity(new Intent(this, LoginAct.class));
+        finish();
+    }
 
-   /* @Override
+    @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-    }*/
+    }
 
 }

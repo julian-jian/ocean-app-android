@@ -2,13 +2,20 @@ package com.sky.lamp.ui.act;
 
 import java.util.HashMap;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import com.sky.lamp.BaseActivity;
+import com.sky.lamp.Constants;
+import com.sky.lamp.MainActivity;
 import com.sky.lamp.R;
+import com.sky.lamp.event.RegSuccessEvent;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
-import com.sky.lamp.response.RegResponse;
+import com.sky.lamp.response.LoginResponse;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
+import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.utils.TAStringUtils;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
@@ -48,7 +55,21 @@ public class LoginAct extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        EventBus.getDefault().register(this);
         ButterKnife.bind(this);
+        setDefaultStatusColor();
+        actionBar.setTitle("登录");
+        actionBar.initLeftImageView(this);
+        actionBar.setRightText("跳过 >>");
+        actionBar.getRightTextView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginAct.this, MainActivity.class);
+                intent.putExtra("skip",true);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     @OnClick({R.id.iv_pwd_show, R.id.btn_login, R.id.tv_reg, R.id.tv_forgetPwd})
@@ -69,7 +90,7 @@ public class LoginAct extends BaseActivity {
     }
 
     private void loginClick() {
-        String email = etEmail.getText().toString();
+        final String email = etEmail.getText().toString();
         String pwd = etPwd.getText().toString();
         if (!TAStringUtils.isEmail(email)) {
             RxToast.showToastShort("邮箱格式不对");
@@ -81,7 +102,7 @@ public class LoginAct extends BaseActivity {
         String strEntity = HttpUtil.getRequestString(map);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"),strEntity);
         AppService.createApi(MyApi.class).login(body).subscribeOn(Schedulers.io()).observeOn(
-                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<RegResponse>() {
+                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<LoginResponse>() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -100,13 +121,28 @@ public class LoginAct extends BaseActivity {
             }
 
             @Override
-            public void onNext(final RegResponse response) {
+            public void onNext(final LoginResponse response) {
                 if (response.status == 0) {
                     RxToast.showToast("登录成功");
+                    EventBus.getDefault().postSticky(new LoginResponse());
+                    RxSPUtilTool.putString(LoginAct.this, Constants.USERNAME,email);
+                    RxSPUtilTool.putString(LoginAct.this,Constants.USER_ID,response.userID);
+                    startActivity(new Intent(LoginAct.this, MainActivity.class));
+                    finish();
                 }  else {
                     RxToast.error("登录失败");
                 }
             }
         });
+    }
+    @Subscribe
+    public void onRegSuccess(RegSuccessEvent regSuccessEvent){
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }

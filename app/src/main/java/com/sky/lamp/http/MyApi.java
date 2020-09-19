@@ -47,6 +47,9 @@ public interface MyApi {
     Observable<RegResponse> reg(@Body RequestBody route);
 
     @POST("/api/login/userLogin")
-    Observable<RegResponse> login(@Body RequestBody body);
+    Observable<LoginResponse> login(@Body RequestBody body);
+
+    @POST("/api/login/modifyPWD")
+    Observable<LoginResponse> editPwd(@Body RequestBody body);
 
 }

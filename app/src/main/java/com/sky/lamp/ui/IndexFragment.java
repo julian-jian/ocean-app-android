@@ -1,7 +1,5 @@
 package com.sky.lamp.ui;
 
-import org.greenrobot.eventbus.EventBus;
-
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.ProductListAdapter;
 

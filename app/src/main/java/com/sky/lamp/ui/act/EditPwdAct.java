@@ -3,17 +3,18 @@ package com.sky.lamp.ui.act;
 import java.util.HashMap;
 
 import com.sky.lamp.BaseActivity;
+import com.sky.lamp.Constants;
 import com.sky.lamp.R;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
-import com.sky.lamp.response.RegResponse;
+import com.sky.lamp.response.LoginResponse;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
+import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.utils.TAStringUtils;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -28,11 +29,11 @@ import okhttp3.RequestBody;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class RegActivity extends BaseActivity {
+public class EditPwdAct extends BaseActivity {
     @BindView(R.id.actionBar)
     TitleBar actionBar;
-    @BindView(R.id.et_email)
-    EditText etEmail;
+    @BindView(R.id.et_old_pwd)
+    EditText etOldPwd;
     @BindView(R.id.et_pwd)
     EditText etPwd;
     @BindView(R.id.iv_pwd_show)
@@ -41,51 +42,56 @@ public class RegActivity extends BaseActivity {
     EditText etConfirm;
     @BindView(R.id.iv_pwd_confirm_show)
     ImageView ivPwdConfirmShow;
-    @BindView(R.id.btn_Reg)
-    Button btnReg;
+    @BindView(R.id.btn_edit_pwd)
+    Button btnEditPwd;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reg);
+        setContentView(R.layout.activity_forget_pwd);
         ButterKnife.bind(this);
-        actionBar.setTitle("注册");
         actionBar.initLeftImageView(this);
-
+        actionBar.setTitle("修改密码");
     }
 
-    @OnClick({R.id.iv_pwd_show, R.id.iv_pwd_confirm_show, R.id.btn_Reg})
+    @OnClick({R.id.iv_pwd_show, R.id.btn_edit_pwd})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_pwd_show:
                 break;
-            case R.id.iv_pwd_confirm_show:
-                break;
-            case R.id.btn_Reg:
+            case R.id.btn_edit_pwd:
                 checkAndSubmit();
                 break;
         }
     }
 
     private void checkAndSubmit() {
-        String email = etEmail.getText().toString();
+        String email = RxSPUtilTool.getString(this, Constants.USERNAME);
         String pwd = etPwd.getText().toString();
         String confirmPwd = etConfirm.getText().toString();
         if (!TAStringUtils.isEmail(email)) {
             RxToast.showToastShort("邮箱格式不对");
             return;
         }
+
+        if (TextUtils.isEmpty(pwd)) {
+            RxToast.showToastShort("密码不能为空");
+            return;
+        }
+
         if (!pwd.equals(confirmPwd)) {
             RxToast.showToastShort("二次密码不一致");
             return;
         }
+
         HashMap<String, Object> map = new HashMap<>();
         map.put("loginName", email);
-        map.put("loginPassword", pwd);
+        map.put("loginPassword", etOldPwd.getText().toString());
+        map.put("newLoginPassword", etPwd.getText().toString());
         String strEntity = HttpUtil.getRequestString(map);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"),strEntity);
-        AppService.createApi(MyApi.class).reg(body).subscribeOn(Schedulers.io()).observeOn(
-                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<RegResponse>() {
+        AppService.createApi(MyApi.class).editPwd(body).subscribeOn(Schedulers.io()).observeOn(
+                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<LoginResponse>() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -104,17 +110,14 @@ public class RegActivity extends BaseActivity {
             }
 
             @Override
-            public void onNext(final RegResponse response) {
-                if (response.status == 0) {
-                    RxToast.showToast("注册成功");
-                    startActivity(new Intent(RegActivity.this,LoginAct.class));
-                    finish();
+            public void onNext(final LoginResponse response) {
+                if (response.status == Constants.SUCCESS) {
+                    RxToast.showToast("修改密码成功");
+                    RxSPUtilTool.putString(EditPwdAct.this,Constants.USER_ID,response.userID);
                 }  else {
-                    String errorMsg = TextUtils.isEmpty(response.result) ? "注册失败" : response.result;
-                    RxToast.error(errorMsg);
+                    RxToast.error("操作失败");
                 }
             }
         });
     }
-
 }

@@ -1,5 +1,7 @@
 package com.sky.lamp;
 
+import static com.sky.lamp.Constants.USERNAME;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -8,11 +10,13 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.sky.CrashHandler;
+import com.sky.lamp.utils.RxSPUtilTool;
 import com.vondear.rxtools.RxDeviceTool;
 import com.vondear.rxtools.RxTool;
 
 import android.app.Application;
 import android.content.Context;
+import android.text.TextUtils;
 
 //import android.support.multidex.MultiDex;
 
@@ -61,6 +65,10 @@ public class MyApplication extends Application {
         return application;
     }
 
+    public boolean isLogin() {
+        String email = RxSPUtilTool.getString(getApplicationContext(), USERNAME);
+        return !TextUtils.isEmpty(email);
+    }
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

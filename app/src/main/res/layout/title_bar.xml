@@ -48,8 +48,8 @@
             android:layout_centerVertical="true"
             android:padding="5dp"
             tools:text="@string/test_string_long"
-            android:textSize="@dimen/text_30"
-            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textColor="@color/black"
             android:gravity="center"
             />
 
@@ -64,7 +64,7 @@
             android:gravity="center"
             android:paddingLeft="@dimen/margin_20"
             android:clickable="true"
-            android:textSize="@dimen/text_33"
+            android:textSize="17sp"
             android:visibility="gone"/>
 
     <ImageView

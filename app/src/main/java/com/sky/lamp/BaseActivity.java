@@ -1,7 +1,10 @@
 package com.sky.lamp;
 
+import com.githang.statusbar.StatusBarCompat;
 import com.vondear.rxtools.view.dialog.RxDialogLoading;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 /**
@@ -11,6 +14,11 @@ import android.support.v7.app.AppCompatActivity;
 public class BaseActivity extends AppCompatActivity {
     private RxDialogLoading rxDialogLoading;
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setDefaultStatusColor();
+    }
 
     @Override
     protected void onDestroy() {
@@ -30,6 +38,10 @@ public class BaseActivity extends AppCompatActivity {
             rxDialogLoading.dismiss();
             rxDialogLoading = null;
         }
+    }
+
+    public void setDefaultStatusColor(){
+        StatusBarCompat.setStatusBarColor(this, getResources().getColor(android.R.color.white));
     }
 
     @Override

@@ -21,5 +21,6 @@
 
     <color name="title_bg">#F4F6F8</color>
     <color name="color_status">#ff3488ea</color>
+    <color name="mine_blue">#545DFF</color>
 </resources>
 
