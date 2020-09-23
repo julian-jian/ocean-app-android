@@ -16,6 +16,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class VerticalColorPagerAdapter extends PagerAdapter{
 
@@ -96,7 +97,7 @@ public class VerticalColorPagerAdapter extends PagerAdapter{
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            String stringJson = new String(buffer, "UTF-8");
+            String stringJson = new String(buffer, StandardCharsets.UTF_8);
             mColors = new JSONArray(stringJson);
         } catch (IOException ex) {
             Log.e("XXX", "Fail to load color JSON file");

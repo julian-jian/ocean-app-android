@@ -107,7 +107,7 @@ public class TAStringUtils {
 
         double len = 0;
         for (int i = 0; i < c.length(); i++) {
-            int temp = (int) c.charAt(i);
+            int temp = c.charAt(i);
             if (temp > 0 && temp < 127) {
                 len++;
             } else {
@@ -149,7 +149,7 @@ public class TAStringUtils {
     public static String replace(String from, String to, String source) {
         if (source == null || from == null || to == null)
             return null;
-        StringBuffer bf = new StringBuffer("");
+        StringBuffer bf = new StringBuffer();
         int index = -1;
         while ((index = source.indexOf(from)) != -1) {
             bf.append(source.substring(0, index) + to);
@@ -256,7 +256,7 @@ public class TAStringUtils {
      */
     public static String getUrlFileName(String urlString) {
         String fileName = urlString.substring(urlString.lastIndexOf("/"));
-        fileName = fileName.substring(1, fileName.length());
+        fileName = fileName.substring(1);
         if (fileName.equalsIgnoreCase("")) {
             Calendar c = Calendar.getInstance();
             fileName = c.get(Calendar.YEAR) + "" + c.get(Calendar.MONTH) + "" + c.get(Calendar.DAY_OF_MONTH) + "" + c.get(Calendar.MINUTE);
@@ -826,7 +826,7 @@ public class TAStringUtils {
 
 
     public static String getTime(String planUse) {
-        String str[] = planUse.split(":");
+        String[] str = planUse.split(":");
 
         if (str.length == 2) {
             if (Integer.valueOf(str[0]) == 0) {

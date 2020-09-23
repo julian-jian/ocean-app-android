@@ -9,14 +9,14 @@ import android.content.Context;
 public class ArrayWheelAdapter<T> extends AbstractWheelTextAdapter {
     
     // items
-    private T items[];
+    private T[] items;
 
     /**
      * Constructor
      * @param context the current context
      * @param items the items
      */
-    public ArrayWheelAdapter(Context context, T items[]) {
+    public ArrayWheelAdapter(Context context, T[] items) {
         super(context);
         
         //setEmptyItemResource(TEXT_VIEW_ITEM_RESOURCE);

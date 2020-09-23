@@ -71,12 +71,12 @@ android {
                 if (!variant.flavorName.isEmpty()) {
                     apkName += "_${variant.flavorName}"
                     def fileApk = file(apkName + "_${releaseTime()}_" + num + ".apk")
-                    println 'zfy A message which is logged at QUIET level';
+                    println 'zfy A message which is logged at QUIET level'
 
                     if (fileApk.exists()) {
                         ++num
                         fileApk = file(apkName + "_${releaseTime()}_" + num + ".apk")
-                        println 'zfy92 A message which is logged at QUIET level';
+                        println 'zfy92 A message which is logged at QUIET level'
                     }
                 }
                 outputFileName = apkName + "_${releaseTime()}.apk"
@@ -148,4 +148,5 @@ dependencies {
     implementation 'com.hacknife:immersive:1.1.0'
     compile 'com.githang:status-bar-compat:0.7'
     implementation files('libs/x5.jar')
+    implementation 'pub.devrel:easypermissions:2.0.1'
 }

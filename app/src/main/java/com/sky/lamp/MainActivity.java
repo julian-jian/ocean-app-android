@@ -13,19 +13,19 @@ import com.sky.lamp.ui.Index2Fragment;
 import com.sky.lamp.ui.Index3Fragment;
 import com.sky.lamp.ui.IndexFragment;
 import com.sky.lamp.ui.act.LoginAct;
-import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends BaseActivity {
 
@@ -79,18 +79,8 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-//        RxPermissions rxPermissions=new RxPermissions(this);
-//        rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.INTERNET).subscribe(new Consumer<Boolean>() {
-//            @Override
-//            public void accept(Boolean aBoolean) throws Exception {
-//                if (aBoolean){
-//                    //申请的权限全部允许
-//                }else{
-//                    //只要有一个权限被拒绝，就会执行
-//                    Toast.makeText(MainActivity.this, "未授权权限，部分功能不能使用", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
+        methodRequiresTwoPermission();
+
     }
 
     private void changeStatusColor(int index) {
@@ -141,5 +131,19 @@ public class MainActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
-
+    private int RC_CAMERA_AND_LOCATION = 0;
+    private void methodRequiresTwoPermission()
+    {
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CHANGE_WIFI_STATE,Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (EasyPermissions.hasPermissions(this, perms))
+        {
+            // 已经有权限
+        } else {
+            // 没有权限，现在请求他们
+            //只有用户首次安装时拒绝了权限，才会在下次申请时弹出 "此app需要xxx权限"提示框
+            EasyPermissions.requestPermissions(this, "此app需要获取授权", RC_CAMERA_AND_LOCATION,
+                    perms);
+        }
+    }
 }

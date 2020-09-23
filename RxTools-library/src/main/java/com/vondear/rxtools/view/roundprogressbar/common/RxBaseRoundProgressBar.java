@@ -468,6 +468,7 @@ public abstract class RxBaseRoundProgressBar extends LinearLayout {
     }
 
     public interface OnProgressChangedListener {
-        public void onProgressChanged(int viewId, float progress, boolean isPrimaryProgress, boolean isSecondaryProgress);
+        void onProgressChanged(int viewId, float progress, boolean isPrimaryProgress,
+                               boolean isSecondaryProgress);
     }
 }

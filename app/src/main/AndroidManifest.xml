@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 访问网络，网络定位需要上网 -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- SD卡读取权限，用户写入离线定位数据 -->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- Required -->
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -18,6 +16,14 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-permission
+            android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_STATE"/>
+
+    <uses-permission
+            android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name="com.sky.lamp.MyApplication"
@@ -27,7 +33,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-                android:name="com.sky.lamp.MainActivity"
+                android:name=".MainActivity"
+                android:exported="true"
                 android:launchMode="singleInstance"
                 android:screenOrientation="portrait" />
         <activity android:name=".ui.act.LoginAct" android:exported="true">
@@ -73,7 +80,11 @@
 
 
         <activity android:name="com.sky.lamp.ui.act.EditPwdAct"  android:screenOrientation="portrait" />
+        <activity android:name="com.sky.lamp.ui.act.DebugAct"
+                android:exported="true" android:screenOrientation="portrait" />
 
+        <activity android:name="com.sky.lamp.ui.act.ConfigAct"
+                android:exported="true" android:screenOrientation="portrait" />
         <meta-data
                 android:name="design_width_in_dp"
                 android:value="360"/>

@@ -47,7 +47,7 @@ import static com.vondear.rxtools.RxConstTool.MB;
 
 public class RxDataTool {
 
-    static final char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    static final char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             'A', 'B', 'C', 'D', 'E', 'F'};
 
     private static final DecimalFormat amountFormat = new DecimalFormat("###,###,###,##0.00");
@@ -94,9 +94,7 @@ public class RxDataTool {
             return true;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            if (obj instanceof SparseLongArray && ((SparseLongArray) obj).size() == 0) {
-                return true;
-            }
+            return obj instanceof SparseLongArray && ((SparseLongArray) obj).size() == 0;
         }
         return false;
     }
@@ -347,7 +345,7 @@ public class RxDataTool {
         if (isNullString(s) || !Character.isLowerCase(s.charAt(0))) {
             return s;
         }
-        return String.valueOf((char) (s.charAt(0) - 32)) + s.substring(1);
+        return (char) (s.charAt(0) - 32) + s.substring(1);
     }
 
     /**
@@ -360,7 +358,7 @@ public class RxDataTool {
         if (isNullString(s) || !Character.isUpperCase(s.charAt(0))) {
             return s;
         }
-        return String.valueOf((char) (s.charAt(0) + 32)) + s.substring(1);
+        return (char) (s.charAt(0) + 32) + s.substring(1);
     }
 
     /**

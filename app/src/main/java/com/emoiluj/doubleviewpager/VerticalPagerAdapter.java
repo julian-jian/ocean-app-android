@@ -22,7 +22,7 @@ public class VerticalPagerAdapter extends PagerAdapter {
     public static final int S11 = 5;
     public static final int F6 = 6;
     public static final int F205 = 7;
-    private int nowImages[];
+    private int[] nowImages;
     int mType;
 
     public VerticalPagerAdapter(Context c, int type) {

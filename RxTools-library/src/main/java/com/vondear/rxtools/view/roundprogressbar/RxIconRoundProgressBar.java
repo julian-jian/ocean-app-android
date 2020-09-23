@@ -332,6 +332,6 @@ public class RxIconRoundProgressBar extends RxBaseRoundProgressBar implements Vi
     }
 
     public interface OnIconClickListener {
-        public void onIconClick();
+        void onIconClick();
     }
 }

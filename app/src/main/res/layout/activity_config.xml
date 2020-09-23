@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_activity2"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <com.sky.lamp.view.TitleBar
+                android:id="@+id/actionBar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/title_height" />
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginRight="30dp">
+
+            <EditText
+                    android:id="@+id/et_wifi_name"
+                    style="@style/Edit"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:hint="请输入WIFI名称"
+                    android:paddingLeft="35dp"
+                    android:paddingRight="35dp"
+                    android:textSize="@dimen/text_et" />
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="9dp"
+                    android:src="@drawable/ic_email" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="14.5dp"
+                android:layout_marginRight="30dp">
+
+            <EditText
+                    android:id="@+id/et_wifi_pwd"
+                    style="@style/Edit"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:hint="请输入WIFI密码"
+                    android:inputType="textPassword"
+                    android:paddingLeft="35dp"
+                    android:paddingRight="35dp"
+                    android:textSize="@dimen/text_et" />
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="9dp"
+                    android:src="@drawable/ic_pwd" />
+
+            <ImageView
+                    android:id="@+id/iv_pwd_show"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="9dp"
+                    android:layout_marginRight="9dp"
+                    android:src="@drawable/ic_pwd" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="30dp"
+                android:orientation="horizontal">
+
+            <Button
+                    android:id="@+id/btn_search"
+                    style="@style/Btn"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="搜索网络" />
+
+            <Button
+                    android:id="@+id/btn_send_pwd"
+                    style="@style/Btn"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_weight="1"
+                    android:width="0dp"
+                    android:text="发送到设备" />
+
+        </LinearLayout>
+
+        <com.github.jdsjlzx.recyclerview.LRecyclerView
+                android:id="@+id/recyclerListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:background="@color/bg_activity2" />
+    </LinearLayout>
+
+</RelativeLayout>
