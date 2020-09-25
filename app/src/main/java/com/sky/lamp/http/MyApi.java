@@ -44,12 +44,16 @@ public interface MyApi {
     Observable<ProductListResponse> searchGoods(@Query("page") int page, @Query("key") String key);
 
     @POST("/api/login/userRegister")
-    Observable<RegResponse> reg(@Body RequestBody route);
+    Observable<BaseResponse> reg(@Body RequestBody route);
 
     @POST("/api/login/userLogin")
     Observable<LoginResponse> login(@Body RequestBody body);
 
     @POST("/api/login/modifyPWD")
     Observable<LoginResponse> editPwd(@Body RequestBody body);
+
+
+    @POST("/api/device/bind")
+    Observable<BaseResponse> bind(@Body RequestBody body);
 
 }

@@ -69,6 +69,7 @@ public class MyApplication extends Application {
         String email = RxSPUtilTool.getString(getApplicationContext(), USERNAME);
         return !TextUtils.isEmpty(email);
     }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

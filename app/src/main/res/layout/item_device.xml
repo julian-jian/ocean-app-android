@@ -12,9 +12,9 @@
 
     <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/swipeLayout"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:id="@+id/swipeLayout"
             app:clickToClose="true">
 
         <LinearLayout

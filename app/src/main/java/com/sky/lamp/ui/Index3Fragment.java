@@ -1,11 +1,11 @@
 package com.sky.lamp.ui;
+
 import static com.sky.lamp.Constants.USERNAME;
 import static com.sky.lamp.Constants.USER_ID;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.event.LoginOutEvent;

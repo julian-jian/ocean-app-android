@@ -11,7 +11,7 @@ import com.sky.udp.SendUtil;
 public class TestSend {
     @Test
     public void send() {
-        //        SendUtil.send("192.168.4.1",61818);
+                SendUtil.send("192.168.4.1",61818);
         List<String> list = new CopyOnWriteArrayList<>();
         list.add("1");
         list.add("2");

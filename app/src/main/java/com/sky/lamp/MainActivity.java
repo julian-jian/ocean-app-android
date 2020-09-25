@@ -83,7 +83,6 @@ public class MainActivity extends BaseActivity {
                                 EventBus.getDefault().postSticky(new NextStepEvent());
                             }
                         });
-                        startActivity(new Intent(MainActivity.this, ConfigAct.class));
                         break;
                     case 2:
                         actionBar.setRightText("");

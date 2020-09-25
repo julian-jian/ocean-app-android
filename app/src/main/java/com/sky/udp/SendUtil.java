@@ -1,13 +1,18 @@
 package com.sky.udp;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import com.orhanobut.logger.Logger;
 
 public class SendUtil {
     public static final String TAG = SendUtil.class.getSimpleName();
+    public static String ip;
+    public static final int port = 61818;
     public static void send(String ip, int port) {
         try {
             /*
@@ -54,6 +59,30 @@ public class SendUtil {
             // 4.关闭资源
             socket.close();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendWifiPwd() {
+
+    }
+
+    public static void sendData() {
+        try {
+            InetAddress address = InetAddress.getByName(ip);
+            byte[] b = new byte[16];
+            // 2.创建数据报，包含发送的数据信息
+            DatagramPacket packet = new DatagramPacket(b, b.length, address, port);
+            // 3.创建DatagramSocket对象
+            DatagramSocket socket = new DatagramSocket();
+            // 4.向服务器端发送数据报
+            socket.send(packet);
+            socket.close();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

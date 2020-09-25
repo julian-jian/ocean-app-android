@@ -6,7 +6,7 @@ import com.sky.lamp.BaseActivity;
 import com.sky.lamp.R;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
-import com.sky.lamp.response.RegResponse;
+import com.sky.lamp.response.BaseResponse;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.TAStringUtils;
@@ -85,7 +85,7 @@ public class RegActivity extends BaseActivity {
         String strEntity = HttpUtil.getRequestString(map);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"),strEntity);
         AppService.createApi(MyApi.class).reg(body).subscribeOn(Schedulers.io()).observeOn(
-                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<RegResponse>() {
+                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<BaseResponse>() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -95,16 +95,16 @@ public class RegActivity extends BaseActivity {
             @Override
             public void onError(Throwable error) {
                 super.onError(error);
-                dimissLoadingDialog();
+                dismissLoadingDialog();
             }
 
             @Override
             public void onCompleted() {
-                dimissLoadingDialog();
+                dismissLoadingDialog();
             }
 
             @Override
-            public void onNext(final RegResponse response) {
+            public void onNext(final BaseResponse response) {
                 if (response.status == 0) {
                     RxToast.showToast("注册成功");
                     startActivity(new Intent(RegActivity.this,LoginAct.class));

@@ -1,10 +1,11 @@
 package com.guo.duoduo.wifidetective.core.devicescan;
 
+import java.io.Serializable;
 
 /**
  * Created by 郭攀峰 on 2015/10/25.
  */
-public class IP_MAC
+public class IP_MAC implements Serializable
 {
     public String mIp;
     public String mMac;

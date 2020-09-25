@@ -112,12 +112,12 @@ public class LoginAct extends BaseActivity {
             @Override
             public void onError(Throwable error) {
                 super.onError(error);
-                dimissLoadingDialog();
+                dismissLoadingDialog();
             }
 
             @Override
             public void onCompleted() {
-                dimissLoadingDialog();
+                dismissLoadingDialog();
             }
 
             @Override

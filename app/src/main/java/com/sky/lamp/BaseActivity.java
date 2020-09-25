@@ -23,7 +23,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        dimissLoadingDialog();
+        dismissLoadingDialog();
         super.onDestroy();
     }
 
@@ -41,7 +41,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void dimissLoadingDialog() {
+    public void dismissLoadingDialog() {
         if (rxDialogLoading != null && rxDialogLoading.isShowing()) {
             rxDialogLoading.dismiss();
             rxDialogLoading = null;
