@@ -6,6 +6,7 @@ import com.vondear.rxtools.view.dialog.RxDialogLoading;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 
 /**
  * Created by sky on 2017/12/17.
@@ -27,8 +28,15 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showLoadingDialog(){
+        showLoadingDialog("");
+    }
+
+    public void showLoadingDialog(String text){
         if (rxDialogLoading == null) {
             rxDialogLoading = new RxDialogLoading(this);
+            if (!TextUtils.isEmpty(text)) {
+                rxDialogLoading.setLoadingText(text);
+            }
             rxDialogLoading.show();
         }
     }

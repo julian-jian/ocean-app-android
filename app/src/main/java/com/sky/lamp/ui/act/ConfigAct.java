@@ -1,10 +1,16 @@
 package com.sky.lamp.ui.act;
 
-import java.lang.ref.WeakReference;
+import static com.vondear.rxtools.RxImageTool.dp2px;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+
+import com.github.jdsjlzx.ItemDecoration.DividerDecoration;
+import com.github.jdsjlzx.interfaces.OnItemClickListener;
 import com.github.jdsjlzx.recyclerview.LRecyclerView;
 import com.github.jdsjlzx.recyclerview.LRecyclerViewAdapter;
 import com.guo.duoduo.wifidetective.core.wifiscan.WiFiBroadcastReceiver;
+import com.guo.duoduo.wifidetective.entity.RouterInfo;
 import com.guo.duoduo.wifidetective.entity.RouterList;
 import com.guo.duoduo.wifidetective.util.Constant;
 import com.guo.duoduo.wifidetective.util.NetworkUtil;
@@ -13,6 +19,9 @@ import com.sky.lamp.BaseActivity;
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.WifiListAdapter;
 import com.sky.lamp.response.WifiResponse;
+import com.sky.lamp.ui.ProductDetailsActivity;
+import com.sky.lamp.ui.ProductListActivity;
+import com.sky.lamp.ui.SpacesItemDecoration;
 import com.sky.lamp.view.TitleBar;
 
 import android.content.IntentFilter;
@@ -20,6 +29,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +58,7 @@ public class ConfigAct extends BaseActivity {
     private WiFiBroadcastReceiver mWiFiBroadcastReceiver = null;
     private WifiManager mWifiManager;
     private WiFiScanHandler mWiFiScanHandler;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,12 +71,28 @@ public class ConfigAct extends BaseActivity {
         adapter = new WifiListAdapter(WifiListAdapter.ProductViewHolder.class);
         final LRecyclerViewAdapter lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
         recyclerListView.setAdapter(lRecyclerViewAdapter);
+
+        recyclerListView.setLayoutManager(new LinearLayoutManager(this));
+        DividerDecoration divider =
+                new DividerDecoration.Builder(this).setHeight(R.dimen.default_divider_height)
+                        //                .setPadding(R.dimen.default_divider_padding)
+                        .setColorResource(R.color.divide).build();
+        recyclerListView.addItemDecoration(divider);
+        recyclerListView.setLoadMoreEnabled(false);
+        lRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                RouterInfo info = adapter.getItems().get(position);
+                etWifiName.setText(info.mSsid);
+            }
+        });
     }
 
     @OnClick({R.id.btn_search, R.id.btn_send_pwd})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_search:
+                showLoadingDialog("正在搜索");
                 initWiFi();
                 break;
             case R.id.btn_send_pwd:
@@ -73,11 +100,9 @@ public class ConfigAct extends BaseActivity {
         }
     }
 
-    private void initWiFi()
-    {
+    private void initWiFi() {
         mWifiManager = NetworkUtil.getWifiManager(getApplicationContext());
-        if (mWifiManager == null)
-        {
+        if (mWifiManager == null) {
             ToastUtils.showTextToast(getApplicationContext(), R.string.net_error);
             finish();
             return;
@@ -89,44 +114,41 @@ public class ConfigAct extends BaseActivity {
         registerReceiver(mWiFiBroadcastReceiver, intentFilter);
 
         boolean success = mWifiManager.startScan();
-        System.out.println("ConfigAct.initWiFi "+success);
+        System.out.println("ConfigAct.initWiFi " + success);
     }
 
-    public static class WiFiScanHandler extends android.os.Handler
-    {
+    public static class WiFiScanHandler extends android.os.Handler {
 
         private WeakReference<ConfigAct> mWifiScanActivity;
 
-        public WiFiScanHandler(ConfigAct activity)
-        {
+        public WiFiScanHandler(ConfigAct activity) {
             mWifiScanActivity = new WeakReference<>(activity);
         }
 
         @Override
-        public void handleMessage(Message msg)
-        {
+        public void handleMessage(Message msg) {
             ConfigAct activity = mWifiScanActivity.get();
-            if (activity == null)
+            if (activity == null) {
                 return;
+            }
 
-            switch (msg.what)
-            {
-                case Constant.MSG.WIFI_SCAN_RESULT :
-                {
-                    if (msg.obj != null)
-                    {   activity.adapter.clear();
-                        SparseArray<RouterList> routerListSparseArray = (SparseArray<RouterList>) msg.obj;
-                        for (int i = 0; i < routerListSparseArray.size(); i++)
-                        {
+            switch (msg.what) {
+                case Constant.MSG.WIFI_SCAN_RESULT: {
+                    activity.dimissLoadingDialog();
+                    if (msg.obj != null) {
+                        activity.adapter.clear();
+                        SparseArray<RouterList> routerListSparseArray =
+                                (SparseArray<RouterList>) msg.obj;
+                        for (int i = 0; i < routerListSparseArray.size(); i++) {
 
                             WifiResponse.DataBean data = new WifiResponse.DataBean();
-                            data.name = routerListSparseArray.get(0).mRouterList.get(i).mSsid;
-                            data.mac = routerListSparseArray.get(0).mRouterList.get(i).mMac;
-                            activity.adapter.add(data);
+                            List<RouterInfo> mRouterList =
+                                    routerListSparseArray.valueAt(i).mRouterList;
+                            activity.adapter.addAll(mRouterList);
                         }
                     }
-//                    activity.mWiFiScanAdapter.notifyDataSetChanged();
-                    activity.mWifiManager.startScan();//处理后冲洗扫描
+                    //                    activity.mWiFiScanAdapter.notifyDataSetChanged();
+                    //                    activity.mWifiManager.startScan();//处理后冲洗扫描
                     break;
                 }
             }

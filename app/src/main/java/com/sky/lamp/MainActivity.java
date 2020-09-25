@@ -7,11 +7,13 @@ import com.chenxi.tabview.adapter.MainViewAdapter;
 import com.chenxi.tabview.listener.OnTabSelectedListener;
 import com.chenxi.tabview.widget.Tab;
 import com.chenxi.tabview.widget.TabContainerView;
+import com.event.NextStepEvent;
 import com.githang.statusbar.StatusBarCompat;
 import com.sky.lamp.event.LoginOutEvent;
 import com.sky.lamp.ui.Index2Fragment;
 import com.sky.lamp.ui.Index3Fragment;
 import com.sky.lamp.ui.IndexFragment;
+import com.sky.lamp.ui.act.ConfigAct;
 import com.sky.lamp.ui.act.LoginAct;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
@@ -36,25 +38,27 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.mainLayout)
     LinearLayout mainLayout;
     MainViewAdapter mainViewAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_main);
         boolean skip = getIntent().getBooleanExtra("skip", false);
         if (!MyApplication.getInstance().isLogin() && !skip) {
-            startActivity(new Intent(this,LoginAct.class));
+            startActivity(new Intent(this, LoginAct.class));
             finish();
             return;
         }
         changeStatusColor(0);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        mainViewAdapter = new MainViewAdapter(getSupportFragmentManager(), new Fragment[]{new IndexFragment()
-                , new Index2Fragment(),new Index3Fragment()});
+        mainViewAdapter =
+                new MainViewAdapter(getSupportFragmentManager(), new Fragment[] {new IndexFragment()
+                        , new Index2Fragment(), new Index3Fragment()});
         mainViewAdapter.setHasMsgIndex(3);
         tabContainer.setAdapter(mainViewAdapter);
         actionBar.getRootView().setVisibility(View.VISIBLE);
-//        actionBar.initLeftImageView(this);
+        //        actionBar.initLeftImageView(this);
         actionBar.getTitleTextView().setText("ReeSun LED");
         tabContainer.setOnTabSelectedListener(new OnTabSelectedListener() {
             /**
@@ -67,12 +71,22 @@ public class MainActivity extends BaseActivity {
                     case 0:
                         actionBar.getRootView().setVisibility(View.VISIBLE);
                         actionBar.getTitleTextView().setText("ReeSun LED");
+                        actionBar.setRightText("");
                         break;
                     case 1:
                         actionBar.getRootView().setVisibility(View.VISIBLE);
                         actionBar.getTitleTextView().setText("设备");
+                        actionBar.setRightText("下一步");
+                        actionBar.getRightTextView().setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                EventBus.getDefault().postSticky(new NextStepEvent());
+                            }
+                        });
+                        startActivity(new Intent(MainActivity.this, ConfigAct.class));
                         break;
                     case 2:
+                        actionBar.setRightText("");
                         actionBar.getRootView().setVisibility(View.GONE);
                         actionBar.getTitleTextView().setText("我的");
                         break;
@@ -91,11 +105,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public void tabSelect(int index){
+    public void tabSelect(int index) {
         tabContainer.setCurrentItem(index);
     }
-
-
 
     //退出时的时间
     private long mExitTime;
@@ -131,13 +143,13 @@ public class MainActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
+
     private int RC_CAMERA_AND_LOCATION = 0;
-    private void methodRequiresTwoPermission()
-    {
+
+    private void methodRequiresTwoPermission() {
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.CHANGE_WIFI_STATE,Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (EasyPermissions.hasPermissions(this, perms))
-        {
+                Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (EasyPermissions.hasPermissions(this, perms)) {
             // 已经有权限
         } else {
             // 没有权限，现在请求他们

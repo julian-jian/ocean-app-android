@@ -176,4 +176,7 @@
 
     <color name="colorBackground">#FF4081</color>
     <color name="colorText">#FFFFFF</color>
+    <color name="divide">#ffe5e5e5</color>
+
+
 </resources>

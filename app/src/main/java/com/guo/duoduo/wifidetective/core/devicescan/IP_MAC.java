@@ -10,6 +10,7 @@ public class IP_MAC
     public String mMac;
     public String mManufacture;
     public String mDeviceName;
+    public boolean mSelect;
 
     public IP_MAC(String ip, String mac)
     {

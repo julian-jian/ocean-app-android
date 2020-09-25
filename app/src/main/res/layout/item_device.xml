@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="81dp"
+        android:orientation="vertical">
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divide" />
+
+    <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:id="@+id/swipeLayout"
+            app:clickToClose="true">
+
+        <LinearLayout
+                android:id="@+id/bottom_wrapper"
+                android:layout_width="160dp"
+                android:layout_height="match_parent"
+                android:tag="Bottom1"
+                android:weightSum="1">
+
+            <TextView
+                    android:id="@+id/tv_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:background="#FF9D01"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="重命名"
+                    android:textColor="@color/white" />
+
+            <TextView
+                    android:id="@+id/tv_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:background="#E50011"
+                    android:gravity="center"
+                    android:text="解除绑定"
+                    android:textColor="@color/white" />
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/white"
+                android:padding="10dp"
+                android:tag="Hover"
+                android:text="要有最樸素的生活和最遙遠的夢想，即使明天天寒地凍，山高水遠，路遠馬亡。" />
+
+    </com.daimajia.swipe.SwipeLayout>
+
+</LinearLayout>
