@@ -21,6 +21,8 @@ import com.vondear.rxtools.view.RxToast;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.View;
@@ -155,6 +157,14 @@ public class MainActivity extends BaseActivity {
             //只有用户首次安装时拒绝了权限，才会在下次申请时弹出 "此app需要xxx权限"提示框
             EasyPermissions.requestPermissions(this, "此app需要获取授权", RC_CAMERA_AND_LOCATION,
                     perms);
+        }
+    }
+
+    public static class MyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            System.out.println("MyHandler.handleMessage");
         }
     }
 }
