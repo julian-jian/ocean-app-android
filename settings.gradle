@@ -1,1 +1,1 @@
-include ':app', ':customDialogLibray', ':ucrop', ':RxTools-library'
+include ':app', ':customDialogLibray', ':ucrop', ':RxTools-library','library'

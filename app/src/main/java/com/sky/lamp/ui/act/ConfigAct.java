@@ -1,8 +1,13 @@
 package com.sky.lamp.ui.act;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import com.github.jdsjlzx.ItemDecoration.DividerDecoration;
 import com.github.jdsjlzx.interfaces.OnItemClickListener;
@@ -15,6 +20,7 @@ import com.guo.duoduo.wifidetective.entity.RouterList;
 import com.guo.duoduo.wifidetective.util.Constant;
 import com.guo.duoduo.wifidetective.util.NetworkUtil;
 import com.guo.duoduo.wifidetective.util.ToastUtils;
+import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
@@ -36,11 +42,22 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import app.socketlib.com.library.ContentServiceHelper;
+import app.socketlib.com.library.events.ConnectClosedEvent;
+import app.socketlib.com.library.events.ConnectFailEvent;
+import app.socketlib.com.library.events.ConnectSuccessEvent;
+import app.socketlib.com.library.listener.SocketResponseListener;
+import app.socketlib.com.library.socket.SessionManager;
+import app.socketlib.com.library.socket.SocketConfig;
+import app.socketlib.com.library.utils.Contants;
+import app.socketlib.com.library.utils.LogUtil;
+import app.socketlib.com.library.utils.SocketCommandCacheUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -48,7 +65,7 @@ import okhttp3.RequestBody;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ConfigAct extends BaseActivity {
+public class ConfigAct extends BaseActivity implements SocketResponseListener {
     @BindView(R.id.actionBar)
     TitleBar actionBar;
     @BindView(R.id.et_wifi_name)
@@ -74,6 +91,7 @@ public class ConfigAct extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         actionBar.setTitle("配置设置");
         actionBar.initLeftImageView(this);
         ipMac = (IP_MAC) getIntent().getSerializableExtra("device");
@@ -82,14 +100,13 @@ public class ConfigAct extends BaseActivity {
         adapter = new WifiListAdapter(WifiListAdapter.ProductViewHolder.class);
         final LRecyclerViewAdapter lRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
         recyclerListView.setAdapter(lRecyclerViewAdapter);
-
         recyclerListView.setLayoutManager(new LinearLayoutManager(this));
         DividerDecoration divider =
                 new DividerDecoration.Builder(this).setHeight(R.dimen.default_divider_height)
-                        //                .setPadding(R.dimen.default_divider_padding)
                         .setColorResource(R.color.divide).build();
         recyclerListView.addItemDecoration(divider);
         recyclerListView.setLoadMoreEnabled(false);
+        recyclerListView.setPullRefreshEnabled(false);
         lRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -99,6 +116,21 @@ public class ConfigAct extends BaseActivity {
         });
         showLoadingDialog("正在搜索");
         initWiFi();
+        bindServerSocket();
+    }
+
+    private void bindServerSocket() {
+        SocketConfig socketConfig = new SocketConfig.Builder(getApplicationContext())
+                .setIp(ipMac.mIp)//ip
+                .setPort(61818)//端口
+                .setReadBufferSize(10240)//readBuffer
+                .setIdleTimeOut(30)//客户端空闲时间,客户端在超过此时间内不向服务器发送数据,则视为idle状态,则进入心跳状态
+                .setTimeOutCheckInterval(10)//客户端连接超时时间,超过此时间则视为连接超时
+                .setRequestInterval(10)//请求超时间隔时间
+                //                .setHeartbeatRequest("(1,1)\r\n")//与服务端约定的发送过去的心跳包
+                //                .setHeartbeatResponse("(10,10)\r\n") //与服务端约定的接收到的心跳包
+                .builder();
+        ContentServiceHelper.bindService(this, socketConfig);
     }
 
     @OnClick({R.id.btn_search, R.id.btn_send_pwd})
@@ -109,13 +141,19 @@ public class ConfigAct extends BaseActivity {
                 initWiFi();
                 break;
             case R.id.btn_send_pwd:
+                if (TextUtils.isEmpty(etWifiPwd.getText().toString()) || TextUtils
+                        .isEmpty(etWifiName.getText().toString())) {
+                    RxToast.showToast("格式不对");
+                    return;
+                }
                 sendWifiPwdToDevice();
                 break;
         }
     }
 
     private void sendWifiPwdToDevice() {
-
+        String pwd =String.format("###%s,%s***",etWifiName.getText(),etWifiPwd.getText());
+        ContentServiceHelper.sendClientMsg(pwd);
     }
 
     private void initWiFi() {
@@ -133,6 +171,28 @@ public class ConfigAct extends BaseActivity {
 
         boolean success = mWifiManager.startScan();
         System.out.println("ConfigAct.initWiFi " + success);
+        SessionManager.getInstance().setReceivedResponseListener(this);
+    }
+
+    @Override
+    public void socketMessageReceived(String msg) {
+        Logger.d("socketMessageReceived() called with: msg = [" + msg + "]");
+        //TODO success bindRequest();
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(ConnectSuccessEvent event) {
+        if (event.getConnectType() == Contants.CONNECT_SUCCESS_TYPE) {
+            RxToast.showToast("建立连接成功");
+        } else {
+            RxToast.showToast("建立连接失败");
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(ConnectFailEvent event) {
+        RxToast.showToast("建立连接失败,请检查");
     }
 
     @Override
@@ -141,9 +201,12 @@ public class ConfigAct extends BaseActivity {
             if (mWiFiBroadcastReceiver != null) {
                 unregisterReceiver(mWiFiBroadcastReceiver);
             }
+            ContentServiceHelper.unBindService(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        EventBus.getDefault().unregister(this);
+
         super.onDestroy();
     }
 

@@ -8,7 +8,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.sky.lamp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 16
         versionName "1.1"
@@ -110,6 +110,7 @@ allprojects {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation project(path: ':library')
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
     //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -150,5 +151,5 @@ dependencies {
     implementation files('libs/x5.jar')
     implementation 'pub.devrel:easypermissions:1.0.1'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
-    compile 'com.github.Jeromeer:MinaSocket:1.0'
+//    compile 'com.github.Jeromeer:MinaSocket:1.0'
 }

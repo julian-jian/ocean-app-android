@@ -12,18 +12,14 @@ import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanManager;
 import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanResult;
 import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.sky.lamp.BaseActivity;
-import com.sky.lamp.MainActivity;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.ui.act.ConfigAct;
 import com.sky.lamp.ui.act.LoginAct;
-import com.sky.udp.UdpClient;
-import com.sky.udp.UdpClientBiz;
 import com.vondear.rxtools.view.RxToast;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
@@ -95,37 +91,8 @@ public class Index2Fragment extends DelayBaseFragment {
         mac.setText("testMac");
         llBindDevicesList.addView(inflate);
     }
-    MainActivity.MyHandler myHandler = new MainActivity.MyHandler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            System.out.println("Index2Fragment.handleMessage");
-        }
-    };
     @Subscribe
     public void nextStepClick(NextStepEvent event) {
-        if (true) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    new UdpClient();
-                }
-            }).start();
-
-            new UdpClientBiz().sendMsg("",new UdpClientBiz.OnMsgReturnedListener(){
-
-                @Override
-                public void onMsgReturned(String msg) {
-                    System.out.println("Index2Fragment.onMsgReturned");
-                }
-
-                @Override
-                public void onError(Exception ex) {
-                    System.out.println("Index2Fragment.onError");
-                }
-            });
-            return;
-        }
         IP_MAC selectDevice = null;
         for (IP_MAC ip_mac : mDeviceList) {
             if (ip_mac.mSelect) {
