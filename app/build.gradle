@@ -150,4 +150,5 @@ dependencies {
     implementation files('libs/x5.jar')
     implementation 'pub.devrel:easypermissions:1.0.1'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    compile 'com.github.Jeromeer:MinaSocket:1.0'
 }
