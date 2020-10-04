@@ -1,7 +1,6 @@
 package com.sky.lamp.ui.act;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,15 +48,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import app.socketlib.com.library.ContentServiceHelper;
-import app.socketlib.com.library.events.ConnectClosedEvent;
 import app.socketlib.com.library.events.ConnectFailEvent;
 import app.socketlib.com.library.events.ConnectSuccessEvent;
 import app.socketlib.com.library.listener.SocketResponseListener;
 import app.socketlib.com.library.socket.SessionManager;
 import app.socketlib.com.library.socket.SocketConfig;
 import app.socketlib.com.library.utils.Contants;
-import app.socketlib.com.library.utils.LogUtil;
-import app.socketlib.com.library.utils.SocketCommandCacheUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

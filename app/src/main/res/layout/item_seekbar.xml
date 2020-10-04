@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+    <TextView
+            android:id="@+id/leftTv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="18dp"
+            android:background="@drawable/bg_plus"
+            android:gravity="center"
+            android:text="-"
+            android:textColor="#ff333333"
+            android:textSize="15dp" />
+
+    <TextView
+            android:id="@+id/percentTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:text="50%"
+            android:textColor="#ff333333"
+            android:textSize="13dp" />
+
+    <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tip2"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="10"
+            android:maxHeight="6dp"
+            android:progressDrawable="@drawable/bg_process1"
+            android:thumb="@drawable/ball1" />
+
+    <TextView
+            android:id="@+id/rightTv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/bg_plus"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="#ff333333"
+            android:textSize="15dp" />
+
+</LinearLayout>
+</LinearLayout>
