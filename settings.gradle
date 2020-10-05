@@ -1,1 +1,1 @@
-include ':app', ':customDialogLibray', ':ucrop', ':RxTools-library','library'
+include ':app', ':customDialogLibray', ':ucrop', ':RxTools-library','library','android-pickers'

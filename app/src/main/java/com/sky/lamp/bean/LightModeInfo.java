@@ -1,9 +1,11 @@
 package com.sky.lamp.bean;
 
+import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class LightModeInfo implements Parcelable {
+public class LightModeInfo implements Parcelable, Serializable {
     public static final Creator<LightModeInfo> CREATOR = new Creator<LightModeInfo>() {
         public LightModeInfo createFromParcel(Parcel source) {
             return new LightModeInfo(source);
