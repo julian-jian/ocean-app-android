@@ -6,6 +6,9 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * LSP、自定义
+ */
 public class CommandLightMode implements Serializable {
     @SerializedName("deviceID")
     public String mDeviceID;

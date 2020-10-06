@@ -34,17 +34,11 @@
             android:textColor="#ff333333"
             android:textSize="13dp" />
 
-    <SeekBar
-            android:id="@+id/seekbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tip2"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:max="100"
-            android:progress="10"
-            android:maxHeight="6dp"
-            android:thumb="@drawable/ball1" />
+    <FrameLayout
+            android:orientation="horizontal"
+            android:id="@+id/fl_sub_seebar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     <TextView
             android:id="@+id/rightTv"

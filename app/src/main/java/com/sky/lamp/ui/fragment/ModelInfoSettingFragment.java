@@ -17,9 +17,8 @@ import com.sky.lamp.view.LightModeChartHelper;
 import com.vondear.rxtools.RxImageTool;
 import com.vondear.rxtools.view.RxToast;
 
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -69,9 +68,9 @@ public class ModelInfoSettingFragment extends BaseFragment {
     public static final int DEFAULT_PROGRESS = 50;
 
     private LightModeChartHelper mChartHelper;
-    private LightModelCache lightModelCache;
-    private CommandLightMode commandLightMode;
-    private LightItemMode currentItemModel;
+    private LightModelCache mLightModelCache;
+    private CommandLightMode mCommandLightMode;
+    private LightItemMode mCurrentItemModel;
 
     @Nullable
     @Override
@@ -92,14 +91,14 @@ public class ModelInfoSettingFragment extends BaseFragment {
     private void readModelCache() {
         String jsonCache = RxSPUtilTool.readJSONCache(getActivity(), KEY_SP_MODEL);
         if (TextUtils.isEmpty(jsonCache)) {
-            lightModelCache = new LightModelCache();
+            mLightModelCache = new LightModelCache();
         } else {
-            lightModelCache = new Gson().fromJson(jsonCache, LightModelCache.class);
+            mLightModelCache = new Gson().fromJson(jsonCache, LightModelCache.class);
         }
-        commandLightMode = lightModelCache.map.get(modelName);
-        if (commandLightMode == null) {
-            commandLightMode = new CommandLightMode();
-            commandLightMode.mParameters = new ArrayList<LightItemMode>();
+        mCommandLightMode = mLightModelCache.map.get(modelName);
+        if (mCommandLightMode == null) {
+            mCommandLightMode = new CommandLightMode();
+            mCommandLightMode.mParameters = new ArrayList<LightItemMode>();
             ((ModeInfoActivity) getActivity()).refreshTitle("自定义");
         } else {
             ((ModeInfoActivity) getActivity()).refreshTitle(modelName);
@@ -116,22 +115,22 @@ public class ModelInfoSettingFragment extends BaseFragment {
         lightItemMode.setLight7Level(DEFAULT_PROGRESS);
         lightItemMode.setStartTime("00:00");
         lightItemMode.setStopTime("01:00");
-        commandLightMode.mParameters.add(lightItemMode);
+        mCommandLightMode.mParameters.add(lightItemMode);
     }
 
     private void initModel() {
-        currentItemModel =
-                commandLightMode.mParameters.get(commandLightMode.mParameters.size() - 1);
+        mCurrentItemModel =
+                mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
         refreshModeItems();
-        tvStartTime.setText(commandLightMode.mParameters.get(0).getStartTime());
-        tvEndTime.setText(commandLightMode.mParameters.get(0).getStopTime());
+        tvStartTime.setText(mCommandLightMode.mParameters.get(0).getStartTime());
+        tvEndTime.setText(mCommandLightMode.mParameters.get(0).getStopTime());
         ((RadioButton) radioGroup.findViewWithTag("rb0")).setChecked(true);
     }
 
     private void refreshModeItems() {
         radioGroup.removeAllViews();
-        for (int index = 0; index < commandLightMode.mParameters.size(); index++) {
-            LightItemMode lightItemMode = commandLightMode.mParameters.get(index);
+        for (int index = 0; index < mCommandLightMode.mParameters.size(); index++) {
+            LightItemMode lightItemMode = mCommandLightMode.mParameters.get(index);
             final RadioButton radioButton = new RadioButton(getActivity());
             radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
             radioButton.setText(lightItemMode.getModeName());
@@ -150,8 +149,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
                         radioButton.setTextColor(getResources().getColor(R.color.white));
                         saveCurrentModel();
                         LightItemMode selectItemModel =
-                                commandLightMode.mParameters.get(finalIndex);
-                        currentItemModel = selectItemModel;
+                                mCommandLightMode.mParameters.get(finalIndex);
+                        mCurrentItemModel = selectItemModel;
                         refreshProgress();
                         refreshTime();
                         refreshChart();
@@ -171,13 +170,44 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void refreshTime() {
-        tvStartTime.setText(currentItemModel.getStartTime());
-        tvEndTime.setText(currentItemModel.getStopTime());
+        tvStartTime.setText(mCurrentItemModel.getStartTime());
+        tvEndTime.setText(mCurrentItemModel.getStopTime());
     }
 
+    private int getSeekbarLayoutId(int index) {
+        int id = 0;
+        switch (index) {
+            case 0:
+                id = R.layout.item_seekbar_sub0;
+                break;
+            case 1:
+                id = R.layout.item_seekbarsub_1;
+                break;
+            case 2:
+                id = R.layout.item_seekbarsub_2;
+                break;
+            case 3:
+                id = R.layout.item_seekbarsub_3;
+                break;
+            case 4:
+                id = R.layout.item_seekbarsub_4;
+                break;
+            case 5:
+                id = R.layout.item_seekbarsub_5;
+                break;
+            case 6:
+                id = R.layout.item_seekbarsub_6;
+                break;
+        }
+        return id;
+    }
     private void initSeekbar() {
         for (int index = 0; index < 7; index++) {
-            View inflate = LayoutInflater.from(getActivity()).inflate(R.layout.item_seekbar, null);
+            View inflate =
+                    LayoutInflater.from(getActivity()).inflate(R.layout.item_seekbar, null);
+            View inflate1 =
+                    LayoutInflater.from(getActivity()).inflate(getSeekbarLayoutId(index), null);
+            ((ViewGroup)inflate.findViewById(R.id.fl_sub_seebar)).addView(inflate1);
             TextView leftTv;
             final TextView percentTv;
             final SeekBar seekbar;
@@ -204,7 +234,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     seekbar.setProgress(Math.min(progress, 100));
                 }
             });
-            seekbar.setProgress(getProgress(index + 1, 0));
+            seekbar.setProgress(getProgress(index, 0));
             final int finalI = index;
             seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -263,28 +293,28 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     public int getProgress(int level, int modelIndex) {
-        LightItemMode lightItemMode = commandLightMode.mParameters.get(modelIndex);
+        LightItemMode lightItemMode = mCommandLightMode.mParameters.get(modelIndex);
         int progress = 0;
         switch (level) {
-            case 1:
+            case 0:
                 progress = lightItemMode.getLight1Level();
                 break;
-            case 2:
+            case 1:
                 progress = lightItemMode.getLight2Level();
                 break;
-            case 3:
+            case 2:
                 progress = lightItemMode.getLight3Level();
                 break;
-            case 4:
+            case 3:
                 progress = lightItemMode.getLight4Level();
                 break;
-            case 5:
+            case 4:
                 progress = lightItemMode.getLight5Level();
                 break;
-            case 6:
+            case 5:
                 progress = lightItemMode.getLight6Level();
                 break;
-            case 7:
+            case 6:
                 progress = lightItemMode.getLight7Level();
                 break;
         }
@@ -344,7 +374,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         String tag = (String) selectBt.getTag();
         int index = Integer.valueOf(tag.replace("rb", "").toString());
 
-        LightItemMode lightItemMode = commandLightMode.mParameters.get(index);
+        LightItemMode lightItemMode = mCommandLightMode.mParameters.get(index);
         lightItemMode.setStartTime(tvStartTime.getText().toString());
         lightItemMode.setStopTime(tvEndTime.getText().toString());
         lightItemMode.setLight1Level(getProgress(0));
@@ -361,6 +391,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_del:
+                delItemModel();
                 break;
             case R.id.btn_add:
                 saveCurrentModel();
@@ -380,24 +411,36 @@ public class ModelInfoSettingFragment extends BaseFragment {
         }
     }
 
+    private void delItemModel() {
+        if (mCommandLightMode.mParameters.size() < 2) {
+            return;
+        }
+        mCommandLightMode.mParameters.remove(mCommandLightMode.mParameters.size() - 1);
+        mCurrentItemModel =
+                mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
+        refreshModeItems();
+        refreshProgress();
+        refreshTime();
+    }
+
     private void saveClick() {
-        if (TextUtils.isEmpty(commandLightMode.modelName)) {
+        if (TextUtils.isEmpty(mCommandLightMode.modelName)) {
             for (int index = 1; ; index++) {
-                CommandLightMode commandLightMode = lightModelCache.map.get("自定义" + index);
+                CommandLightMode commandLightMode = mLightModelCache.map.get("自定义" + index);
                 if (commandLightMode == null) {
-                    commandLightMode.modelName = "自定义" + index;
+                    mCommandLightMode.modelName = "自定义" + index;
                     break;
                 }
             }
         }
-        lightModelCache.map.put(commandLightMode.modelName, commandLightMode);
-        RxSPUtilTool.putJSONCache(getActivity(), KEY_SP_MODEL, new Gson().toJson(lightModelCache));
+        mLightModelCache.map.put(mCommandLightMode.modelName, mCommandLightMode);
+        RxSPUtilTool.putJSONCache(getActivity(), KEY_SP_MODEL, new Gson().toJson(mLightModelCache));
         RxToast.showToast("保存成功");
     }
 
     private void addNewItemModel() {
         LightItemMode lastItemModel =
-                commandLightMode.mParameters.get(commandLightMode.mParameters.size() - 1);
+                mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
         LightItemMode lightItemMode = new LightItemMode();
         lightItemMode.setIndex(lastItemModel.getIndex() + 1);
         lightItemMode.setModeName("模式" + lightItemMode.getIndex());
@@ -410,52 +453,40 @@ public class ModelInfoSettingFragment extends BaseFragment {
         lightItemMode.setLight7Level(DEFAULT_PROGRESS);
         lightItemMode.setStartTime(lastItemModel.getStopTime());
         lightItemMode.setStopTime("00:00");
-        currentItemModel = lastItemModel;
+        mCurrentItemModel = lastItemModel;
         refreshProgress();
-        commandLightMode.mParameters.add(lightItemMode);
+        mCommandLightMode.mParameters.add(lightItemMode);
         refreshModeItems();
-        ((RadioButton) radioGroup.findViewWithTag("rb" + (commandLightMode.mParameters.size() - 1)))
+        ((RadioButton) radioGroup.findViewWithTag("rb" + (mCommandLightMode.mParameters.size() - 1)))
                 .setChecked(true);
     }
 
+
     private void refreshProgress() {
         for (int index = 0; index < 7; index++) {
-            ProgressBar progressBar = (ProgressBar) llSeekbar.findViewWithTag("index" + (index));
+            Drawable draw;
+            SeekBar progressBar = (SeekBar) llSeekbar.findViewWithTag("index" + (index));
             switch (index) {
                 case 0:
-                    progressBar.setProgressDrawable(
-                            getResources().getDrawable(R.drawable.bg_process0));
-                    progressBar.setProgress(currentItemModel.getLight1Level());
+                    progressBar.setProgress(mCurrentItemModel.getLight1Level());
                     break;
                 case 1:
-                    progressBar.setProgressDrawable(
-                            getResources().getDrawable(R.drawable.bg_process1));
-                    progressBar.setProgress(currentItemModel.getLight2Level());
+                    progressBar.setProgress(mCurrentItemModel.getLight2Level());
                     break;
                 case 2:
-                    progressBar.setProgressDrawable(
-                            getResources().getDrawable(R.drawable.bg_process2));
-                    progressBar.setProgress(currentItemModel.getLight3Level());
+                    progressBar.setProgress(mCurrentItemModel.getLight3Level());
                     break;
                 case 3:
-                    progressBar.setProgressDrawable(
-                            getResources().getDrawable(R.drawable.bg_process3));
-                    progressBar.setProgress(currentItemModel.getLight4Level());
+                    progressBar.setProgress(mCurrentItemModel.getLight4Level());
                     break;
                 case 4:
-                    progressBar.setProgressDrawable(
-                            getResources().getDrawable(R.drawable.bg_process4));
-                    progressBar.setProgress(currentItemModel.getLight5Level());
+                    progressBar.setProgress(mCurrentItemModel.getLight5Level());
                     break;
                 case 5:
-                    progressBar.setProgressDrawable(
-                            getResources().getDrawable(R.drawable.bg_process5));
-                    progressBar.setProgress(currentItemModel.getLight6Level());
+                    progressBar.setProgress(mCurrentItemModel.getLight6Level());
                     break;
                 case 6:
-                    progressBar.setProgressDrawable(
-                            getResources().getDrawable(R.drawable.bg_process6));
-                    progressBar.setProgress(currentItemModel.getLight7Level());
+                    progressBar.setProgress(mCurrentItemModel.getLight7Level());
                     break;
             }
         }

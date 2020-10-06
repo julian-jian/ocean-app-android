@@ -37,7 +37,7 @@ public class ModeInfoActivity extends BaseActivity {
         mainViewAdapter =
                 new ModelInfoAdapter(getSupportFragmentManager(),
                         new Fragment[] {new ModelInfoSettingFragment()
-                                , new Index2Fragment(), new Index3Fragment()});
+                                , new Index2Fragment()});
         tabContainer.setAdapter(mainViewAdapter);
         actionBar.getRootView().setVisibility(View.VISIBLE);
         actionBar.initLeftImageView(this);
