@@ -44,7 +44,6 @@
             android:max="100"
             android:progress="10"
             android:maxHeight="6dp"
-            android:progressDrawable="@drawable/bg_process1"
             android:thumb="@drawable/ball1" />
 
     <TextView

@@ -6,7 +6,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.Test;
 
-import com.sky.udp.SendUtil;
+import com.google.gson.Gson;
+import com.sky.lamp.bean.LightItemMode;
+import com.sky.lamp.bean.LightModelCache;
+import com.sky.lamp.utils.RxSPUtilTool;
 
 public class TestSend {
     @Test
@@ -60,5 +63,10 @@ public class TestSend {
             bytes[i] = (byte) (high|low);//高地位做或运算
         }
         return bytes;
+    }
+
+    @Test
+    public void testCache() {
+
     }
 }

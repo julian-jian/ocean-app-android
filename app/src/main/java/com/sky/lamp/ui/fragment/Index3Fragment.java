@@ -1,4 +1,4 @@
-package com.sky.lamp.ui;
+package com.sky.lamp.ui.fragment;
 
 import static com.sky.lamp.Constants.USERNAME;
 import static com.sky.lamp.Constants.USER_ID;
@@ -10,6 +10,7 @@ import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.event.LoginOutEvent;
 import com.sky.lamp.response.LoginResponse;
+import com.sky.lamp.ui.DelayBaseFragment;
 import com.sky.lamp.ui.act.EditPwdAct;
 import com.sky.lamp.ui.act.LoginAct;
 import com.sky.lamp.utils.RxSPUtilTool;

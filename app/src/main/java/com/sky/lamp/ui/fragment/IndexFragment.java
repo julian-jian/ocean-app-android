@@ -1,7 +1,8 @@
-package com.sky.lamp.ui;
+package com.sky.lamp.ui.fragment;
 
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.ProductListAdapter;
+import com.sky.lamp.ui.DelayBaseFragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

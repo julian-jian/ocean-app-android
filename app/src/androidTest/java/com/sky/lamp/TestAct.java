@@ -1,6 +1,5 @@
 package com.sky.lamp;
 
-import android.test.ActivityInstrumentationTestCase;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class TestAct extends ActivityInstrumentationTestCase2 {
@@ -15,4 +14,7 @@ public class TestAct extends ActivityInstrumentationTestCase2 {
     public void testStart() {
         getActivity();
     }
+
+
+
 }

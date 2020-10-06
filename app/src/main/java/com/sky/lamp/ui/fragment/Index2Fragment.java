@@ -1,4 +1,4 @@
-package com.sky.lamp.ui;
+package com.sky.lamp.ui.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
+import com.sky.lamp.ui.DelayBaseFragment;
 import com.sky.lamp.ui.act.ConfigAct;
 import com.sky.lamp.ui.act.LoginAct;
 import com.vondear.rxtools.view.RxToast;

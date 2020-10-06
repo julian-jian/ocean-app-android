@@ -2,66 +2,31 @@ package com.sky.lamp.bean;
 
 import java.io.Serializable;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.google.gson.annotations.SerializedName;
 
-public class LightModeInfo implements Parcelable, Serializable {
-    public static final Creator<LightModeInfo> CREATOR = new Creator<LightModeInfo>() {
-        public LightModeInfo createFromParcel(Parcel source) {
-            return new LightModeInfo(source);
-        }
-
-        public LightModeInfo[] newArray(int size) {
-            return new LightModeInfo[size];
-        }
-    };
+public class LightItemMode implements Serializable {
+    @SerializedName("id")
     private int mIndex;
+    @SerializedName("white")
     private int mLight1Level;
+    @SerializedName("blue")
     private int mLight2Level;
+    @SerializedName("yellow")
     private int mLight3Level;
+    @SerializedName("purple")
     private int mLight4Level;
+    @SerializedName("uv")
     private int mLight5Level;
+    @SerializedName("red")
     private int mLight6Level;
+    @SerializedName("green")
     private int mLight7Level;
+    @SerializedName("modeName")
     private String mModeName;
+    @SerializedName("startTime")
     private String mStartTime;
+    @SerializedName("endTime")
     private String mStopTime;
-
-    public LightModeInfo() {
-
-    }
-
-    protected LightModeInfo(Parcel in) {
-        this.mIndex = in.readInt();
-        this.mModeName = in.readString();
-        this.mStartTime = in.readString();
-        this.mStopTime = in.readString();
-        this.mLight1Level = in.readInt();
-        this.mLight2Level = in.readInt();
-        this.mLight3Level = in.readInt();
-        this.mLight4Level = in.readInt();
-        this.mLight5Level = in.readInt();
-        this.mLight6Level = in.readInt();
-        this.mLight7Level = in.readInt();
-    }
-
-    public int describeContents() {
-        return 0;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.mIndex);
-        dest.writeString(this.mModeName);
-        dest.writeString(this.mStartTime);
-        dest.writeString(this.mStopTime);
-        dest.writeInt(this.mLight1Level);
-        dest.writeInt(this.mLight2Level);
-        dest.writeInt(this.mLight3Level);
-        dest.writeInt(this.mLight4Level);
-        dest.writeInt(this.mLight5Level);
-        dest.writeInt(this.mLight6Level);
-        dest.writeInt(this.mLight7Level);
-    }
 
     public int getIndex() {
         return this.mIndex;

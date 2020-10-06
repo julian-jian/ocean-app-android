@@ -13,7 +13,7 @@
                     android:right="2dp"
                     android:top="2dp" />
             <!-- corners设置圆角，只适用于rectangle -->
-            <corners android:radius="2dp" />
+            <corners android:radius="4dp" />
         </shape>
     </item>
 </ripple>
