@@ -12,4 +12,8 @@ public class ConnectServiceBinder extends Binder {
     public void sendMessage(String message){
 
     }
+
+    public void sendMessage(Object message){
+
+    }
 }

@@ -1,6 +1,7 @@
 package com.sky.lamp.ui.fragment;
 
 import com.sky.lamp.BaseFragment;
+import com.sky.lamp.R;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ public class DemoFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_demo, null);
+        return view;
     }
 }

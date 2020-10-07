@@ -113,6 +113,9 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
         showLoadingDialog("正在搜索");
         initWiFi();
         bindServerSocket();
+
+        etWifiName.setText("HQRZ");
+        etWifiPwd.setText("hqrz123456");
     }
 
     private void bindServerSocket() {
@@ -148,8 +151,30 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     }
 
     private void sendWifiPwdToDevice() {
-        String pwd =String.format("###%s,%s***",etWifiName.getText(),etWifiPwd.getText());
+        String pwd = String.format("###%s,%s***", etWifiName.getText(), etWifiPwd.getText());
         ContentServiceHelper.sendClientMsg(pwd);
+        String cmd  = "AA 01 08 00 0C    00 32 32 32 32  32 32 32 32 4F   55";
+
+//        byte[] temp = new byte[] {
+//                (byte) 0xaa, (byte) 0x01, (byte) 0x08, (byte) 0x00, (byte) 0x0C,
+//                (byte) 0x00, (byte) 0x32, (byte) 0x32,(byte) 0x32, (byte) 0x32,
+//                (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x4F,
+//                (byte) 0x55};
+//        ContentServiceHelper.sendClientMsg(temp);
+
+    }
+
+    public static byte[] parseHexStr2Byte(String hexStr) {
+        if (hexStr.length() < 1)
+            return null;
+        byte[] result = new byte[hexStr.length() / 2];
+        for (int i = 0; i < hexStr.length() / 2; i++) {
+            int high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), 16);
+            int low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2),
+                    16);
+            result[i] = (byte) (high * 16 + low);
+        }
+        return result;
     }
 
     private void initWiFi() {
@@ -174,6 +199,12 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     public void socketMessageReceived(String msg) {
         Logger.d("socketMessageReceived() called with: msg = [" + msg + "]");
         //TODO success bindRequest();
+        if ("WIFI SET SUCCESS".equals(msg)) {
+            if (mWiFiBroadcastReceiver != null) {
+                unregisterReceiver(mWiFiBroadcastReceiver);
+                mWiFiBroadcastReceiver = null;
+            }
+        }
     }
 
 

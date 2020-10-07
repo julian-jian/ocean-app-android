@@ -14,6 +14,7 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import java.net.InetSocketAddress;
 
+import android.util.Log;
 import app.socketlib.com.library.events.ConnectClosedEvent;
 import app.socketlib.com.library.events.ConnectFailEvent;
 import app.socketlib.com.library.events.ConnectSuccessEvent;
@@ -62,7 +63,8 @@ public class ConnectionManager {
         //设置超过多长时间客户端进入IDLE状态
         mConnection.getSessionConfig().setBothIdleTime(mConfig.getIdleTimeOut());
         mConnection.setConnectTimeoutCheckInterval(mConfig.getConnetTimeOutCheckInterval());//设置连接超时时间
-        mConnection.getFilterChain().addLast("Logging", new LoggingFilter());
+        LoggingFilter loggingFilter = new LoggingFilter("EventRecodingLogger");
+        mConnection.getFilterChain().addLast("Logging",loggingFilter);
         mConnection.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MessageLineFactory()));
         mConnection.setDefaultRemoteAddress(mAddress);
         //设置心跳监听的handler
@@ -137,6 +139,8 @@ public class ConnectionManager {
 
         @Override
         public void messageReceived(IoSession session, Object message) throws Exception {
+            Log.d("zfy", "messageReceived() called with: session = [" + session + "], message = ["
+                    + message + "]");
             SessionManager.getInstance().writeToClient(message.toString());
 
         }
@@ -144,6 +148,7 @@ public class ConnectionManager {
         @Override
         public void sessionCreated(IoSession session) throws Exception {
             super.sessionCreated(session);
+            LogUtil.i("sessionCreated() called with: session = [" + session + "]");
         }
 
         @Override
@@ -172,6 +177,13 @@ public class ConnectionManager {
             if (null != session) {
                 session.closeNow();
             }
+        }
+
+        @Override
+        public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
+            super.exceptionCaught(session, cause);
+            LogUtil.e("exceptionCaught() called with: session = [" + session + "], cause = [" + cause
+                            + "]");
         }
     }
 }

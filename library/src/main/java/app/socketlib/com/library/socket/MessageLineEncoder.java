@@ -16,9 +16,11 @@ import java.nio.charset.CharsetEncoder;
 public class MessageLineEncoder implements ProtocolEncoder {
     @Override
     public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput protocolEncoderOutput) throws Exception {
-        String s = null ;
-        if(message instanceof String){
+        String s = null;
+        if (message instanceof String) {
             s = (String) message;
+        } else {
+            return;
         }
         CharsetEncoder charsetEncoder = (CharsetEncoder) ioSession.getAttribute("encoder");
         if(null == charsetEncoder){

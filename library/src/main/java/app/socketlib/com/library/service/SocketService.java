@@ -48,6 +48,12 @@ public class SocketService extends Service {
             SessionManager.getInstance().writeToServer(message);
         }
 
+        @Override
+        public void sendMessage(Object message) {
+            super.sendMessage(message);
+            SessionManager.getInstance().writeToServer(message);
+        }
+
     };
 
 

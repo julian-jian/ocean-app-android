@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+    <AnalogClock
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="35dp" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30.5dp"
+            android:text="演示模式,可以快速把当时的配置跑一遍"
+            android:textColor="#ff333333"
+            android:textSize="13sp" />
+
+    <Button
+            style="@style/Btn"
+            android:layout_marginTop="65dp"
+            android:text="点击开始" />
+</LinearLayout>

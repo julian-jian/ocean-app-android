@@ -14,6 +14,8 @@ public class MessageLineCumulativeDecoder extends CumulativeProtocolDecoder {
     @Override
     protected boolean doDecode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput protocolDecoderOutput) throws Exception {
         int startPosition = in.position();
+        System.out.println("MessageLineCumulativeDecoder.doDecode " + new String(in.array()));
+
         while (in.hasRemaining()) {
             byte b = in.get();
             if (b == '\n') {//读取到\n时候认为一行已经读取完毕
@@ -32,6 +34,7 @@ public class MessageLineCumulativeDecoder extends CumulativeProtocolDecoder {
             }
         }
         in.position(startPosition);
+        System.out.println("MessageLineCumulativeDecoder.doDecode " + false);
         return false;
     }
 }

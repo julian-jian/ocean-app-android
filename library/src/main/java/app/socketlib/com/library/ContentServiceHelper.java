@@ -1,12 +1,14 @@
 package app.socketlib.com.library;
 
+import org.apache.mina.core.buffer.IoBuffer;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-
+import android.util.Log;
 import app.socketlib.com.library.socket.SocketConfig;
 import app.socketlib.com.library.utils.Contants;
 import app.socketlib.com.library.utils.SocketCommandCacheUtils;
@@ -17,6 +19,7 @@ import app.socketlib.com.library.utils.SocketCommandCacheUtils;
  * @description：服务连接的管理类,服务绑定,解绑,数据发送等在此进行
  */
 public class ContentServiceHelper {
+    private static final String TAG = ContentServiceHelper.class.getSimpleName();
     private static ConnectServiceBinder socketBinder;//服务的binder
 
 
@@ -62,11 +65,28 @@ public class ContentServiceHelper {
         sendMessage(socketBinder,msg);
     }
 
+    public static void sendClientMsg(byte[] msg){
+        sendMessage2(socketBinder, IoBuffer.wrap(msg));
+    }
+
+    private static void sendMessage2(ConnectServiceBinder connectBinder, Object msg) {
+        if (null != connectBinder) {
+            try {
+                Log.d(TAG, "sendMessage " + msg);
+                connectBinder.sendMessage(msg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+//            SocketCommandCacheUtils.getInstance().addCache(msg);
+        }
+    }
 
 
     private static void sendMessage(ConnectServiceBinder connectBinder, String msg) {
         if (null != connectBinder) {
             try {
+                Log.d(TAG, "sendMessage " + msg);
                 connectBinder.sendMessage(msg);
             } catch (Exception e) {
                 e.printStackTrace();

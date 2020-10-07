@@ -2,6 +2,7 @@ package app.socketlib.com.library.socket;
 
 import android.text.TextUtils;
 
+import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 
 import app.socketlib.com.library.listener.SocketResponseListener;
@@ -53,7 +54,6 @@ public class SessionManager {
             session.write(msg);
         }
     }
-
 
     /***
      * 写出数据到客户端
