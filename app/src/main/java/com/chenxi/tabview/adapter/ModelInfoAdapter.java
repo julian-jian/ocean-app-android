@@ -43,12 +43,12 @@ public class ModelInfoAdapter extends TabBaseAdapter {
 
     @Override
     public int[] getIconImageArray() {
-        return new int[]{R.drawable.modeinfo_setting_select,R.drawable.modelinfo_demo_unselect};
+        return new int[]{R.drawable.modeinfo_setting_unselect,R.drawable.modelinfo_demo_unselect};
     }
 
     @Override
     public int[] getSelectedIconImageArray() {
-        return new int[]{R.drawable.modeinfo_setting_select,R.drawable.modelinfo_demo_unselect};
+        return new int[]{R.drawable.modeinfo_setting_select,R.drawable.modelinfo_demo_select};
     }
 
     @Override

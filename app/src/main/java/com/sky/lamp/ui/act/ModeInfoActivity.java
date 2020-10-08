@@ -1,11 +1,14 @@
 package com.sky.lamp.ui.act;
 
+import org.greenrobot.eventbus.EventBus;
+
 import com.chenxi.tabview.adapter.ModelInfoAdapter;
 import com.chenxi.tabview.listener.OnTabSelectedListener;
 import com.chenxi.tabview.widget.Tab;
 import com.chenxi.tabview.widget.TabContainerView;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.R;
+import com.sky.lamp.event.DemoShowEvent;
 import com.sky.lamp.ui.fragment.DemoFragment;
 import com.sky.lamp.ui.fragment.ModelInfoSettingFragment;
 import com.sky.lamp.view.TitleBar;
@@ -51,6 +54,7 @@ public class ModeInfoActivity extends BaseActivity {
                         break;
                     case 1:
                         actionBar.setTitle("demo演示");
+                        EventBus.getDefault().post(new DemoShowEvent());
                         break;
                 }
             }

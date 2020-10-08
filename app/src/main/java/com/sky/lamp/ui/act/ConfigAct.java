@@ -122,7 +122,7 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
         SocketConfig socketConfig = new SocketConfig.Builder(getApplicationContext())
                 .setIp(ipMac.mIp)//ip
                 .setPort(61818)//端口
-                .setReadBufferSize(10240)//readBuffer
+                .setReadBufferSize(1024)//readBuffer
                 .setIdleTimeOut(30)//客户端空闲时间,客户端在超过此时间内不向服务器发送数据,则视为idle状态,则进入心跳状态
                 .setTimeOutCheckInterval(10)//客户端连接超时时间,超过此时间则视为连接超时
                 .setRequestInterval(10)//请求超时间隔时间
@@ -136,8 +136,15 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_search:
-                showLoadingDialog("正在搜索");
-                initWiFi();
+                // TODO DEL
+                //                showLoadingDialog("正在搜索");
+                //                initWiFi();
+                byte[] temp = new byte[] {
+                        (byte) 0xaa, (byte) 0x01, (byte) 0x08, (byte) 0x00, (byte) 0x0C,
+                        (byte) 0x00, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32,
+                        (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x4F,
+                        (byte) 0x55};
+                ContentServiceHelper.sendClientMsg(temp);
                 break;
             case R.id.btn_send_pwd:
                 if (TextUtils.isEmpty(etWifiPwd.getText().toString()) || TextUtils
@@ -153,15 +160,6 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     private void sendWifiPwdToDevice() {
         String pwd = String.format("###%s,%s***", etWifiName.getText(), etWifiPwd.getText());
         ContentServiceHelper.sendClientMsg(pwd);
-        String cmd  = "AA 01 08 00 0C    00 32 32 32 32  32 32 32 32 4F   55";
-
-//        byte[] temp = new byte[] {
-//                (byte) 0xaa, (byte) 0x01, (byte) 0x08, (byte) 0x00, (byte) 0x0C,
-//                (byte) 0x00, (byte) 0x32, (byte) 0x32,(byte) 0x32, (byte) 0x32,
-//                (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x4F,
-//                (byte) 0x55};
-//        ContentServiceHelper.sendClientMsg(temp);
-
     }
 
     public static byte[] parseHexStr2Byte(String hexStr) {
@@ -199,7 +197,8 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     public void socketMessageReceived(String msg) {
         Logger.d("socketMessageReceived() called with: msg = [" + msg + "]");
         //TODO success bindRequest();
-        if ("WIFI SET SUCCESS".equals(msg)) {
+        if (msg.contains("WIFI SET SUCCESS")) {
+            System.out.println("ConfigAct.socketMessageReceived set wifi success");
             if (mWiFiBroadcastReceiver != null) {
                 unregisterReceiver(mWiFiBroadcastReceiver);
                 mWiFiBroadcastReceiver = null;

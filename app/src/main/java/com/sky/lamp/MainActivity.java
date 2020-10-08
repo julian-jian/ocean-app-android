@@ -1,5 +1,9 @@
 package com.sky.lamp;
 
+import static com.sky.lamp.ui.fragment.ModelInfoSettingFragment.KEY_SP_MODEL;
+
+import java.util.ArrayList;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -9,11 +13,17 @@ import com.chenxi.tabview.widget.Tab;
 import com.chenxi.tabview.widget.TabContainerView;
 import com.event.NextStepEvent;
 import com.githang.statusbar.StatusBarCompat;
+import com.google.gson.Gson;
+import com.orhanobut.logger.Logger;
+import com.sky.lamp.bean.CommandLightMode;
+import com.sky.lamp.bean.LightItemMode;
+import com.sky.lamp.bean.LightModelCache;
 import com.sky.lamp.event.LoginOutEvent;
 import com.sky.lamp.ui.fragment.Index2Fragment;
 import com.sky.lamp.ui.fragment.Index3Fragment;
 import com.sky.lamp.ui.fragment.IndexFragment;
 import com.sky.lamp.ui.act.LoginAct;
+import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
 
@@ -23,6 +33,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -93,6 +104,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
+        initConfig();
         methodRequiresTwoPermission();
 
     }
@@ -164,6 +176,54 @@ public class MainActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             System.out.println("MyHandler.handleMessage");
+        }
+    }
+
+    private void initConfig() {
+        String jsonCache = RxSPUtilTool.readJSONCache(this, KEY_SP_MODEL);
+        LightModelCache mLightModelCache = null;
+        if (TextUtils.isEmpty(jsonCache) || new Gson().fromJson(jsonCache,LightModelCache.class).map.size() == 0) {
+            Logger.d( "initConfig() called");
+            mLightModelCache = new LightModelCache();
+            {
+                CommandLightMode LED_LSP = new CommandLightMode();
+                LED_LSP.modelName = "LED_LSP"; // 大模式_模式名
+                LED_LSP.mParameters = new ArrayList<>();
+                LightItemMode lightItemMode = new LightItemMode();
+                lightItemMode.setIndex(0);
+                LED_LSP.mParameters.add(lightItemMode);
+                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
+            }
+            {
+                CommandLightMode LED_LSP = new CommandLightMode();
+                LED_LSP.modelName = "LED_SPS"; // 大模式_模式名
+                LED_LSP.mParameters = new ArrayList<>();
+                LightItemMode lightItemMode = new LightItemMode();
+                lightItemMode.setIndex(0);
+                LED_LSP.mParameters.add(lightItemMode);
+                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
+            }
+            {
+                CommandLightMode LED_LSP = new CommandLightMode();
+                LED_LSP.modelName = "LED_SPS+SPS"; // 大模式_模式名
+                LED_LSP.mParameters = new ArrayList<>();
+                LightItemMode lightItemMode = new LightItemMode();
+                lightItemMode.setIndex(0);
+                LED_LSP.mParameters.add(lightItemMode);
+                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
+            }
+            // lps
+            {
+                CommandLightMode LED_LSP = new CommandLightMode();
+                LED_LSP.modelName = "LPS_LSP"; // 大模式_模式名
+                LED_LSP.mParameters = new ArrayList<>();
+                LightItemMode lightItemMode = new LightItemMode();
+                lightItemMode.setIndex(0);
+                LED_LSP.mParameters.add(lightItemMode);
+                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
+            }
+
+            RxSPUtilTool.putJSONCache(this,KEY_SP_MODEL,new Gson().toJson(mLightModelCache));
         }
     }
 }

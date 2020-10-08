@@ -39,4 +39,11 @@
             <attr name="x_disableEmoji" format="boolean"/>
             <attr name="x_disableTogglePwdDrawable" format="boolean"/>
         </declare-styleable>-->
+
+
+    <declare-styleable name="AnalogClock">
+        <attr name="dial" format="reference"/>
+        <attr name="hand_hour" format="reference"/>
+        <attr name="hand_minute" format="reference"/>
+    </declare-styleable>
 </resources>

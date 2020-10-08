@@ -3,6 +3,9 @@ package com.sky.lamp.ui.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.google.gson.Gson;
@@ -11,6 +14,7 @@ import com.sky.lamp.R;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.bean.LightModelCache;
+import com.sky.lamp.event.DemoShowEvent;
 import com.sky.lamp.ui.act.ModeInfoActivity;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.LightModeChartHelper;
@@ -85,7 +89,13 @@ public class ModelInfoSettingFragment extends BaseFragment {
         initModel();
         tvStartTime.setClickable(false);
         tvStartTime.setEnabled(false);
+        EventBus.getDefault().register(this);
         return view;
+    }
+
+    @Subscribe
+    public void onDemoShow(DemoShowEvent event) {
+        EventBus.getDefault().post(mCommandLightMode);
     }
 
     private void readModelCache() {

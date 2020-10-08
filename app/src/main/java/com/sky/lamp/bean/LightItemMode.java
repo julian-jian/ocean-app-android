@@ -8,25 +8,25 @@ public class LightItemMode implements Serializable {
     @SerializedName("id")
     private int mIndex;
     @SerializedName("white")
-    private int mLight1Level;
+    private int mLight1Level = 50;
     @SerializedName("blue")
-    private int mLight2Level;
+    private int mLight2Level = 50;
     @SerializedName("yellow")
-    private int mLight3Level;
+    private int mLight3Level = 50;
     @SerializedName("purple")
-    private int mLight4Level;
+    private int mLight4Level = 50;
     @SerializedName("uv")
-    private int mLight5Level;
+    private int mLight5Level = 50;
     @SerializedName("red")
-    private int mLight6Level;
+    private int mLight6Level = 50;
     @SerializedName("green")
-    private int mLight7Level;
+    private int mLight7Level = 50;
     @SerializedName("modeName")
     private String mModeName;
     @SerializedName("startTime")
-    private String mStartTime;
+    private String mStartTime = "00:00";
     @SerializedName("endTime")
-    private String mStopTime;
+    private String mStopTime = "23:59";
 
     public int getIndex() {
         return this.mIndex;

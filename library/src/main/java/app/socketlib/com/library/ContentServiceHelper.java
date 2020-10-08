@@ -78,6 +78,7 @@ public class ContentServiceHelper {
                 e.printStackTrace();
             }
         } else {
+            //TODO 请先连接
 //            SocketCommandCacheUtils.getInstance().addCache(msg);
         }
     }

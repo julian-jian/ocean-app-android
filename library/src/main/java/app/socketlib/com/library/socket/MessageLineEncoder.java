@@ -28,10 +28,10 @@ public class MessageLineEncoder implements ProtocolEncoder {
             ioSession.setAttribute("encoder",charsetEncoder);
         }
 
-        if(null!=s){
+        if (null != s) {
             IoBuffer buffer = IoBuffer.allocate(s.length());
             buffer.setAutoExpand(true);//设置是否可以动态扩展大小
-            buffer.putString(s,charsetEncoder);
+            buffer.putString(s, charsetEncoder);
             buffer.flip();
             protocolEncoderOutput.write(buffer);
         }

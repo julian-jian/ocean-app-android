@@ -5,7 +5,8 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-    <AnalogClock
+    <com.sky.lamp.view.MyAnalogClock
+            android:id="@+id/analogClock"
             android:layout_width="240dp"
             android:layout_height="240dp"
             android:layout_marginTop="35dp" />
@@ -19,6 +20,7 @@
             android:textSize="13sp" />
 
     <Button
+            android:id="@+id/btn_start"
             style="@style/Btn"
             android:layout_marginTop="65dp"
             android:text="点击开始" />
