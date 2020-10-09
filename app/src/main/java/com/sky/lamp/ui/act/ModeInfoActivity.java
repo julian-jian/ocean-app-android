@@ -13,6 +13,7 @@ import com.sky.lamp.ui.fragment.DemoFragment;
 import com.sky.lamp.ui.fragment.ModelInfoSettingFragment;
 import com.sky.lamp.view.TitleBar;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,10 @@ public class ModeInfoActivity extends BaseActivity {
     @BindView(R.id.mainLayout)
     LinearLayout mainLayout;
     ModelInfoAdapter mainViewAdapter;
+
+    public void startUI(Context context,String modelName) {
+
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

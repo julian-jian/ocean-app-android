@@ -2,7 +2,11 @@ package com.sky.lamp;
 
 import static com.sky.lamp.ui.fragment.ModelInfoSettingFragment.KEY_SP_MODEL;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -18,6 +22,7 @@ import com.orhanobut.logger.Logger;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.bean.LightModelCache;
+import com.sky.lamp.bean.ModelBean;
 import com.sky.lamp.event.LoginOutEvent;
 import com.sky.lamp.ui.fragment.Index2Fragment;
 import com.sky.lamp.ui.fragment.Index3Fragment;
@@ -32,6 +37,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -181,49 +187,67 @@ public class MainActivity extends BaseActivity {
 
     private void initConfig() {
         String jsonCache = RxSPUtilTool.readJSONCache(this, KEY_SP_MODEL);
-        LightModelCache mLightModelCache = null;
-        if (TextUtils.isEmpty(jsonCache) || new Gson().fromJson(jsonCache,LightModelCache.class).map.size() == 0) {
-            Logger.d( "initConfig() called");
-            mLightModelCache = new LightModelCache();
-            {
-                CommandLightMode LED_LSP = new CommandLightMode();
-                LED_LSP.modelName = "LED_LSP"; // 大模式_模式名
-                LED_LSP.mParameters = new ArrayList<>();
-                LightItemMode lightItemMode = new LightItemMode();
-                lightItemMode.setIndex(0);
-                LED_LSP.mParameters.add(lightItemMode);
-                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
+        if (TextUtils.isEmpty(jsonCache)
+                || new Gson().fromJson(jsonCache, LightModelCache.class).list.size() == 0) {
+            Logger.d("initConfig() called");
+            String fromAssets = null;
+            try {
+                fromAssets = getFromAssets("config.json");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            {
-                CommandLightMode LED_LSP = new CommandLightMode();
-                LED_LSP.modelName = "LED_SPS"; // 大模式_模式名
-                LED_LSP.mParameters = new ArrayList<>();
-                LightItemMode lightItemMode = new LightItemMode();
-                lightItemMode.setIndex(0);
-                LED_LSP.mParameters.add(lightItemMode);
-                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
-            }
-            {
-                CommandLightMode LED_LSP = new CommandLightMode();
-                LED_LSP.modelName = "LED_SPS+SPS"; // 大模式_模式名
-                LED_LSP.mParameters = new ArrayList<>();
-                LightItemMode lightItemMode = new LightItemMode();
-                lightItemMode.setIndex(0);
-                LED_LSP.mParameters.add(lightItemMode);
-                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
-            }
-            // lps
-            {
-                CommandLightMode LED_LSP = new CommandLightMode();
-                LED_LSP.modelName = "LPS_LSP"; // 大模式_模式名
-                LED_LSP.mParameters = new ArrayList<>();
-                LightItemMode lightItemMode = new LightItemMode();
-                lightItemMode.setIndex(0);
-                LED_LSP.mParameters.add(lightItemMode);
-                mLightModelCache.map.put(LED_LSP.modelName,LED_LSP);
-            }
-
-            RxSPUtilTool.putJSONCache(this,KEY_SP_MODEL,new Gson().toJson(mLightModelCache));
+            RxSPUtilTool.putJSONCache(this, KEY_SP_MODEL, fromAssets);
         }
+
+
+    }
+
+    public void simumaData() {
+        LightModelCache lightModelCache = new LightModelCache();
+        lightModelCache.map = new HashMap<>();
+        ModelBean led = addLedData();
+        ArrayList ledList = new ArrayList();
+        ledList.add(led);
+        lightModelCache.map.put("LED",ledList);
+
+    }
+
+    @NonNull
+    private ModelBean addLedData() {
+        ModelBean modelBean = new ModelBean();
+        modelBean.lightModes = new ArrayList<>();
+        CommandLightMode mode1 = new CommandLightMode();
+        mode1.mUserID = MyApplication.getInstance().getUserId();
+        modelBean.lightModes.add(mode1);
+
+        return modelBean;
+    }
+
+    @NonNull
+    private ModelBean addLpsData() {
+        ModelBean led = new ModelBean();
+        led.map = new HashMap<>();
+        CommandLightMode commandLightMode = new CommandLightMode();
+        LightItemMode lightItemMode = new LightItemMode();
+        lightItemMode.setIndex(0);
+        LightItemMode lightItemMode1 = new LightItemMode();
+        lightItemMode1.setIndex(1);
+        commandLightMode.mParameters.add(lightItemMode);
+        led.map.put("LPS", commandLightMode);
+        led.map.put("SPS", commandLightMode);
+        led.map.put("LPS+SPS", commandLightMode);
+        return led;
+    }
+
+    public String getFromAssets(String fileName) throws IOException {
+        InputStreamReader inputReader =
+                new InputStreamReader(getResources().getAssets().open(fileName), "GB2312");
+        BufferedReader bufReader = new BufferedReader(inputReader);
+        String line = "";
+        String Result = "";
+        while ((line = bufReader.readLine()) != null) {
+            Result += line;
+        }
+        return Result;
     }
 }

@@ -1,6 +1,7 @@
 package com.sky.lamp.ui.act;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +30,8 @@ import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
 import com.sky.lamp.response.WifiResponse;
+import com.sky.lamp.ui.fragment.DemoFragment;
+import com.sky.lamp.utils.HexUtils;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
@@ -199,6 +202,7 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
         //TODO success bindRequest();
         if (msg.contains("WIFI SET SUCCESS")) {
             System.out.println("ConfigAct.socketMessageReceived set wifi success");
+            RxToast.showToast("wifi设置成功");
             if (mWiFiBroadcastReceiver != null) {
                 unregisterReceiver(mWiFiBroadcastReceiver);
                 mWiFiBroadcastReceiver = null;

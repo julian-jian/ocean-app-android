@@ -139,7 +139,7 @@ public class Index2Fragment extends DelayBaseFragment {
         swipeLayout.setSwipeEnabled(false);
         TextView deviceName = inflate.findViewById(R.id.tv_name);
         TextView mac = inflate.findViewById(R.id.tv_mac);
-        deviceName.setText(ip_mac.mDeviceName);
+        deviceName.setText(ip_mac.mIp);
         mac.setText(ip_mac.mMac);
         final int pos = mDeviceList.size() - 1;
         AppCompatCheckBox checkBox = inflate.findViewById(R.id.checkbox);

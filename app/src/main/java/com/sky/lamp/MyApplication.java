@@ -1,6 +1,7 @@
 package com.sky.lamp;
 
 import static com.sky.lamp.Constants.USERNAME;
+import static com.sky.lamp.Constants.USER_ID;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,6 +69,11 @@ public class MyApplication extends Application {
     public boolean isLogin() {
         String email = RxSPUtilTool.getString(getApplicationContext(), USERNAME);
         return !TextUtils.isEmpty(email);
+    }
+
+    public String getUserId() {
+        String userId = RxSPUtilTool.getString(getApplicationContext(), USER_ID);
+        return userId;
     }
 
     @Override

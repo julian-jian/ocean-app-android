@@ -2,6 +2,7 @@ package app.socketlib.com.library.socket;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
@@ -17,8 +18,6 @@ public class MessageLineCumulativeDecoder extends CumulativeProtocolDecoder {
     @Override
     protected boolean doDecode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput protocolDecoderOutput) throws Exception {
         int startPosition = in.position();
-        System.out.println("MessageLineCumulativeDecoder.doDecode " + new String(in.array()));
-        String bytesToHexString = bytesToHexString(in.array());
         while (in.hasRemaining()) {
             byte b = in.get();
             if (b == '\n') {//读取到\n时候认为一行已经读取完毕
@@ -36,8 +35,15 @@ public class MessageLineCumulativeDecoder extends CumulativeProtocolDecoder {
                 return true;
             }
         }
+        // 16进制
         in.position(startPosition);
-        System.out.println("MessageLineCumulativeDecoder.doDecode " + false);
+        byte[] array = in.array();
+        // 取前5个字节
+        byte[] results = Arrays.copyOf(in.array(), 5);
+        String bytesToHexString = bytesToHexString(results);
+        System.out.println("MessageLineCumulativeDecoder.doDecode bytesToHexString " + bytesToHexString);
+//        in.clear();
+        in.flip();
         return false;
     }
 

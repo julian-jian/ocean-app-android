@@ -1,0 +1,76 @@
+{
+  "map": {
+    "LED_SPS": {
+      "parameters": [{
+        "id": 0,
+        "white": 50,
+        "blue": 50,
+        "yellow": 50,
+        "purple": 50,
+        "uv": 50,
+        "red": 50,
+        "green": 50,
+        "startTime": "00:00",
+        "endTime": "01:00"
+      },
+        {
+          "id": 1,
+          "white": 50,
+          "blue": 50,
+          "yellow": 50,
+          "purple": 50,
+          "uv": 50,
+          "red": 50,
+          "green": 50,
+          "startTime": "01:00",
+          "endTime": "23:59"
+        }],
+      "modelName": "LED_SPS"
+    },
+    "LED_SPS+SPS": {
+      "parameters": [{
+        "id": 0,
+        "white": 50,
+        "blue": 50,
+        "yellow": 50,
+        "purple": 50,
+        "uv": 50,
+        "red": 50,
+        "green": 50,
+        "startTime": "00:00",
+        "endTime": "23:59"
+      }],
+      "modelName": "LED_SPS+SPS"
+    },
+    "LPS_LSP": {
+      "parameters": [{
+        "id": 0,
+        "white": 50,
+        "blue": 50,
+        "yellow": 50,
+        "purple": 50,
+        "uv": 50,
+        "red": 50,
+        "green": 50,
+        "startTime": "00:00",
+        "endTime": "23:59"
+      }],
+      "modelName": "LPS_LSP"
+    },
+    "LED_LSP": {
+      "parameters": [{
+        "id": 0,
+        "white": 50,
+        "blue": 50,
+        "yellow": 50,
+        "purple": 50,
+        "uv": 50,
+        "red": 50,
+        "green": 50,
+        "startTime": "00:00",
+        "endTime": "23:59"
+      }],
+      "modelName": "LED_LSP"
+    }
+  }
+}
