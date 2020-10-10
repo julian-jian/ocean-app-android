@@ -1,5 +1,7 @@
 package com.sky.lamp.ui;
 
+import com.sky.lamp.BaseActivity;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +38,9 @@ public abstract class DelayBaseFragment extends Fragment {
         }
     }
 
+    public BaseActivity getBaseActivity() {
+        return (BaseActivity)getActivity();
+    }
 
     /**
      * 懒加载的方式获取数据

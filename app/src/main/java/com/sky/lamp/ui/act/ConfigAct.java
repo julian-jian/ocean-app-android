@@ -139,9 +139,10 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_search:
-                // TODO DEL
-                //                showLoadingDialog("正在搜索");
-                //                initWiFi();
+//                 TODO DEL
+//                                showLoadingDialog("正在搜索");
+//                                initWiFi();
+                bindDeviceRequest();
                 byte[] temp = new byte[] {
                         (byte) 0xaa, (byte) 0x01, (byte) 0x08, (byte) 0x00, (byte) 0x0C,
                         (byte) 0x00, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32,
@@ -199,14 +200,10 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     @Override
     public void socketMessageReceived(String msg) {
         Logger.d("socketMessageReceived() called with: msg = [" + msg + "]");
-        //TODO success bindRequest();
         if (msg.contains("WIFI SET SUCCESS")) {
             System.out.println("ConfigAct.socketMessageReceived set wifi success");
             RxToast.showToast("wifi设置成功");
-            if (mWiFiBroadcastReceiver != null) {
-                unregisterReceiver(mWiFiBroadcastReceiver);
-                mWiFiBroadcastReceiver = null;
-            }
+            bindDeviceRequest();
         }
     }
 
@@ -240,7 +237,7 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
         super.onDestroy();
     }
 
-    public void bindRequest() {
+    public void bindDeviceRequest() {
         if (!MyApplication.getInstance().isLogin()) {
             RxToast.showToast("请先登录");
             return;

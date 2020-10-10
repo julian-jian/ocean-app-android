@@ -1,22 +1,37 @@
 package com.sky.lamp.ui.fragment;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.event.NextStepEvent;
+import com.google.gson.reflect.TypeToken;
 import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanManager;
 import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanResult;
 import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.sky.lamp.BaseActivity;
+import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
+import com.sky.lamp.bean.Device;
+import com.sky.lamp.http.AppService;
+import com.sky.lamp.http.MyApi;
+import com.sky.lamp.response.BaseResponse;
+import com.sky.lamp.response.GetBindDeviceResponse;
 import com.sky.lamp.ui.DelayBaseFragment;
 import com.sky.lamp.ui.act.ConfigAct;
 import com.sky.lamp.ui.act.LoginAct;
+import com.sky.lamp.utils.GsonImpl;
+import com.sky.lamp.utils.HttpUtil;
+import com.sky.lamp.utils.MySubscriber;
+import com.sky.lamp.utils.RxSPUtilTool;
 import com.vondear.rxtools.view.RxToast;
 
 import android.content.Intent;
@@ -32,6 +47,9 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import okhttp3.RequestBody;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class Index2Fragment extends DelayBaseFragment {
     @BindView(R.id.ll_bind_devices_list)
@@ -62,36 +80,11 @@ public class Index2Fragment extends DelayBaseFragment {
                 startFindDevices();
             }
         });
-        initBindViews();
         deviceScanManager = new DeviceScanManager();
         startFindDevices();
         return view;
     }
 
-    private void initBindViews() {
-        View inflate = LayoutInflater
-                .from(getActivity()).inflate(R.layout.item_find_device, null);
-        SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
-        swipeLayout.findViewById(R.id.checkbox).setVisibility(View.INVISIBLE);
-        swipeLayout.findViewById(R.id.tv_1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RxToast.showToast("重命名");
-            }
-        });
-        swipeLayout.findViewById(R.id.tv_1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RxToast.showToast("解绑设备");
-            }
-        });
-        // 禁用左划
-        TextView deviceName = inflate.findViewById(R.id.tv_name);
-        TextView mac = inflate.findViewById(R.id.tv_mac);
-        deviceName.setText("test");
-        mac.setText("testMac");
-        llBindDevicesList.addView(inflate);
-    }
     @Subscribe
     public void nextStepClick(NextStepEvent event) {
         IP_MAC selectDevice = null;
@@ -112,6 +105,13 @@ public class Index2Fragment extends DelayBaseFragment {
         Intent intent = new Intent(getActivity(), ConfigAct.class);
         intent.putExtra("device", selectDevice);
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        queryBindDevice();
+        System.out.println("Index2Fragment.onResume");
     }
 
     private void startFindDevices() {
@@ -167,9 +167,117 @@ public class Index2Fragment extends DelayBaseFragment {
         llFindDevicesList.addView(inflate);
     }
 
+    public void unbindDevice(String deviceID) {
+        String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("userID", userId);
+        map.put("deviceID", deviceID);
+        String strEntity = HttpUtil.getRequestString(map);
+        RequestBody body = RequestBody
+                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+        AppService.createApi(MyApi.class).unBind(body).subscribeOn(Schedulers.io())
+                .observeOn(
+                        AndroidSchedulers.mainThread())
+                .subscribe(new MySubscriber<BaseResponse>() {
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        getBaseActivity().showLoadingDialog();
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        super.onError(error);
+                        getBaseActivity().dismissLoadingDialog();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onNext(final BaseResponse response) {
+                        if (!response.isSuccess()) {
+                            RxToast.showToast(response.result);
+                            return;
+                        }
+                        queryBindDevice();
+
+                    }
+                });
+    }
+
+    public void queryBindDevice() {
+        String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("userID", userId);
+        String strEntity = HttpUtil.getRequestString(map);
+        RequestBody body = RequestBody
+                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+        AppService.createApi(MyApi.class).getBindDevices(body).subscribeOn(Schedulers.io())
+                .observeOn(
+                        AndroidSchedulers.mainThread())
+                .subscribe(new MySubscriber<GetBindDeviceResponse>() {
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        super.onError(error);
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        getBaseActivity().dismissLoadingDialog();
+                    }
+
+                    @Override
+                    public void onNext(final GetBindDeviceResponse response) {
+                        if (!response.isSuccess()) {
+                            RxToast.showToast(response.result);
+                            return;
+                        }
+                        Type type = new TypeToken<List<Device>>() {
+                        }.getType();
+                        List<Device> list = new GsonImpl().toList(response.result,
+                                Device.class, type);
+                        llBindDevicesList.removeAllViews();
+                        for (final Device device : list) {
+                            View inflate = LayoutInflater
+                                    .from(getActivity()).inflate(R.layout.item_find_device, null);
+                            SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
+                            swipeLayout.findViewById(R.id.checkbox).setVisibility(View.INVISIBLE);
+                            swipeLayout.findViewById(R.id.tv_1)
+                                    .setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            RxToast.showToast("暂不支持");
+                                        }
+                                    });
+                            swipeLayout.findViewById(R.id.tv_2)
+                                    .setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            unbindDevice(device.getDeviceSN());
+                                        }
+                                    });
+                            // 禁用左划
+                            TextView deviceName = inflate.findViewById(R.id.tv_name);
+                            deviceName.setText(device.getDeviceSN());
+                            TextView mac = inflate.findViewById(R.id.tv_mac);
+                            mac.setVisibility(View.GONE);
+                            llBindDevicesList.addView(inflate);
+                        }
+                    }
+                });
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
+
 }
