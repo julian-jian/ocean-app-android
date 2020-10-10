@@ -1,118 +1,123 @@
 package com.sky.lamp.bean;
 
-import java.io.Serializable;
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
-import com.google.gson.annotations.SerializedName;
-
-public class LightItemMode implements Serializable {
-    @SerializedName("id")
-    private int mIndex;
-    @SerializedName("white")
-    private int mLight1Level = 50;
-    @SerializedName("blue")
-    private int mLight2Level = 50;
-    @SerializedName("yellow")
-    private int mLight3Level = 50;
-    @SerializedName("purple")
-    private int mLight4Level = 50;
-    @SerializedName("uv")
-    private int mLight5Level = 50;
-    @SerializedName("red")
-    private int mLight6Level = 50;
-    @SerializedName("green")
-    private int mLight7Level = 50;
-    @SerializedName("modeName")
-    private String mModeName;
-    @SerializedName("startTime")
-    private String mStartTime = "00:00";
-    @SerializedName("endTime")
-    private String mStopTime = "23:59";
-
+@Entity
+public class LightItemMode  {
+    @Id
+    private Long id;
+    public int index;
+    public int light1Level = 50;
+    public int light2Level = 50;
+    public int light3Level = 50;
+    public int light4Level = 50;
+    public int light5Level = 50;
+    public int light6Level = 50;
+    public int light7Level = 50;
+    public String modeName;//模式1
+    public String startTime = "00:00";
+    public String stopTime = "23:59";
+    public long parent_id;
+    @Generated(hash = 1201714956)
+    public LightItemMode(Long id, int index, int light1Level, int light2Level,
+            int light3Level, int light4Level, int light5Level, int light6Level,
+            int light7Level, String modeName, String startTime, String stopTime,
+            long parent_id) {
+        this.id = id;
+        this.index = index;
+        this.light1Level = light1Level;
+        this.light2Level = light2Level;
+        this.light3Level = light3Level;
+        this.light4Level = light4Level;
+        this.light5Level = light5Level;
+        this.light6Level = light6Level;
+        this.light7Level = light7Level;
+        this.modeName = modeName;
+        this.startTime = startTime;
+        this.stopTime = stopTime;
+        this.parent_id = parent_id;
+    }
+    @Generated(hash = 1621573110)
+    public LightItemMode() {
+    }
+    public Long getId() {
+        return this.id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
     public int getIndex() {
-        return this.mIndex;
+        return this.index;
     }
-
     public void setIndex(int index) {
-        this.mIndex = index;
+        this.index = index;
     }
-
-    public String getModeName() {
-        return this.mModeName;
-    }
-
-    public void setModeName(String mode) {
-        this.mModeName = mode;
-    }
-
-    public String getStartTime() {
-        return this.mStartTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.mStartTime = startTime;
-    }
-
-    public String getStopTime() {
-        return this.mStopTime;
-    }
-
-    public void setStopTime(String stopTime) {
-        this.mStopTime = stopTime;
-    }
-
     public int getLight1Level() {
-        return this.mLight1Level;
+        return this.light1Level;
     }
-
     public void setLight1Level(int light1Level) {
-        this.mLight1Level = light1Level;
+        this.light1Level = light1Level;
     }
-
     public int getLight2Level() {
-        return this.mLight2Level;
+        return this.light2Level;
     }
-
     public void setLight2Level(int light2Level) {
-        this.mLight2Level = light2Level;
+        this.light2Level = light2Level;
     }
-
     public int getLight3Level() {
-        return this.mLight3Level;
+        return this.light3Level;
     }
-
     public void setLight3Level(int light3Level) {
-        this.mLight3Level = light3Level;
+        this.light3Level = light3Level;
     }
-
     public int getLight4Level() {
-        return this.mLight4Level;
+        return this.light4Level;
     }
-
     public void setLight4Level(int light4Level) {
-        this.mLight4Level = light4Level;
+        this.light4Level = light4Level;
     }
-
     public int getLight5Level() {
-        return this.mLight5Level;
+        return this.light5Level;
     }
-
     public void setLight5Level(int light5Level) {
-        this.mLight5Level = light5Level;
+        this.light5Level = light5Level;
     }
-
     public int getLight6Level() {
-        return this.mLight6Level;
+        return this.light6Level;
     }
-
     public void setLight6Level(int light6Level) {
-        this.mLight6Level = light6Level;
+        this.light6Level = light6Level;
     }
-
     public int getLight7Level() {
-        return this.mLight7Level;
+        return this.light7Level;
     }
-
     public void setLight7Level(int light7Level) {
-        this.mLight7Level = light7Level;
+        this.light7Level = light7Level;
+    }
+    public String getModeName() {
+        return this.modeName;
+    }
+    public void setModeName(String modeName) {
+        this.modeName = modeName;
+    }
+    public String getStartTime() {
+        return this.startTime;
+    }
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+    public String getStopTime() {
+        return this.stopTime;
+    }
+    public void setStopTime(String stopTime) {
+        this.stopTime = stopTime;
+    }
+    public long getParent_id() {
+        return this.parent_id;
+    }
+    public void setParent_id(long parent_id) {
+        this.parent_id = parent_id;
     }
 }

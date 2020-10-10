@@ -3,6 +3,7 @@ package com.sky.lamp.ui.fragment;
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.ProductListAdapter;
 import com.sky.lamp.ui.DelayBaseFragment;
+import com.sky.lamp.ui.act.SelectConfigAct;
 import com.vondear.rxtools.view.RxToast;
 
 import android.os.Bundle;
@@ -56,6 +57,7 @@ public class IndexFragment extends DelayBaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ll_led:
+                SelectConfigAct.startUI(getActivity(),"LED");
                 break;
             case R.id.ll_zaolang:
                 RxToast.showToast("该功能正在开发");
@@ -63,8 +65,10 @@ public class IndexFragment extends DelayBaseFragment {
                 RxToast.showToast("该功能正在开发");
                 break;
             case R.id.ll_lps:
+                SelectConfigAct.startUI(getActivity(),"LPS");
                 break;
             case R.id.ll_sps:
+                SelectConfigAct.startUI(getActivity(),"SPS");
                 break;
             case R.id.ll_lps_sps:
                 break;

@@ -6,6 +6,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import com.sky.lamp.BaseActivity;
+import com.sky.lamp.BuildConfig;
 import com.sky.lamp.Constants;
 import com.sky.lamp.MainActivity;
 import com.sky.lamp.R;
@@ -70,6 +71,10 @@ public class LoginAct extends BaseActivity {
                 finish();
             }
         });
+        if (BuildConfig.DEBUG) {
+            etEmail.setText("1234@qq.com");
+            etPwd.setText("123456");
+        }
     }
 
     @OnClick({R.id.iv_pwd_show, R.id.btn_login, R.id.tv_reg, R.id.tv_forgetPwd})

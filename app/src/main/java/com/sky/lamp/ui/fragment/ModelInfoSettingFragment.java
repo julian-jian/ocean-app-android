@@ -8,15 +8,12 @@ import org.greenrobot.eventbus.Subscribe;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
-import com.google.gson.Gson;
 import com.sky.lamp.BaseFragment;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.bean.LightModelCache;
 import com.sky.lamp.event.DemoShowEvent;
-import com.sky.lamp.ui.act.ModeInfoActivity;
-import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.LightModeChartHelper;
 import com.vondear.rxtools.RxImageTool;
 import com.vondear.rxtools.view.RxToast;
@@ -25,7 +22,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,33 +95,33 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void readModelCache() {
-        String jsonCache = RxSPUtilTool.readJSONCache(getActivity(), KEY_SP_MODEL);
-        if (TextUtils.isEmpty(jsonCache)) {
-            mLightModelCache = new LightModelCache();
-        } else {
-            mLightModelCache = new Gson().fromJson(jsonCache, LightModelCache.class);
-        }
-        mCommandLightMode = mLightModelCache.map.get(modelName);
-        if (mCommandLightMode == null) {
-            mCommandLightMode = new CommandLightMode();
-            mCommandLightMode.mParameters = new ArrayList<LightItemMode>();
-            ((ModeInfoActivity) getActivity()).refreshTitle("自定义");
-        } else {
-            ((ModeInfoActivity) getActivity()).refreshTitle(modelName);
-        }
-        LightItemMode lightItemMode = new LightItemMode();
-        lightItemMode.setIndex(1);
-        lightItemMode.setModeName("模式" + lightItemMode.getIndex());
-        lightItemMode.setLight1Level(DEFAULT_PROGRESS);
-        lightItemMode.setLight2Level(DEFAULT_PROGRESS);
-        lightItemMode.setLight3Level(DEFAULT_PROGRESS);
-        lightItemMode.setLight4Level(DEFAULT_PROGRESS);
-        lightItemMode.setLight5Level(DEFAULT_PROGRESS);
-        lightItemMode.setLight6Level(DEFAULT_PROGRESS);
-        lightItemMode.setLight7Level(DEFAULT_PROGRESS);
-        lightItemMode.setStartTime("00:00");
-        lightItemMode.setStopTime("01:00");
-        mCommandLightMode.mParameters.add(lightItemMode);
+//        String jsonCache = RxSPUtilTool.readJSONCache(getActivity(), KEY_SP_MODEL);
+//        if (TextUtils.isEmpty(jsonCache)) {
+//            mLightModelCache = new LightModelCache();
+//        } else {
+//            mLightModelCache = new Gson().fromJson(jsonCache, LightModelCache.class);
+//        }
+////        mCommandLightMode = mLightModelCache.map.get(modelName);
+//        if (mCommandLightMode == null) {
+//            mCommandLightMode = new CommandLightMode();
+//            mCommandLightMode.mParameters = new ArrayList<LightItemMode>();
+//            ((ModeInfoActivity) getActivity()).refreshTitle("自定义");
+//        } else {
+//            ((ModeInfoActivity) getActivity()).refreshTitle(modelName);
+//        }
+//        LightItemMode lightItemMode = new LightItemMode();
+//        lightItemMode.setIndex(1);
+//        lightItemMode.setModeName("模式" + lightItemMode.getIndex());
+//        lightItemMode.setLight1Level(DEFAULT_PROGRESS);
+//        lightItemMode.setLight2Level(DEFAULT_PROGRESS);
+//        lightItemMode.setLight3Level(DEFAULT_PROGRESS);
+//        lightItemMode.setLight4Level(DEFAULT_PROGRESS);
+//        lightItemMode.setLight5Level(DEFAULT_PROGRESS);
+//        lightItemMode.setLight6Level(DEFAULT_PROGRESS);
+//        lightItemMode.setLight7Level(DEFAULT_PROGRESS);
+//        lightItemMode.setStartTime("00:00");
+//        lightItemMode.setStopTime("01:00");
+//        mCommandLightMode.mParameters.add(lightItemMode);
     }
 
     private void initModel() {
@@ -434,18 +430,18 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void saveClick() {
-        if (TextUtils.isEmpty(mCommandLightMode.modelName)) {
-            for (int index = 1; ; index++) {
-                CommandLightMode commandLightMode = mLightModelCache.map.get("自定义" + index);
-                if (commandLightMode == null) {
-                    mCommandLightMode.modelName = "自定义" + index;
-                    break;
-                }
-            }
-        }
-        mLightModelCache.map.put(mCommandLightMode.modelName, mCommandLightMode);
-        RxSPUtilTool.putJSONCache(getActivity(), KEY_SP_MODEL, new Gson().toJson(mLightModelCache));
-        RxToast.showToast("保存成功");
+//        if (TextUtils.isEmpty(mCommandLightMode.modelName)) {
+//            for (int index = 1; ; index++) {
+//                CommandLightMode commandLightMode = mLightModelCache.map.get("自定义" + index);
+//                if (commandLightMode == null) {
+//                    mCommandLightMode.modelName = "自定义" + index;
+//                    break;
+//                }
+//            }
+//        }
+//        mLightModelCache.map.put(mCommandLightMode.modelName, mCommandLightMode);
+//        RxSPUtilTool.putJSONCache(getActivity(), KEY_SP_MODEL, new Gson().toJson(mLightModelCache));
+//        RxToast.showToast("保存成功");
     }
 
     private void addNewItemModel() {

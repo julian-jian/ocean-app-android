@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'org.greenrobot.greendao' // apply plugin
 def releaseTime() {
     return new Date().format("yyyy-MM-dd-ss", TimeZone.getTimeZone("UTC"))
 }
@@ -153,5 +153,13 @@ dependencies {
     implementation 'pub.devrel:easypermissions:1.0.1'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'org.greenrobot:greendao:3.2.2' // add library
 //    compile 'com.github.Jeromeer:MinaSocket:1.0'
+}
+
+
+greendao {
+    schemaVersion 1
+    daoPackage 'com.sky.lamp.dao'
+    targetGenDir 'src/main/java'
 }

@@ -6,11 +6,14 @@ import static com.sky.lamp.Constants.USER_ID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.greenrobot.greendao.AbstractDaoMaster;
+
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.sky.CrashHandler;
+import com.sky.lamp.dao.DaoManager;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.vondear.rxtools.RxDeviceTool;
 import com.vondear.rxtools.RxTool;
@@ -38,6 +41,7 @@ public class MyApplication extends Application {
 //        QbSdk.initX5Environment(this,null);
         RxTool.init(this);
         initImageLoader(this);
+        DaoManager.getInstance().init(this);
         new CrashHandler().init(this);
     }
 
@@ -80,6 +84,10 @@ public class MyApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 //        MultiDex.install(this);
+    }
+
+    public void initDao() {
+
     }
 
 }

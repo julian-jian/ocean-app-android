@@ -1,17 +1,15 @@
 package com.sky.lamp.ui.act;
 
-import static com.sky.lamp.ui.fragment.ModelInfoSettingFragment.KEY_SP_MODEL;
+import org.greenrobot.greendao.query.QueryBuilder;
 
-import java.io.Serializable;
-import java.util.Set;
-
-import com.google.gson.Gson;
+import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
+import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
-import com.sky.lamp.bean.LightModelCache;
-import com.sky.lamp.utils.RxSPUtilTool;
+import com.sky.lamp.dao.CommandLightModeDao;
+import com.sky.lamp.dao.DaoManager;
 import com.sky.lamp.view.TitleBar;
 
 import android.content.Context;
@@ -34,9 +32,9 @@ public class SelectConfigAct extends BaseActivity {
     @BindView(R.id.ll_custom_configs)
     LinearLayout llCustomConfigs;
     public static final String MODEL_NAME = "modelName";
-    private LightModelCache lightModelCache;
+    String mModelName;
 
-    public void startUI(Context context, String modelName) {
+    public static void startUI(Context context, String modelName) {
         Intent intent = new Intent(context, SelectConfigAct.class);
         intent.putExtra(MODEL_NAME, modelName);
         context.startActivity(intent);
@@ -49,46 +47,52 @@ public class SelectConfigAct extends BaseActivity {
         ButterKnife.bind(this);
         actionBar.setTitle("选择配置");
         actionBar.initLeftImageView(this);
-        String stringExtra = getIntent().getStringExtra(MODEL_NAME);
-        if (TextUtils.isEmpty(stringExtra)) {
+        mModelName = getIntent().getStringExtra(MODEL_NAME);
+        if (TextUtils.isEmpty(mModelName)) {
             finish();
             return;
         }
-        String jsonCache = RxSPUtilTool.readJSONCache(this, KEY_SP_MODEL);
-        lightModelCache = new Gson().fromJson(jsonCache, LightModelCache.class);
-        Set<String> strings = lightModelCache.map.keySet();
-        for (String key : strings) {
+        initConfig();
+    }
 
-            if (stringExtra.equals(key.split("_")[0])) {
-                if (key.split("_")[1].contains("custom")) { // 自定义
-                    CommandLightMode commandLightMode = lightModelCache.map.get(key);
-                    View inflate = LayoutInflater.from(SelectConfigAct.this)
-                            .inflate(R.layout.select_config_item,
-                                    llCustomConfigs);
-                    TextView textView = inflate.findViewById(R.id.textView);
-                    textView.setText(commandLightMode.modelName);
-                    inflate.setOnClickListener(new View.OnClickListener() {
+    private void initConfig() {
+        if (!MyApplication.getInstance().isLogin()) {
+            Logger.d("not login");
+            return;
+        }
+        DaoManager.getInstance().getDaoSession().runInTx(new Runnable() {
+            @Override
+            public void run() {
+                QueryBuilder<CommandLightMode> commandLightModeQueryBuilder =
+                        DaoManager.getInstance().getDaoSession()
+                                .queryBuilder(CommandLightMode.class);
+                QueryBuilder<CommandLightMode> where =
+                        commandLightModeQueryBuilder.where(CommandLightModeDao.Properties.MUserID
+                                        .eq(MyApplication.getInstance().getUserId()),
+                                CommandLightModeDao.Properties.ModelName.eq(mModelName));
+                if (where.count() == 0) {
+                    // 初始化默认配置
+                    final CommandLightMode lps = new CommandLightMode();
+                    lps.mUserID = MyApplication.getInstance().getUserId();
+                    lps.modelName = "LPS";
+                    DaoManager.getInstance().getDaoSession().insert(lps);
+
+                    LightItemMode itemMode = new LightItemMode();
+                    itemMode.setIndex(0);
+                    itemMode.parent_id = lps.id;
+                    DaoManager.getInstance().getDaoSession().insert(itemMode);
+                    // add view
+                    SelectConfigAct.this.runOnUiThread(new Runnable() {
                         @Override
-                        public void onClick(View v) {
-
-                        }
-                    });
-                } else { // 默认模式
-                    CommandLightMode commandLightMode = lightModelCache.map.get(key);
-                    View inflate = LayoutInflater.from(SelectConfigAct.this)
-                            .inflate(R.layout.select_config_item,
-                                    llDefaultConfigs);
-                    TextView textView = inflate.findViewById(R.id.textView);
-                    textView.setText(commandLightMode.modelName);
-                    inflate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
+                        public void run() {
+                            View inflate = LayoutInflater.from(SelectConfigAct.this)
+                                    .inflate(R.layout.select_config_item
+                                            , llDefaultConfigs);
+                            ((TextView)inflate.findViewById(R.id.textView)).setText(lps.modelName);
                         }
                     });
                 }
-
             }
-        }
+        });
     }
 }

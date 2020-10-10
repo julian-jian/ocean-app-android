@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import com.chenxi.tabview.adapter.MainViewAdapter;
 import com.chenxi.tabview.listener.OnTabSelectedListener;
@@ -23,6 +25,10 @@ import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.bean.LightModelCache;
 import com.sky.lamp.bean.ModelBean;
+import com.sky.lamp.dao.CommandLightModeDao;
+import com.sky.lamp.dao.DaoManager;
+import com.sky.lamp.dao.DaoMaster;
+import com.sky.lamp.dao.LightItemModeDao;
 import com.sky.lamp.event.LoginOutEvent;
 import com.sky.lamp.ui.fragment.Index2Fragment;
 import com.sky.lamp.ui.fragment.Index3Fragment;
@@ -110,7 +116,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        initConfig();
         methodRequiresTwoPermission();
 
     }
@@ -185,57 +190,19 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void initConfig() {
-        String jsonCache = RxSPUtilTool.readJSONCache(this, KEY_SP_MODEL);
-        if (TextUtils.isEmpty(jsonCache)
-                || new Gson().fromJson(jsonCache, LightModelCache.class).list.size() == 0) {
-            Logger.d("initConfig() called");
-            String fromAssets = null;
-            try {
-                fromAssets = getFromAssets("config.json");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            RxSPUtilTool.putJSONCache(this, KEY_SP_MODEL, fromAssets);
-        }
 
-
-    }
 
     public void simumaData() {
         LightModelCache lightModelCache = new LightModelCache();
         lightModelCache.map = new HashMap<>();
-        ModelBean led = addLedData();
         ArrayList ledList = new ArrayList();
-        ledList.add(led);
-        lightModelCache.map.put("LED",ledList);
+        lightModelCache.map.put("LED", ledList);
 
-    }
-
-    @NonNull
-    private ModelBean addLedData() {
-        ModelBean modelBean = new ModelBean();
-        modelBean.lightModes = new ArrayList<>();
-        CommandLightMode mode1 = new CommandLightMode();
-        mode1.mUserID = MyApplication.getInstance().getUserId();
-        modelBean.lightModes.add(mode1);
-
-        return modelBean;
     }
 
     @NonNull
     private ModelBean addLpsData() {
         ModelBean led = new ModelBean();
-        led.map = new HashMap<>();
-        CommandLightMode commandLightMode = new CommandLightMode();
-        LightItemMode lightItemMode = new LightItemMode();
-        lightItemMode.setIndex(0);
-        LightItemMode lightItemMode1 = new LightItemMode();
-        lightItemMode1.setIndex(1);
-        commandLightMode.mParameters.add(lightItemMode);
-        led.map.put("LPS", commandLightMode);
-        led.map.put("SPS", commandLightMode);
-        led.map.put("LPS+SPS", commandLightMode);
         return led;
     }
 
