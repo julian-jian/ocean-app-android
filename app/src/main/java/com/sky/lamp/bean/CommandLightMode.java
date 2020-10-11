@@ -1,16 +1,16 @@
 package com.sky.lamp.bean;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.ToMany;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
+
+import com.sky.lamp.dao.CommandLightModeDao;
 import com.sky.lamp.dao.DaoSession;
 import com.sky.lamp.dao.LightItemModeDao;
-import com.sky.lamp.dao.CommandLightModeDao;
 
 /**
  * LSP、自定义
@@ -24,19 +24,20 @@ public class CommandLightMode {
     public List<LightItemMode> mParameters;
     public String mUserID;
     public String modelName;
+    public String t1;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
     /** Used for active entity operations. */
     @Generated(hash = 564579061)
     private transient CommandLightModeDao myDao;
-    @Generated(hash = 419608017)
-    public CommandLightMode(Long id, String mDeviceID, String mUserID,
-            String modelName) {
+    @Generated(hash = 1481888654)
+    public CommandLightMode(Long id, String mDeviceID, String mUserID, String modelName, String t1) {
         this.id = id;
         this.mDeviceID = mDeviceID;
         this.mUserID = mUserID;
         this.modelName = modelName;
+        this.t1 = t1;
     }
     @Generated(hash = 2008176647)
     public CommandLightMode() {
@@ -130,5 +131,11 @@ public class CommandLightMode {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getCommandLightModeDao() : null;
+    }
+    public String getT1() {
+        return this.t1;
+    }
+    public void setT1(String t1) {
+        this.t1 = t1;
     }
 }

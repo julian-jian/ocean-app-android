@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+    <View
+            android:layout_width="match_parent"
+            android:background="@color/divide"
+            android:layout_height="1dp"/>
 
     <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
             android:text="LPS"
+            android:layout_centerVertical="true"
             android:textColor="#ff333333"
-            android:textSize="17sp"
-            />
+            android:textSize="17sp" />
+
 </RelativeLayout>

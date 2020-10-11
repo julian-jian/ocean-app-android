@@ -42,9 +42,9 @@ public class MessageLineCumulativeDecoder extends CumulativeProtocolDecoder {
         byte[] results = Arrays.copyOf(in.array(), 5);
         String bytesToHexString = bytesToHexString(results);
         System.out.println("MessageLineCumulativeDecoder.doDecode bytesToHexString " + bytesToHexString);
-//        in.clear();
+        protocolDecoderOutput.write(bytesToHexString);
         in.flip();
-        return false;
+        return true;
     }
 
 

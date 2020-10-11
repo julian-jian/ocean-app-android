@@ -332,11 +332,11 @@ public class RxToast {
      * @param msg 显示内容
      */
     public static void showToast(String msg) {
-        if (mToast == null) {
+//        if (mToast == null) {
             mToast = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
-        } else {
-            mToast.setText(msg);
-        }
+//        } else {
+//            mToast.setText(msg);
+//        }
         mToast.show();
     }
 
@@ -346,11 +346,11 @@ public class RxToast {
      * @param resId String资源ID
      */
     public static void showToast(int resId) {
-        if (mToast == null) {
+//        if (mToast == null) {
             mToast = Toast.makeText(getContext(), getContext().getString(resId), Toast.LENGTH_LONG);
-        } else {
-            mToast.setText(getContext().getString(resId));
-        }
+//        } else {
+//            mToast.setText(getContext().getString(resId));
+//        }
         mToast.show();
     }
 

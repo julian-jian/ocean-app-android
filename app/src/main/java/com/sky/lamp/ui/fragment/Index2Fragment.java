@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.event.NextStepEvent;
@@ -18,6 +16,8 @@ import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanResult;
 import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
+import com.sky.lamp.bean.ModelBean;
+import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.Device;
@@ -28,6 +28,7 @@ import com.sky.lamp.response.GetBindDeviceResponse;
 import com.sky.lamp.ui.DelayBaseFragment;
 import com.sky.lamp.ui.act.ConfigAct;
 import com.sky.lamp.ui.act.LoginAct;
+import com.sky.lamp.ui.act.SelectConfigAct;
 import com.sky.lamp.utils.GsonImpl;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
@@ -38,6 +39,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +66,14 @@ public class Index2Fragment extends DelayBaseFragment {
 
     @Override
     protected void showDelayData() {
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            queryBindDevice();
+        }
     }
 
     @Nullable
@@ -110,8 +120,6 @@ public class Index2Fragment extends DelayBaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        queryBindDevice();
-        System.out.println("Index2Fragment.onResume");
     }
 
     private void startFindDevices() {
@@ -134,9 +142,15 @@ public class Index2Fragment extends DelayBaseFragment {
                 .from(getActivity()).inflate(R.layout.item_find_device, null);
         SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
         // 禁用左划
-        swipeLayout.setLeftSwipeEnabled(false);
-        swipeLayout.setRightSwipeEnabled(false);
-        swipeLayout.setSwipeEnabled(false);
+        //        swipeLayout.setLeftSwipeEnabled(false);
+        //        swipeLayout.setRightSwipeEnabled(false);
+        //        swipeLayout.setSwipeEnabled(false);
+        swipeLayout.findViewById(R.id.tv_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bindDeviceRequest(ip_mac.mMac);
+            }
+        });
         TextView deviceName = inflate.findViewById(R.id.tv_name);
         TextView mac = inflate.findViewById(R.id.tv_mac);
         deviceName.setText(ip_mac.mIp);
@@ -165,6 +179,7 @@ public class Index2Fragment extends DelayBaseFragment {
                     }
                 });
         llFindDevicesList.addView(inflate);
+
     }
 
     public void unbindDevice(String deviceID) {
@@ -225,7 +240,7 @@ public class Index2Fragment extends DelayBaseFragment {
 
                     @Override
                     public void onError(Throwable error) {
-                        super.onError(error);
+                        //                        super.onError(error);
                     }
 
                     @Override
@@ -245,7 +260,7 @@ public class Index2Fragment extends DelayBaseFragment {
                                 Device.class, type);
                         llBindDevicesList.removeAllViews();
                         for (final Device device : list) {
-                            View inflate = LayoutInflater
+                            final View inflate = LayoutInflater
                                     .from(getActivity()).inflate(R.layout.item_find_device, null);
                             SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
                             swipeLayout.findViewById(R.id.checkbox).setVisibility(View.INVISIBLE);
@@ -268,6 +283,30 @@ public class Index2Fragment extends DelayBaseFragment {
                             deviceName.setText(device.getDeviceSN());
                             TextView mac = inflate.findViewById(R.id.tv_mac);
                             mac.setVisibility(View.GONE);
+
+                            deviceName.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    if (TextUtils.isEmpty(ModelSelectBean.t1)) {
+                                        RxToast.showToast("请选择模式");
+                                        return;
+                                    }
+                                    String ip  = "";
+                                    for (IP_MAC ipMac : mDeviceList) {
+                                        if (ipMac.mMac.equals(device.getDeviceSN())) {
+                                            ip = ipMac.mIp;
+                                        }
+                                    }
+                                    if (TextUtils.isEmpty(ip)) {
+                                        RxToast.showToast("设备未上线");
+                                        return;
+                                    }
+                                    ModelSelectBean.deviceId = device.getDeviceSN();
+                                    ModelSelectBean.ip =ip;
+                                    SelectConfigAct.startUI(getActivity());
+                                }
+                            });
                             llBindDevicesList.addView(inflate);
                         }
                     }
@@ -278,6 +317,48 @@ public class Index2Fragment extends DelayBaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    public void bindDeviceRequest(String mac) {
+        if (!MyApplication.getInstance().isLogin()) {
+            RxToast.showToast("请先登录");
+            return;
+        }
+        String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("deviceID", mac);
+        map.put("userID", userId);
+        String strEntity = HttpUtil.getRequestString(map);
+        RequestBody body = RequestBody
+                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+        AppService.createApi(MyApi.class).bind(body).subscribeOn(Schedulers.io()).observeOn(
+                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<BaseResponse>() {
+            @Override
+            public void onStart() {
+                super.onStart();
+                getBaseActivity().showLoadingDialog();
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                super.onError(error);
+                getBaseActivity().dismissLoadingDialog();
+            }
+
+            @Override
+            public void onCompleted() {
+                getBaseActivity().dismissLoadingDialog();
+            }
+
+            @Override
+            public void onNext(final BaseResponse response) {
+                if (response.isSuccess()) {
+                    RxToast.showToast("绑定成功");
+                } else {
+                    RxToast.error(response.result);
+                }
+            }
+        });
     }
 
 }

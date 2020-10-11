@@ -1,9 +1,10 @@
 package com.sky.lamp.ui.fragment;
 
+import com.sky.lamp.MainActivity;
+import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.ProductListAdapter;
 import com.sky.lamp.ui.DelayBaseFragment;
-import com.sky.lamp.ui.act.SelectConfigAct;
 import com.vondear.rxtools.view.RxToast;
 
 import android.os.Bundle;
@@ -57,7 +58,7 @@ public class IndexFragment extends DelayBaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ll_led:
-                SelectConfigAct.startUI(getActivity(),"LED");
+                goStep2("LED");
                 break;
             case R.id.ll_zaolang:
                 RxToast.showToast("该功能正在开发");
@@ -65,13 +66,22 @@ public class IndexFragment extends DelayBaseFragment {
                 RxToast.showToast("该功能正在开发");
                 break;
             case R.id.ll_lps:
-                SelectConfigAct.startUI(getActivity(),"LPS");
+                goStep2("LPS");
                 break;
             case R.id.ll_sps:
-                SelectConfigAct.startUI(getActivity(),"SPS");
+                goStep2("SPS");
                 break;
             case R.id.ll_lps_sps:
+                goStep2("LPS+SPS");
                 break;
         }
+    }
+
+    private void goStep2(String modelName) {
+        ModelSelectBean.t1 = modelName;
+        if (getBaseActivity() instanceof MainActivity) {
+            ((MainActivity) getBaseActivity()).tabSelect(1);
+        }
+        RxToast.showToast("请选择设备");
     }
 }

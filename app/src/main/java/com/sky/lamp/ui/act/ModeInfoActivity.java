@@ -8,6 +8,7 @@ import com.chenxi.tabview.widget.Tab;
 import com.chenxi.tabview.widget.TabContainerView;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.R;
+import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.event.DemoShowEvent;
 import com.sky.lamp.ui.fragment.DemoFragment;
 import com.sky.lamp.ui.fragment.ModelInfoSettingFragment;
@@ -30,15 +31,20 @@ public class ModeInfoActivity extends BaseActivity {
     @BindView(R.id.mainLayout)
     LinearLayout mainLayout;
     ModelInfoAdapter mainViewAdapter;
+    public CommandLightMode mCommandLightMode;
 
-    public void startUI(Context context,String modelName) {
-
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //TODO 还是用db读
+        CommandLightMode stickyEvent = EventBus.getDefault().getStickyEvent(CommandLightMode.class);
+        if (stickyEvent == null) {
+            finish();
+            return;
+        }
+        mCommandLightMode = stickyEvent;
         ButterKnife.bind(this);
         mainViewAdapter =
                 new ModelInfoAdapter(getSupportFragmentManager(),
@@ -59,7 +65,7 @@ public class ModeInfoActivity extends BaseActivity {
                         break;
                     case 1:
                         actionBar.setTitle("demo演示");
-                        EventBus.getDefault().post(new DemoShowEvent());
+                        EventBus.getDefault().post(mCommandLightMode);
                         break;
                 }
             }

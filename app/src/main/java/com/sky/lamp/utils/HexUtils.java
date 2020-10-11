@@ -60,7 +60,15 @@ public class HexUtils {
         return (byte) Integer.parseInt(inHex+"", 16);
     }
 
-
+    /**
+     * @param tenJInzhi 10进制转换成16进制的byte
+     *
+     * @return
+     */
+    public static byte tenToHexByte(int tenJInzhi) {
+        String hex = Integer.toHexString(tenJInzhi);
+        return (byte) Integer.parseInt(hex, 16);
+    }
 
     /**
      * hex字符串转byte数组

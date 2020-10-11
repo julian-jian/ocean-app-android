@@ -33,6 +33,7 @@
                     android:background="#FF9D01"
                     android:clickable="true"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:text="重命名"
                     android:textColor="@color/white" />
 
@@ -43,7 +44,7 @@
                     android:layout_weight="0.5"
                     android:background="#E50011"
                     android:gravity="center"
-                    android:text="解除绑定"
+                    android:text="绑定设备"
                     android:textColor="@color/white" />
         </LinearLayout>
 
@@ -87,11 +88,11 @@
 
             <android.support.v7.widget.AppCompatCheckBox
                     android:id="@+id/checkbox"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp" />
         </RelativeLayout>
 
     </com.daimajia.swipe.SwipeLayout>

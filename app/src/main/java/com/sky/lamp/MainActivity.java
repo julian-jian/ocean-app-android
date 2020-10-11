@@ -1,17 +1,11 @@
 package com.sky.lamp;
 
-import static com.sky.lamp.ui.fragment.ModelInfoSettingFragment.KEY_SP_MODEL;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import com.chenxi.tabview.adapter.MainViewAdapter;
 import com.chenxi.tabview.listener.OnTabSelectedListener;
@@ -19,22 +13,11 @@ import com.chenxi.tabview.widget.Tab;
 import com.chenxi.tabview.widget.TabContainerView;
 import com.event.NextStepEvent;
 import com.githang.statusbar.StatusBarCompat;
-import com.google.gson.Gson;
-import com.orhanobut.logger.Logger;
-import com.sky.lamp.bean.CommandLightMode;
-import com.sky.lamp.bean.LightItemMode;
-import com.sky.lamp.bean.LightModelCache;
-import com.sky.lamp.bean.ModelBean;
-import com.sky.lamp.dao.CommandLightModeDao;
-import com.sky.lamp.dao.DaoManager;
-import com.sky.lamp.dao.DaoMaster;
-import com.sky.lamp.dao.LightItemModeDao;
 import com.sky.lamp.event.LoginOutEvent;
+import com.sky.lamp.ui.act.LoginAct;
 import com.sky.lamp.ui.fragment.Index2Fragment;
 import com.sky.lamp.ui.fragment.Index3Fragment;
 import com.sky.lamp.ui.fragment.IndexFragment;
-import com.sky.lamp.ui.act.LoginAct;
-import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
 
@@ -43,9 +26,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -82,7 +63,6 @@ public class MainActivity extends BaseActivity {
         mainViewAdapter.setHasMsgIndex(3);
         tabContainer.setAdapter(mainViewAdapter);
         actionBar.getRootView().setVisibility(View.VISIBLE);
-        //        actionBar.initLeftImageView(this);
         actionBar.getTitleTextView().setText("ReeSun LED");
         tabContainer.setOnTabSelectedListener(new OnTabSelectedListener() {
             /**
@@ -190,21 +170,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
-
-    public void simumaData() {
-        LightModelCache lightModelCache = new LightModelCache();
-        lightModelCache.map = new HashMap<>();
-        ArrayList ledList = new ArrayList();
-        lightModelCache.map.put("LED", ledList);
-
-    }
-
-    @NonNull
-    private ModelBean addLpsData() {
-        ModelBean led = new ModelBean();
-        return led;
-    }
 
     public String getFromAssets(String fileName) throws IOException {
         InputStreamReader inputReader =

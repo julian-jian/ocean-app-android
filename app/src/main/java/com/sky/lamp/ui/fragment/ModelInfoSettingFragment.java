@@ -14,6 +14,7 @@ import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.bean.LightModelCache;
 import com.sky.lamp.event.DemoShowEvent;
+import com.sky.lamp.ui.act.ModeInfoActivity;
 import com.sky.lamp.view.LightModeChartHelper;
 import com.vondear.rxtools.RxImageTool;
 import com.vondear.rxtools.view.RxToast;
@@ -95,33 +96,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void readModelCache() {
-//        String jsonCache = RxSPUtilTool.readJSONCache(getActivity(), KEY_SP_MODEL);
-//        if (TextUtils.isEmpty(jsonCache)) {
-//            mLightModelCache = new LightModelCache();
-//        } else {
-//            mLightModelCache = new Gson().fromJson(jsonCache, LightModelCache.class);
-//        }
-////        mCommandLightMode = mLightModelCache.map.get(modelName);
-//        if (mCommandLightMode == null) {
-//            mCommandLightMode = new CommandLightMode();
-//            mCommandLightMode.mParameters = new ArrayList<LightItemMode>();
-//            ((ModeInfoActivity) getActivity()).refreshTitle("自定义");
-//        } else {
-//            ((ModeInfoActivity) getActivity()).refreshTitle(modelName);
-//        }
-//        LightItemMode lightItemMode = new LightItemMode();
-//        lightItemMode.setIndex(1);
-//        lightItemMode.setModeName("模式" + lightItemMode.getIndex());
-//        lightItemMode.setLight1Level(DEFAULT_PROGRESS);
-//        lightItemMode.setLight2Level(DEFAULT_PROGRESS);
-//        lightItemMode.setLight3Level(DEFAULT_PROGRESS);
-//        lightItemMode.setLight4Level(DEFAULT_PROGRESS);
-//        lightItemMode.setLight5Level(DEFAULT_PROGRESS);
-//        lightItemMode.setLight6Level(DEFAULT_PROGRESS);
-//        lightItemMode.setLight7Level(DEFAULT_PROGRESS);
-//        lightItemMode.setStartTime("00:00");
-//        lightItemMode.setStopTime("01:00");
-//        mCommandLightMode.mParameters.add(lightItemMode);
+        mCommandLightMode = ((ModeInfoActivity)getActivity()).mCommandLightMode;
     }
 
     private void initModel() {

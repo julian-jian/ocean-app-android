@@ -142,7 +142,7 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
 //                 TODO DEL
 //                                showLoadingDialog("正在搜索");
 //                                initWiFi();
-                bindDeviceRequest();
+//                bindDeviceRequest();
                 byte[] temp = new byte[] {
                         (byte) 0xaa, (byte) 0x01, (byte) 0x08, (byte) 0x00, (byte) 0x0C,
                         (byte) 0x00, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32,
@@ -212,6 +212,7 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     public void onEventMainThread(ConnectSuccessEvent event) {
         if (event.getConnectType() == Contants.CONNECT_SUCCESS_TYPE) {
             RxToast.showToast("建立连接成功");
+
         } else {
             RxToast.showToast("建立连接失败");
         }

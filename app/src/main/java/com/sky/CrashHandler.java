@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
+import android.util.Log;
 import me.jessyan.autosize.utils.LogUtils;
 
 import java.io.PrintWriter;
@@ -69,9 +70,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
             mDefaultHandler.uncaughtException(thread, ex);
         } else {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
-                LogUtils.e(e.toString());
+                Log.e("CrashHandler",e.toString());
             }
             //退出程序
             android.os.Process.killProcess(android.os.Process.myPid());

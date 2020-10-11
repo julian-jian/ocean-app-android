@@ -28,6 +28,7 @@ public class CommandLightModeDao extends AbstractDao<CommandLightMode, Long> {
         public final static Property MDeviceID = new Property(1, String.class, "mDeviceID", false, "M_DEVICE_ID");
         public final static Property MUserID = new Property(2, String.class, "mUserID", false, "M_USER_ID");
         public final static Property ModelName = new Property(3, String.class, "modelName", false, "MODEL_NAME");
+        public final static Property T1 = new Property(4, String.class, "t1", false, "T1");
     }
 
     private DaoSession daoSession;
@@ -49,7 +50,8 @@ public class CommandLightModeDao extends AbstractDao<CommandLightMode, Long> {
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"M_DEVICE_ID\" TEXT," + // 1: mDeviceID
                 "\"M_USER_ID\" TEXT," + // 2: mUserID
-                "\"MODEL_NAME\" TEXT);"); // 3: modelName
+                "\"MODEL_NAME\" TEXT," + // 3: modelName
+                "\"T1\" TEXT);"); // 4: t1
     }
 
     /** Drops the underlying database table. */
@@ -81,6 +83,11 @@ public class CommandLightModeDao extends AbstractDao<CommandLightMode, Long> {
         if (modelName != null) {
             stmt.bindString(4, modelName);
         }
+ 
+        String t1 = entity.getT1();
+        if (t1 != null) {
+            stmt.bindString(5, t1);
+        }
     }
 
     @Override
@@ -106,6 +113,11 @@ public class CommandLightModeDao extends AbstractDao<CommandLightMode, Long> {
         if (modelName != null) {
             stmt.bindString(4, modelName);
         }
+ 
+        String t1 = entity.getT1();
+        if (t1 != null) {
+            stmt.bindString(5, t1);
+        }
     }
 
     @Override
@@ -125,7 +137,8 @@ public class CommandLightModeDao extends AbstractDao<CommandLightMode, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // mDeviceID
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // mUserID
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // modelName
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // modelName
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // t1
         );
         return entity;
     }
@@ -136,6 +149,7 @@ public class CommandLightModeDao extends AbstractDao<CommandLightMode, Long> {
         entity.setMDeviceID(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setMUserID(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setModelName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setT1(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     @Override
