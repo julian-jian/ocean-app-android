@@ -32,7 +32,7 @@ public class ModeInfoActivity extends BaseActivity {
     LinearLayout mainLayout;
     ModelInfoAdapter mainViewAdapter;
     public CommandLightMode mCommandLightMode;
-
+    DemoFragment demoFragment = new DemoFragment();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +49,7 @@ public class ModeInfoActivity extends BaseActivity {
         mainViewAdapter =
                 new ModelInfoAdapter(getSupportFragmentManager(),
                         new Fragment[] {new ModelInfoSettingFragment()
-                                , new DemoFragment()});
+                                , demoFragment});
         tabContainer.setAdapter(mainViewAdapter);
         actionBar.getRootView().setVisibility(View.VISIBLE);
         actionBar.initLeftImageView(this);
@@ -66,6 +66,7 @@ public class ModeInfoActivity extends BaseActivity {
                     case 1:
                         actionBar.setTitle("demo演示");
                         EventBus.getDefault().post(mCommandLightMode);
+                        demoFragment.refreshData();
                         break;
                 }
             }

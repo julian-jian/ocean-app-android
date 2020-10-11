@@ -86,13 +86,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         initModel();
         tvStartTime.setClickable(false);
         tvStartTime.setEnabled(false);
-        EventBus.getDefault().register(this);
         return view;
-    }
-
-    @Subscribe
-    public void onDemoShow(DemoShowEvent event) {
-        EventBus.getDefault().post(mCommandLightMode);
     }
 
     private void readModelCache() {

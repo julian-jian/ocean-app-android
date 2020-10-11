@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import com.orhanobut.logger.Logger;
+import com.sky.lamp.BaseFragment;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
@@ -51,7 +52,7 @@ public class DemoFragment extends DelayBaseFragment implements SocketResponseLis
     private Handler mHandler = new Handler();
     Timer timer;
     SocketConfig socketConfig;
-
+    private boolean connectSuccess;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -64,6 +65,7 @@ public class DemoFragment extends DelayBaseFragment implements SocketResponseLis
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ConnectSuccessEvent event) {
+        getBaseActivity().dismissLoadingDialog();
         if (event.getConnectType() == Contants.CONNECT_SUCCESS_TYPE) {
             RxToast.showToast("建立连接成功");
             final byte[] temp = new byte[] {
@@ -90,20 +92,25 @@ public class DemoFragment extends DelayBaseFragment implements SocketResponseLis
         }
     }
 
-    @Override
-    protected void showDelayData() {
+    public void refreshData() {
         commandLightMode = ((ModeInfoActivity) getBaseActivity()).mCommandLightMode;
         socketConfig = new SocketConfig.Builder(getActivity().getApplicationContext())
                 .setIp(ModelSelectBean.ip)//ip
                 .setPort(61818)//端口
                 .setReadBufferSize(1024)//readBuffer
                 .setIdleTimeOut(30)//客户端空闲时间,客户端在超过此时间内不向服务器发送数据,则视为idle状态,则进入心跳状态
-                .setTimeOutCheckInterval(10)//客户端连接超时时间,超过此时间则视为连接超时
+                .setTimeOutCheckInterval(60*10)//客户端连接超时时间,超过此时间则视为连接超时
                 .setRequestInterval(10)//请求超时间隔时间
                 //                .setHeartbeatRequest("(1,1)\r\n")//与服务端约定的发送过去的心跳包
                 //                .setHeartbeatResponse("(10,10)\r\n") //与服务端约定的接收到的心跳包
                 .builder();
         ContentServiceHelper.bindService(getActivity(), socketConfig);
+        getBaseActivity().showLoadingDialog("正在建立连接...");
+    }
+
+    @Override
+    protected void showDelayData() {
+
     }
 
     @Override
