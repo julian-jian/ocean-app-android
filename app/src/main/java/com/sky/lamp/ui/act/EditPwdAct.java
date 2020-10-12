@@ -36,12 +36,8 @@ public class EditPwdAct extends BaseActivity {
     EditText etOldPwd;
     @BindView(R.id.et_pwd)
     EditText etPwd;
-    @BindView(R.id.iv_pwd_show)
-    ImageView ivPwdShow;
     @BindView(R.id.et_confirm)
     EditText etConfirm;
-    @BindView(R.id.iv_pwd_confirm_show)
-    ImageView ivPwdConfirmShow;
     @BindView(R.id.btn_edit_pwd)
     Button btnEditPwd;
 
@@ -54,11 +50,9 @@ public class EditPwdAct extends BaseActivity {
         actionBar.setTitle("修改密码");
     }
 
-    @OnClick({R.id.iv_pwd_show, R.id.btn_edit_pwd})
+    @OnClick({R.id.btn_edit_pwd})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.iv_pwd_show:
-                break;
             case R.id.btn_edit_pwd:
                 checkAndSubmit();
                 break;

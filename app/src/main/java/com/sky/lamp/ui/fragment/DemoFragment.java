@@ -52,7 +52,6 @@ public class DemoFragment extends DelayBaseFragment implements SocketResponseLis
     private Handler mHandler = new Handler();
     Timer timer;
     SocketConfig socketConfig;
-    private boolean connectSuccess;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,

@@ -43,8 +43,6 @@ public class LoginAct extends BaseActivity {
     EditText etEmail;
     @BindView(R.id.et_pwd)
     EditText etPwd;
-    @BindView(R.id.iv_pwd_show)
-    ImageView ivPwdShow;
     @BindView(R.id.btn_login)
     Button btnLogin;
     @BindView(R.id.tv_reg)
@@ -77,11 +75,9 @@ public class LoginAct extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.iv_pwd_show, R.id.btn_login, R.id.tv_reg, R.id.tv_forgetPwd})
+    @OnClick({R.id.btn_login, R.id.tv_reg, R.id.tv_forgetPwd})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.iv_pwd_show:
-                break;
             case R.id.btn_login:
                 loginClick();
                 break;

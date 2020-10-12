@@ -47,7 +47,7 @@ public class PasswordToggleEditText extends EditText implements
         //获取EditText的DrawableRight,主要是通过xml或者外部设置右边的按钮，如果没有设置就采用默认的
         mToggleDrawable = getCompoundDrawables()[2];
         if (mToggleDrawable == null) {
-            mToggleDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_eye);
+            mToggleDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_close_eye);
         }
         mToggleDrawable.setBounds(0, 0, mToggleDrawable.getIntrinsicWidth(), mToggleDrawable.getIntrinsicHeight());
         setToggleIconVisible(false);
