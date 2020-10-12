@@ -42,6 +42,7 @@ public class MyApplication extends Application {
         RxTool.init(this);
         initImageLoader(this);
         DaoManager.getInstance().init(this);
+        SocketManager.getInstance();
         new CrashHandler().init(this);
     }
 

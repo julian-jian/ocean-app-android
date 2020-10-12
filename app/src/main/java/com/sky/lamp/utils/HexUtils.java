@@ -1,5 +1,7 @@
 package com.sky.lamp.utils;
 
+import java.util.Arrays;
+
 /**
  * 16进制字符串 与 byte数组 相互转换工具类
  */
@@ -159,6 +161,21 @@ public class HexUtils {
             hexa = "0" + hexa;
         }
         return hexa;
+    }
+
+    /**
+     * 校验码
+     * @param temp
+     *
+     * @return
+     */
+    public static byte getVerifyCode(byte[] temp) {
+        byte[] verfi = Arrays.copyOf(temp, 14);
+        String s1 = HexUtils.bytes2Hex(verfi);
+        String s2 = HexUtils.makeChecksum(s1);
+        String s3 = s2.substring(s2.length() - 2, s2.length());
+        byte s4 = HexUtils.hexToByte(s3);
+        return s4;
     }
 
 }

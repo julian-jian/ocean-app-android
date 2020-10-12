@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanManager;
 import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanResult;
 import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
+import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
 import com.sky.lamp.bean.ModelBean;
@@ -86,12 +87,13 @@ public class Index2Fragment extends DelayBaseFragment {
         llSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity) getActivity()).showLoadingDialog("正在搜索");
+                ((BaseActivity) getActivity()).showLoadingDialog("正在搜索局域网设备");
                 startFindDevices();
             }
         });
         deviceScanManager = new DeviceScanManager();
         startFindDevices();
+        queryBindDevice();
         return view;
     }
 
@@ -224,7 +226,11 @@ public class Index2Fragment extends DelayBaseFragment {
 
     public void queryBindDevice() {
         String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
-        HashMap<String, Object> map = new HashMap<>();
+        if (TextUtils.isEmpty(userId)) {
+            Logger.d("not login");
+            return;
+        }
+        final HashMap<String, Object> map = new HashMap<>();
         map.put("userID", userId);
         String strEntity = HttpUtil.getRequestString(map);
         RequestBody body = RequestBody
@@ -278,9 +284,15 @@ public class Index2Fragment extends DelayBaseFragment {
                                             unbindDevice(device.getDeviceSN());
                                         }
                                     });
+                            ((TextView)swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
                             // 禁用左划
                             TextView deviceName = inflate.findViewById(R.id.tv_name);
-                            deviceName.setText(device.getDeviceSN());
+                            IP_MAC tmp = new IP_MAC("",device.getDeviceSN());
+                            if (mDeviceList.contains(tmp)) {
+                                deviceName.setText(device.getDeviceSN() + "(在线)");
+                            } else {
+                                deviceName.setText(device.getDeviceSN());
+                            }
                             TextView mac = inflate.findViewById(R.id.tv_mac);
                             mac.setVisibility(View.GONE);
 
@@ -303,7 +315,7 @@ public class Index2Fragment extends DelayBaseFragment {
                                         return;
                                     }
                                     ModelSelectBean.deviceId = device.getDeviceSN();
-                                    ModelSelectBean.ip =ip;
+                                    ModelSelectBean.ip = ip;
                                     SelectConfigAct.startUI(getActivity());
                                 }
                             });
@@ -354,6 +366,7 @@ public class Index2Fragment extends DelayBaseFragment {
             public void onNext(final BaseResponse response) {
                 if (response.isSuccess()) {
                     RxToast.showToast("绑定成功");
+                    queryBindDevice();
                 } else {
                     RxToast.error(response.result);
                 }

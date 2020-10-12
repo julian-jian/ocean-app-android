@@ -104,7 +104,7 @@ public class ConnectionManager {
                 } catch (Exception e) {
                     count++;
                     LogUtil.e("connnectToServer中,Socket连接失败,每3秒连接一次!");
-                    if (count == 10) {
+                    if (count == 7) {
                         Bus.post(new ConnectClosedEvent(closeType));
                         Bus.post(new ConnectFailEvent());
                     }

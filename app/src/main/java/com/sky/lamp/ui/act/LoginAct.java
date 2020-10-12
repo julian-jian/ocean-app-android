@@ -86,6 +86,7 @@ public class LoginAct extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.tv_forgetPwd:
+                finish();
                 break;
         }
     }

@@ -1,5 +1,6 @@
 package com.sky.lamp.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.greenrobot.greendao.DaoException;

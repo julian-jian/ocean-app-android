@@ -84,8 +84,8 @@
                     android:layout_marginRight="14.5dp"
                     android:orientation="horizontal">
 
-
                 <Button
+                        android:id="@+id/btn_add_config"
                         style="@style/Btn"
                         android:layout_marginLeft="0dp"
                         android:layout_marginRight="0dp"
@@ -94,6 +94,7 @@
                         android:text="添加配置" />
 
                 <Button
+                        android:id="@+id/btn_reset"
                         style="@style/Btn"
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="0dp"

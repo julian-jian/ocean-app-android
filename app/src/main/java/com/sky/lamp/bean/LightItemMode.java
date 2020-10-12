@@ -6,7 +6,7 @@ import org.greenrobot.greendao.annotation.Id;
 
 @Entity
 public class LightItemMode  {
-    @Id
+    @Id(autoincrement = true)
     private Long id;
     public int index;
     public int light1Level = 50;
@@ -120,4 +120,21 @@ public class LightItemMode  {
     public void setParent_id(long parent_id) {
         this.parent_id = parent_id;
     }
+
+    public int getStartHour() {
+        return Integer.parseInt(startTime.split(":")[0]);
+    }
+
+    public int getStartMinute() {
+        return Integer.parseInt(startTime.split(":")[1]);
+    }
+
+    public int getStopHour() {
+        return Integer.parseInt(stopTime.split(":")[0]);
+    }
+
+    public int getStopMinute() {
+        return Integer.parseInt(stopTime.split(":")[1]);
+    }
+
 }

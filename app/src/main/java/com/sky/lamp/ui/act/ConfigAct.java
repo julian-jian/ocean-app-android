@@ -22,6 +22,7 @@ import com.guo.duoduo.wifidetective.util.NetworkUtil;
 import com.guo.duoduo.wifidetective.util.ToastUtils;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
+import com.sky.lamp.BuildConfig;
 import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
@@ -116,39 +117,24 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
         showLoadingDialog("正在搜索");
         initWiFi();
         bindServerSocket();
-
-        etWifiName.setText("HQRZ");
-        etWifiPwd.setText("hqrz123456");
+        if (BuildConfig.DEBUG) {
+            etWifiName.setText("HQRZ");
+            etWifiPwd.setText("hqrz123456");
+        }
     }
 
     private void bindServerSocket() {
-        SocketConfig socketConfig = new SocketConfig.Builder(getApplicationContext())
-                .setIp(ipMac.mIp)//ip
-                .setPort(61818)//端口
-                .setReadBufferSize(1024)//readBuffer
-                .setIdleTimeOut(30)//客户端空闲时间,客户端在超过此时间内不向服务器发送数据,则视为idle状态,则进入心跳状态
-                .setTimeOutCheckInterval(10)//客户端连接超时时间,超过此时间则视为连接超时
-                .setRequestInterval(10)//请求超时间隔时间
-                //                .setHeartbeatRequest("(1,1)\r\n")//与服务端约定的发送过去的心跳包
-                //                .setHeartbeatResponse("(10,10)\r\n") //与服务端约定的接收到的心跳包
-                .builder();
+        SocketConfig socketConfig = ContentServiceHelper.getConfig(getApplicationContext(),ipMac.mIp);
         ContentServiceHelper.bindService(this, socketConfig);
+        showLoadingDialog("正在连接..");
     }
 
     @OnClick({R.id.btn_search, R.id.btn_send_pwd})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_search:
-//                 TODO DEL
-//                                showLoadingDialog("正在搜索");
-//                                initWiFi();
-//                bindDeviceRequest();
-                byte[] temp = new byte[] {
-                        (byte) 0xaa, (byte) 0x01, (byte) 0x08, (byte) 0x00, (byte) 0x0C,
-                        (byte) 0x00, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32,
-                        (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x4F,
-                        (byte) 0x55};
-                ContentServiceHelper.sendClientMsg(temp);
+                showLoadingDialog("正在搜索wifi");
+                initWiFi();
                 break;
             case R.id.btn_send_pwd:
                 if (TextUtils.isEmpty(etWifiPwd.getText().toString()) || TextUtils
@@ -212,10 +198,10 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     public void onEventMainThread(ConnectSuccessEvent event) {
         if (event.getConnectType() == Contants.CONNECT_SUCCESS_TYPE) {
             RxToast.showToast("建立连接成功");
-
         } else {
             RxToast.showToast("建立连接失败");
         }
+        dismissLoadingDialog();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

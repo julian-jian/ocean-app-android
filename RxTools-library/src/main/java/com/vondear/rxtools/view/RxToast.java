@@ -9,6 +9,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
@@ -331,12 +333,8 @@ public class RxToast {
      *
      * @param msg 显示内容
      */
-    public static void showToast(String msg) {
-//        if (mToast == null) {
-            mToast = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
-//        } else {
-//            mToast.setText(msg);
-//        }
+    public static void showToast(final String msg) {
+        mToast = Toast.makeText(getContext(), msg, Toast.LENGTH_LONG);
         mToast.show();
     }
 

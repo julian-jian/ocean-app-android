@@ -82,6 +82,6 @@ public class IndexFragment extends DelayBaseFragment {
         if (getBaseActivity() instanceof MainActivity) {
             ((MainActivity) getBaseActivity()).tabSelect(1);
         }
-        RxToast.showToast("请选择设备");
+        RxToast.showToast("请选择绑定的设备");
     }
 }

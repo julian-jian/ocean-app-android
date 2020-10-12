@@ -38,6 +38,7 @@ public class PasswordToggleEditText extends EditText implements
     public PasswordToggleEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
+        setTransformationMethod(PasswordTransformationMethod.getInstance());
     }
 
     /**
@@ -99,7 +100,7 @@ public class PasswordToggleEditText extends EditText implements
         if (hasFocus) {
             setToggleIconVisible(getText().length() > 0);
         } else {
-            setToggleIconVisible(false);
+//            setToggleIconVisible(false);
 //            setShakeAnimation();
         }
     }

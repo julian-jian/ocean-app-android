@@ -35,12 +35,8 @@ public class RegActivity extends BaseActivity {
     EditText etEmail;
     @BindView(R.id.et_pwd)
     EditText etPwd;
-    @BindView(R.id.iv_pwd_show)
-    ImageView ivPwdShow;
     @BindView(R.id.et_confirm)
     EditText etConfirm;
-    @BindView(R.id.iv_pwd_confirm_show)
-    ImageView ivPwdConfirmShow;
     @BindView(R.id.btn_Reg)
     Button btnReg;
 
@@ -54,13 +50,9 @@ public class RegActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.iv_pwd_show, R.id.iv_pwd_confirm_show, R.id.btn_Reg})
+    @OnClick({R.id.btn_Reg})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.iv_pwd_show:
-                break;
-            case R.id.iv_pwd_confirm_show:
-                break;
             case R.id.btn_Reg:
                 checkAndSubmit();
                 break;

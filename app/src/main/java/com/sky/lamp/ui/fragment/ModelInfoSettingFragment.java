@@ -1,20 +1,23 @@
 package com.sky.lamp.ui.fragment;
 
+import static com.sky.lamp.utils.HexUtils.tenToHexByte;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
+import com.orhanobut.logger.Logger;
+import com.sky.lamp.BaseActivity;
 import com.sky.lamp.BaseFragment;
 import com.sky.lamp.R;
+import com.sky.lamp.SocketManager;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
-import com.sky.lamp.bean.LightModelCache;
-import com.sky.lamp.event.DemoShowEvent;
+import com.sky.lamp.dao.DaoManager;
+import com.sky.lamp.dao.LightItemModeDao;
 import com.sky.lamp.ui.act.ModeInfoActivity;
+import com.sky.lamp.utils.HexUtils;
 import com.sky.lamp.view.LightModeChartHelper;
 import com.vondear.rxtools.RxImageTool;
 import com.vondear.rxtools.view.RxToast;
@@ -36,6 +39,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import app.socketlib.com.library.ContentServiceHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -62,16 +66,12 @@ public class ModelInfoSettingFragment extends BaseFragment {
     ImageView btnSave;
     @BindView(R.id.btn_send)
     Button btnSend;
-    // 如果为空的，就是new
-    private String modelName;
-    public static final String KEY_SP_MODEL = "models";
     public static final float DEFAULT_BACKOFF_MULT = 1.0f;
     public static final int DEFAULT_PROGRESS = 50;
 
     private LightModeChartHelper mChartHelper;
-    private LightModelCache mLightModelCache;
     private CommandLightMode mCommandLightMode;
-    private LightItemMode mCurrentItemModel;
+    private int mIndex;
 
     @Nullable
     @Override
@@ -79,7 +79,6 @@ public class ModelInfoSettingFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frament_modelinfo, null);
         unbinder = ButterKnife.bind(this, view);
-        modelName = getActivity().getIntent().getStringExtra("model_name");
         this.mChartHelper = new LightModeChartHelper(lineChart, this.getActivity());
         readModelCache();
         initSeekbar();
@@ -90,16 +89,15 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void readModelCache() {
-        mCommandLightMode = ((ModeInfoActivity)getActivity()).mCommandLightMode;
+        mCommandLightMode = ((ModeInfoActivity) getActivity()).mCommandLightMode;
+        List<LightItemMode> mParameters = mCommandLightMode.getMParameters();
+        System.out.println("ModelInfoSettingFragment.readModelCache");
     }
 
     private void initModel() {
-        mCurrentItemModel =
-                mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
-        refreshModeItems();
         tvStartTime.setText(mCommandLightMode.mParameters.get(0).getStartTime());
         tvEndTime.setText(mCommandLightMode.mParameters.get(0).getStopTime());
-        ((RadioButton) radioGroup.findViewWithTag("rb0")).setChecked(true);
+        refreshModeItems();
     }
 
     private void refreshModeItems() {
@@ -108,7 +106,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
             LightItemMode lightItemMode = mCommandLightMode.mParameters.get(index);
             final RadioButton radioButton = new RadioButton(getActivity());
             radioButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
-            radioButton.setText(lightItemMode.getModeName());
+            radioButton.setText("模式" + (lightItemMode.getIndex() + 1));
             radioButton.setPadding(0, 5, 0, 5);
             radioButton.setGravity(17);
             radioButton.setTag("rb" + index);
@@ -122,15 +120,13 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
                         radioButton.setTextColor(getResources().getColor(R.color.white));
-                        saveCurrentModel();
-                        LightItemMode selectItemModel =
-                                mCommandLightMode.mParameters.get(finalIndex);
-                        mCurrentItemModel = selectItemModel;
-                        refreshProgress();
+                        mIndex = finalIndex;
+                        initSeekbar();
                         refreshTime();
                         refreshChart();
-                        refreshTime();
+                        System.out.println("ModelInfoSettingFragment.onCheckedChanged "+mIndex);
                     } else {
+                        System.out.println("ModelInfoSettingFragment.onCheckedChanged "+isChecked);
                         radioButton.setTextColor(getResources().getColor(R.color.text_black));
                     }
                 }
@@ -141,12 +137,16 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     (LinearLayout.LayoutParams) radioButton.getLayoutParams();
             layoutParams.setMargins(10, 0, 10, 0);
             radioButton.setLayoutParams(layoutParams);
+            // 最后一项选中
+            if (index == mCommandLightMode.mParameters.size() - 1) {
+                radioButton.setChecked(true);
+            }
         }
     }
 
     private void refreshTime() {
-        tvStartTime.setText(mCurrentItemModel.getStartTime());
-        tvEndTime.setText(mCurrentItemModel.getStopTime());
+        tvStartTime.setText(mCommandLightMode.getMParameters().get(mIndex).getStartTime());
+        tvEndTime.setText(mCommandLightMode.getMParameters().get(mIndex).getStopTime());
     }
 
     private int getSeekbarLayoutId(int index) {
@@ -176,13 +176,15 @@ public class ModelInfoSettingFragment extends BaseFragment {
         }
         return id;
     }
+
     private void initSeekbar() {
+        llSeekbar.removeAllViews();
         for (int index = 0; index < 7; index++) {
             View inflate =
                     LayoutInflater.from(getActivity()).inflate(R.layout.item_seekbar, null);
             View inflate1 =
                     LayoutInflater.from(getActivity()).inflate(getSeekbarLayoutId(index), null);
-            ((ViewGroup)inflate.findViewById(R.id.fl_sub_seebar)).addView(inflate1);
+            ((ViewGroup) inflate.findViewById(R.id.fl_sub_seebar)).addView(inflate1);
             TextView leftTv;
             final TextView percentTv;
             final SeekBar seekbar;
@@ -209,13 +211,15 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     seekbar.setProgress(Math.min(progress, 100));
                 }
             });
-            seekbar.setProgress(getProgress(index, 0));
+            seekbar.setProgress(getProgress(index, mIndex));
+            percentTv.setText(seekbar.getProgress() + "%");
             final int finalI = index;
             seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     percentTv.setText(progress + "%");
                     refreshChart();
+                    saveCurrentModel();
                 }
 
                 @Override
@@ -332,10 +336,11 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     if (error) {
                         RxToast.showToast("时间设置错误");
                         return;
+                    } else {
+                        mCommandLightMode.getMParameters().get(mIndex).setStopTime(setStopTime);
+                        ((TextView) getView().findViewById(id)).setText(hour + ":" + minute);
                     }
                 }
-
-                ((TextView) getView().findViewById(id)).setText(hour + ":" + minute);
             }
         });
         picker.show();
@@ -345,11 +350,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
         if (radioGroup.getCheckedRadioButtonId() == -1) {
             return;
         }
-        RadioButton selectBt = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
-        String tag = (String) selectBt.getTag();
-        int index = Integer.valueOf(tag.replace("rb", "").toString());
-
-        LightItemMode lightItemMode = mCommandLightMode.mParameters.get(index);
+        System.out.println("ModelInfoSettingFragment.saveCurrentModel");
+        LightItemMode lightItemMode = mCommandLightMode.getMParameters().get(mIndex);
         lightItemMode.setStartTime(tvStartTime.getText().toString());
         lightItemMode.setStopTime(tvEndTime.getText().toString());
         lightItemMode.setLight1Level(getProgress(0));
@@ -369,16 +371,27 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 delItemModel();
                 break;
             case R.id.btn_add:
+                if (mCommandLightMode.mParameters.size() >= 7) {
+                    RxToast.showToast("模式个数已是最大");
+                    return;
+                }
                 saveCurrentModel();
                 addNewItemModel();
                 break;
             case R.id.btn_save:
+                saveCurrentModel();
                 saveClick();
                 break;
             case R.id.btn_send:
+                if (!SocketManager.getInstance().isConnect()) {
+                    RxToast.showToast("未建立连接成功，请先确认连接成功");
+
+                } else {
+                    btnSend.setEnabled(false);
+                    sendAllModeCommand();
+                }
                 break;
-            case R.id.tv_startTime:
-                //                onTimePicker(R.id.tv_startTime);
+            case R.id.tv_startTime: // 不允许设置开始时间
                 break;
             case R.id.tv_endTime:
                 onTimePicker(R.id.tv_endTime);
@@ -386,36 +399,181 @@ public class ModelInfoSettingFragment extends BaseFragment {
         }
     }
 
+    private void sendAllModeCommand() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                saveCurrentModel();
+                saveClick();
+                showSendCommandLoading();
+                for (int i = 0; i < 7; i++) {
+                    if (i > mCommandLightMode.mParameters.size() - 1) {
+                        sendEmptyMode(i);
+                    } else {
+                        sendUserModel(i);
+                    }
+                }
+                dismissLoading();
+            }
+        }).start();
+    }
+
+    private void dismissLoading() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((BaseActivity) ModelInfoSettingFragment.this.getActivity())
+                        .dismissLoadingDialog();
+            }
+        });
+    }
+
+    private void showSendCommandLoading() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((BaseActivity) ModelInfoSettingFragment.this.getActivity())
+                        .showLoadingDialog("发送中...");
+            }
+        });
+    }
+
+    private void sendEmptyMode(int i) {
+        LightItemMode lightItemMode = new LightItemMode();
+        lightItemMode.startTime = "00:00";
+        lightItemMode.stopTime = "00:00";
+        lightItemMode.setLight1Level(0);
+        lightItemMode.setLight2Level(0);
+        lightItemMode.setLight3Level(0);
+        lightItemMode.setLight4Level(0);
+        lightItemMode.setLight5Level(0);
+        lightItemMode.setLight6Level(0);
+        lightItemMode.setLight7Level(0);
+        sendCommand(i, lightItemMode);
+        if (i == 6) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    RxToast.showToast("设置完毕");
+                    btnSend.setEnabled(true);
+                }
+            });
+        } else {
+            final int finalI1 = i;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    RxToast.showToast("模式" + (finalI1 + 1) + "发送成功");
+                }
+            });
+        }
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendUserModel(int i) {
+        LightItemMode lightItemMode =
+                mCommandLightMode.mParameters.get(i);
+        sendCommand(i, lightItemMode);
+        final int finalI = i;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RxToast.showToast("模式" + (finalI + 1) + "发送成功");
+            }
+        });
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendCommand(int index, LightItemMode lightItemMode) {
+        byte[] temp = new byte[] {
+                (byte) 0xaa, (byte) 0x0a, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00,
+                (byte) 0x55};
+        temp[1] = tenToHexByte(index + 1);
+        temp[2] = tenToHexByte(lightItemMode.getStartHour());
+        temp[3] = tenToHexByte(lightItemMode.getStartMinute());
+        temp[4] = tenToHexByte(lightItemMode.getStopHour());
+        temp[5] = tenToHexByte(lightItemMode.getStopMinute());
+        temp[6] = tenToHexByte(lightItemMode.getLight1Level());
+        temp[7] = tenToHexByte(lightItemMode.getLight2Level());
+        temp[8] = tenToHexByte(lightItemMode.getLight3Level());
+        temp[9] = tenToHexByte(lightItemMode.getLight4Level());
+        temp[10] = tenToHexByte(lightItemMode.getLight5Level());
+        temp[11] = tenToHexByte(lightItemMode.getLight6Level());
+        temp[12] = tenToHexByte(lightItemMode.getLight7Level());
+        temp[13] = tenToHexByte(0);
+        temp[14] = HexUtils.getVerifyCode(temp);
+        Logger.d("sendCommand success index = " + index + " " + HexUtils
+                .bytes2Hex(temp));
+        ContentServiceHelper.sendClientMsg(temp);
+    }
+
     private void delItemModel() {
         if (mCommandLightMode.mParameters.size() < 2) {
             return;
         }
         mCommandLightMode.mParameters.remove(mCommandLightMode.mParameters.size() - 1);
-        mCurrentItemModel =
-                mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
         refreshModeItems();
         refreshProgress();
         refreshTime();
     }
 
     private void saveClick() {
-//        if (TextUtils.isEmpty(mCommandLightMode.modelName)) {
-//            for (int index = 1; ; index++) {
-//                CommandLightMode commandLightMode = mLightModelCache.map.get("自定义" + index);
-//                if (commandLightMode == null) {
-//                    mCommandLightMode.modelName = "自定义" + index;
-//                    break;
-//                }
-//            }
-//        }
-//        mLightModelCache.map.put(mCommandLightMode.modelName, mCommandLightMode);
-//        RxSPUtilTool.putJSONCache(getActivity(), KEY_SP_MODEL, new Gson().toJson(mLightModelCache));
-//        RxToast.showToast("保存成功");
+        if (mCommandLightMode.getId() == 0) {
+            DaoManager.getInstance().getDaoSession().getCommandLightModeDao()
+                    .insert(mCommandLightMode);
+        } else {
+            DaoManager.getInstance().getDaoSession().getCommandLightModeDao()
+                    .update(mCommandLightMode);
+        }
+        if (mCommandLightMode.getId() == null) {
+            DaoManager.getInstance().getDaoSession().getCommandLightModeDao()
+                    .insert(mCommandLightMode);
+        }
+        List<LightItemMode> parameters = mCommandLightMode.mParameters == null ?
+                new ArrayList<LightItemMode>() : mCommandLightMode.mParameters;
+        LightItemModeDao targetDao = DaoManager.getInstance().getDaoSession().getLightItemModeDao();
+        List<LightItemMode> mParametersNew = targetDao
+                ._queryCommandLightMode_MParameters(mCommandLightMode.id);
+        // 删除老数据先
+        DaoManager.getInstance().getDaoSession().getLightItemModeDao().deleteInTx(mParametersNew);
+        mCommandLightMode.mParameters = parameters;
+        // 保存新数据
+        for (LightItemMode lightItemMode : mCommandLightMode.mParameters) {
+            lightItemMode.setId(null);
+            lightItemMode.setParent_id(mCommandLightMode.getId());
+            DaoManager.getInstance().getDaoSession().getLightItemModeDao().insert(lightItemMode);
+        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RxToast.showToast("保存成功");
+            }
+        });
+
     }
 
     private void addNewItemModel() {
-        LightItemMode lastItemModel =
-                mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
+        LightItemMode lastItemModel;
+        if (mCommandLightMode.mParameters.size() == 0) {
+            lastItemModel = new LightItemMode();
+            lastItemModel.setStopTime("00:00");
+        } else {
+            lastItemModel =
+                    mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
+        }
         LightItemMode lightItemMode = new LightItemMode();
         lightItemMode.setIndex(lastItemModel.getIndex() + 1);
         lightItemMode.setModeName("模式" + lightItemMode.getIndex());
@@ -427,15 +585,11 @@ public class ModelInfoSettingFragment extends BaseFragment {
         lightItemMode.setLight6Level(DEFAULT_PROGRESS);
         lightItemMode.setLight7Level(DEFAULT_PROGRESS);
         lightItemMode.setStartTime(lastItemModel.getStopTime());
-        lightItemMode.setStopTime("00:00");
-        mCurrentItemModel = lastItemModel;
+        lightItemMode.setStopTime("23:59");
         refreshProgress();
         mCommandLightMode.mParameters.add(lightItemMode);
         refreshModeItems();
-        ((RadioButton) radioGroup.findViewWithTag("rb" + (mCommandLightMode.mParameters.size() - 1)))
-                .setChecked(true);
     }
-
 
     private void refreshProgress() {
         for (int index = 0; index < 7; index++) {
@@ -443,25 +597,25 @@ public class ModelInfoSettingFragment extends BaseFragment {
             SeekBar progressBar = (SeekBar) llSeekbar.findViewWithTag("index" + (index));
             switch (index) {
                 case 0:
-                    progressBar.setProgress(mCurrentItemModel.getLight1Level());
+                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight1Level());
                     break;
                 case 1:
-                    progressBar.setProgress(mCurrentItemModel.getLight2Level());
+                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight2Level());
                     break;
                 case 2:
-                    progressBar.setProgress(mCurrentItemModel.getLight3Level());
+                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight3Level());
                     break;
                 case 3:
-                    progressBar.setProgress(mCurrentItemModel.getLight4Level());
+                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight4Level());
                     break;
                 case 4:
-                    progressBar.setProgress(mCurrentItemModel.getLight5Level());
+                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight5Level());
                     break;
                 case 5:
-                    progressBar.setProgress(mCurrentItemModel.getLight6Level());
+                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight6Level());
                     break;
                 case 6:
-                    progressBar.setProgress(mCurrentItemModel.getLight7Level());
+                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight7Level());
                     break;
             }
         }

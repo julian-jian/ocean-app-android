@@ -20,7 +20,7 @@
 
         <LinearLayout
                 android:id="@+id/bottom_wrapper"
-                android:layout_width="160dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:tag="Bottom1"
                 android:weightSum="1">
