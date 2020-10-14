@@ -66,7 +66,7 @@ android {
     applicationVariants.all { variant ->
         if (variant.buildType.name == 'release') {
             variant.outputs.all {
-                def apkName = "power_${variant.versionCode}"
+                def apkName = "lamp_${variant.versionCode}"
                 def num = 1
                 if (!variant.flavorName.isEmpty()) {
                     apkName += "_${variant.flavorName}"

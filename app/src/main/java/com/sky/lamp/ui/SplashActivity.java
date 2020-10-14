@@ -18,21 +18,8 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        if (BuildConfig.DEBUG) {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
-            finish();
-            return;
-        }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!TextUtils.isEmpty(RxSPUtilTool.getString(SplashActivity.this, "name"))) {//已登录
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                    finish();
-                } else {
-                    RxActivityTool.skipActivity(SplashActivity.this, LoginAcitivty.class);
-                }
-            }
-        }, 2000);
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        finish();
+        return;
     }
 }
