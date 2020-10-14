@@ -282,21 +282,8 @@ public class NetworkUtil {
     public static boolean isPingOk(String ip) {
         Log.d(tag, "ping ip = " + ip);
         try {
-            Process p = Runtime.getRuntime()
-                               .exec("/system/bin/ping -c 10 -w 4 " + ip);
-            if (p == null) {
-                return false;
-            }
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(p.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.contains("bytes from")) {
-                    Log.d(tag, "ping read line = " + line);
-                    return true;
-                }
-            }
+            InetAddress server = InetAddress.getByName(ip);
+            return server.isReachable(5000);
         } catch (IOException e) {
             e.printStackTrace();
         }

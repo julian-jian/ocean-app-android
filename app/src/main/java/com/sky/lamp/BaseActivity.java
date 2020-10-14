@@ -32,6 +32,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showLoadingDialog(String text){
+        dismissLoadingDialog();
         if (rxDialogLoading == null) {
             rxDialogLoading = new RxDialogLoading(this);
             if (!TextUtils.isEmpty(text)) {
