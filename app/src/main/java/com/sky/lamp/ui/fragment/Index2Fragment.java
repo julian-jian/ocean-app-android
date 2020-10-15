@@ -146,6 +146,7 @@ public class Index2Fragment extends DelayBaseFragment {
                                 addDeviceView(ipMac);
                             }
                         }
+                        queryBindDevice();
                     }
                 });
             }
@@ -319,7 +320,8 @@ public class Index2Fragment extends DelayBaseFragment {
                                     }
                                     String ip  = "";
                                     for (IP_MAC ipMac : mDeviceList) {
-                                        if (ipMac.mMac.equals(device.getDeviceSN())) {
+                                        if (ipMac.mMac.toLowerCase()
+                                                .equals(device.getDeviceSN().toLowerCase())) {
                                             ip = ipMac.mIp;
                                         }
                                     }

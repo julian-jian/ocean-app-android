@@ -61,4 +61,7 @@ public interface MyApi {
 
     @POST("/api/device/unBind")
     Observable<BaseResponse> unBind(@Body RequestBody body);
+
+    @POST("/api/login/findPWD")
+    Observable<BaseResponse> findPwd(@Body RequestBody body);
 }

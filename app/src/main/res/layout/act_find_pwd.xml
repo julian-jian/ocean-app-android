@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <include layout="@layout/include_action_bar" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="50dp"
+            android:text="请输入邮箱地址已找回密码"
+            android:textColor="#ff333333"
+            android:textSize="18sp" />
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="29dp"
+            android:layout_marginRight="30dp">
+
+        <EditText
+                android:id="@+id/et_email"
+                style="@style/Edit"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:hint="请输入邮箱地址"
+                android:paddingLeft="35dp"
+                android:paddingRight="35dp"
+                android:textSize="@dimen/text_et" />
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="9dp"
+                android:src="@drawable/ic_pwd" />
+
+    </RelativeLayout>
+
+    <Button
+            android:id="@+id/btn_find_pwd"
+            style="@style/Btn"
+            android:layout_marginTop="50dp"
+            android:text="发送密码到邮箱" />
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:id="@+id/tv_go_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="29dp"
+                android:text="使用账号登录"
+                android:textColor="#ff808080"
+                android:textSize="18sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

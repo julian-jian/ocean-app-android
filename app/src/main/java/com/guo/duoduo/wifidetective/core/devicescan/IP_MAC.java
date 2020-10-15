@@ -29,7 +29,7 @@ public class IP_MAC implements Serializable
 
         IP_MAC ip_mac = (IP_MAC) o;
 
-        return mMac.equals(ip_mac.mMac);
+        return mMac.toLowerCase().equals(ip_mac.mMac.toLowerCase()) || mMac.toUpperCase().equals(ip_mac.mMac.toUpperCase());
     }
 
     @Override

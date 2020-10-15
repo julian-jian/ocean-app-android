@@ -3,6 +3,7 @@ package com.sky.lamp.ui.fragment;
 import static com.sky.lamp.utils.HexUtils.tenToHexByte;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -313,7 +314,6 @@ public class ModelInfoSettingFragment extends BaseFragment {
         picker.setLineVisible(false);
         String time[] = id == R.id.tv_startTime ? tvStartTime.getText().toString().split(":") :
                 tvEndTime.getText().toString().split(":");
-        picker.setSelectedItem(Integer.valueOf(time[0]), Integer.valueOf(time[1]));
         picker.setOnTimePickListener(new TimePicker.OnTimePickListener() {
             @Override
             public void onTimePicked(String hour, String minute) {
@@ -324,11 +324,15 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     boolean error = false;
                     if (Integer.valueOf(startTime[0]) > Integer.valueOf(hour)) {
                         error = true;
-                    } else if (Integer.valueOf(startTime[0]) == Integer.valueOf(hour)) {
-                        if (Integer.valueOf(startTime[1]) > Integer.valueOf(minute)) {
-                            error = true;
+                    } else {
+                        int gap = Integer.valueOf(hour) * 60 + Integer.valueOf(minute) - Integer
+                                .valueOf(startTime[0]) - Integer.valueOf(startTime[1]);
+                        if (gap < 60) {
+                            RxToast.showToast("时间设置错误,间隔不能低于1小时");
+                            return;
                         }
                     }
+
                     String setStopTime = hour + ":" + minute;
                     if (setStopTime.equals(tvStartTime.getText().toString())) {
                         error = true;
@@ -344,6 +348,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
             }
         });
         picker.show();
+        // 坑爹不会默认滚动过去
+//        picker.setSelectedItem(Integer.valueOf(time[0]), Integer.valueOf(time[1]));
     }
 
     private void saveCurrentModel() {
