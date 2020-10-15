@@ -11,17 +11,16 @@ import org.greenrobot.eventbus.Subscribe;
 import com.daimajia.swipe.SwipeLayout;
 import com.event.NextStepEvent;
 import com.google.gson.reflect.TypeToken;
-import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanManager;
-import com.guo.duoduo.wifidetective.core.devicescan.DeviceScanResult;
 import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
-import com.sky.lamp.bean.ModelBean;
 import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.Device;
+import com.sky.lamp.bean.RenameMac;
+import com.sky.lamp.dao.DaoManager;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
@@ -36,6 +35,7 @@ import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.stealthcopter.networktools.SubnetDevices;
 import com.vondear.rxtools.view.RxToast;
+import com.vondear.rxtools.view.dialog.RxDialogEditSureCancel;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,6 +64,10 @@ public class Index2Fragment extends DelayBaseFragment {
     LinearLayout llSearch;
     Unbinder unbinder;
     private List<IP_MAC> mDeviceList = new ArrayList<IP_MAC>();
+    private RxDialogEditSureCancel rxDialogLoading;
+    private List<RenameMac> renameMacs;
+
+    ArrayList<com.stealthcopter.networktools.subnet.Device> mDevicesFound = new ArrayList<>();
 
     @Override
     protected void showDelayData() {
@@ -93,6 +97,12 @@ public class Index2Fragment extends DelayBaseFragment {
         });
         startFindDevices();
         queryBindDevice();
+        renameMacs =
+                DaoManager.getInstance().getDaoSession().getRenameMacDao()
+                        .loadAll();
+        if (renameMacs == null) {
+            renameMacs = new ArrayList<>();
+        }
         return view;
     }
 
@@ -135,15 +145,16 @@ public class Index2Fragment extends DelayBaseFragment {
             @Override
             public void onFinished(
                     final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
+                mDevicesFound = devicesFound;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ((BaseActivity) getActivity()).dismissLoadingDialog();
                         for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
-                            IP_MAC ipMac = new IP_MAC(device.ip,device.mac);
-                            if (!TextUtils.isEmpty(device.mac) && !mDeviceList.contains(ipMac) ) {
+                            IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
+                            if (!TextUtils.isEmpty(device.mac) && !mDeviceList.contains(ipMac)) {
                                 mDeviceList.add(ipMac);
-                                addDeviceView(ipMac);
+                                addFindDeviceView(ipMac);
                             }
                         }
                         queryBindDevice();
@@ -153,14 +164,11 @@ public class Index2Fragment extends DelayBaseFragment {
         });
     }
 
-    private void addDeviceView(final IP_MAC ip_mac) {
+    private void addFindDeviceView(final IP_MAC ip_mac) {
         View inflate = LayoutInflater
-                .from(getActivity()).inflate(R.layout.item_find_device, null);
+                .from(getActivity()).inflate(R.layout.item_find_device2, null);
         SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
-        // 禁用左划
-        //        swipeLayout.setLeftSwipeEnabled(false);
-        //        swipeLayout.setRightSwipeEnabled(false);
-        //        swipeLayout.setSwipeEnabled(false);
+
         swipeLayout.findViewById(R.id.tv_2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,8 +177,21 @@ public class Index2Fragment extends DelayBaseFragment {
         });
         TextView deviceName = inflate.findViewById(R.id.tv_name);
         TextView mac = inflate.findViewById(R.id.tv_mac);
-        deviceName.setText(ip_mac.mIp);
+        RenameMac renameMac = new RenameMac();
+        renameMac.mac = ip_mac.mMac;
+        if (renameMacs.contains(renameMac)) {
+            RenameMac renameMac1 = renameMacs.get(renameMacs.indexOf(renameMac));
+            deviceName.setText("(" + renameMac1.name + ")" + ip_mac.mIp);
+        } else {
+            deviceName.setText(ip_mac.mIp);
+        }
         mac.setText(ip_mac.mMac);
+        swipeLayout.findViewById(R.id.tv_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRenameDialog(ip_mac.mMac);
+            }
+        });
         final int pos = mDeviceList.size() - 1;
         AppCompatCheckBox checkBox = inflate.findViewById(R.id.checkbox);
         checkBox.setOnCheckedChangeListener(
@@ -298,10 +319,10 @@ public class Index2Fragment extends DelayBaseFragment {
                                             unbindDevice(device.getDeviceSN());
                                         }
                                     });
-                            ((TextView)swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
+                            ((TextView) swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
                             // 禁用左划
                             TextView deviceName = inflate.findViewById(R.id.tv_name);
-                            IP_MAC tmp = new IP_MAC("",device.getDeviceSN());
+                            IP_MAC tmp = new IP_MAC("", device.getDeviceSN());
                             if (mDeviceList.contains(tmp)) {
                                 deviceName.setText(device.getDeviceSN() + "(在线)");
                             } else {
@@ -318,7 +339,7 @@ public class Index2Fragment extends DelayBaseFragment {
                                         RxToast.showToast("请选择模式");
                                         return;
                                     }
-                                    String ip  = "";
+                                    String ip = "";
                                     for (IP_MAC ipMac : mDeviceList) {
                                         if (ipMac.mMac.toLowerCase()
                                                 .equals(device.getDeviceSN().toLowerCase())) {
@@ -387,6 +408,52 @@ public class Index2Fragment extends DelayBaseFragment {
                 }
             }
         });
+    }
+
+    public void showRenameDialog(final String mac) {
+        rxDialogLoading = new RxDialogEditSureCancel(getActivity());
+        rxDialogLoading.setTitle("重命名");
+        rxDialogLoading.getCancelView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rxDialogLoading.dismiss();
+            }
+        });
+        rxDialogLoading.getSureView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = rxDialogLoading.getEditText().getText().toString();
+                if (!TextUtils.isEmpty(name)) {
+                    List<RenameMac> renameMacs =
+                            DaoManager.getInstance().getDaoSession().getRenameMacDao()
+                                    .loadAll();
+                    boolean findDevice = false;
+                    for (RenameMac renameMac : renameMacs) {
+                        if (renameMac.mac.equals(mac)) {
+                            renameMac.name = name;
+                            findDevice = true;
+                            DaoManager.getInstance().getDaoSession().update(renameMac);
+                            break;
+                        }
+                    }
+                    if (!findDevice) {
+                        RenameMac renameMac = new RenameMac();
+                        renameMac.mac = mac;
+                        renameMac.name = name;
+                        DaoManager.getInstance().getDaoSession().insert(renameMac);
+                    }
+                    llFindDevicesList.removeAllViews();
+                    for (com.stealthcopter.networktools.subnet.Device device : mDevicesFound) {
+                        IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
+                        if (!TextUtils.isEmpty(device.mac)) {
+                            addFindDeviceView(ipMac);
+                        }
+                    }
+                    rxDialogLoading.dismiss();
+                }
+            }
+        });
+        rxDialogLoading.show();
     }
 
 }
