@@ -43,6 +43,8 @@ public class FindPwdAct extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_find_pwd);
         ButterKnife.bind(this);
+        actionBar.initLeftImageView(this);
+        actionBar.setTitle("找回密码");
     }
 
     public void requestFindPwd() {
