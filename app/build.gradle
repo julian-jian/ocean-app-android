@@ -138,22 +138,23 @@ dependencies {
     // add library
     implementation files('libs/imagelibrary.jar')
     implementation project(':customDialogLibray')
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
-    compile 'com.bm.photoview:library:1.4.1'
+    implementation 'com.android.support:appcompat-v7:26.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.2.0'
+    implementation 'com.bm.photoview:library:1.4.1'
     implementation project(':RxTools-library')
     implementation 'me.jessyan:autosize:1.1.2'
-    compile 'org.raphets:roundimageview:1.2.0'
+    implementation 'org.raphets:roundimageview:1.2.0'
     implementation 'cn.bingoogolapple:bga-banner:2.2.7'
     implementation 'com.android.support:support-v4:26.1.0'
-    compile 'com.jwkj:commwebview:v1.2.6'
+    implementation 'com.jwkj:commwebview:v1.2.6'
     implementation 'com.hacknife:immersive:1.1.0'
-    compile 'com.githang:status-bar-compat:0.7'
+    implementation 'com.githang:status-bar-compat:0.7'
     implementation files('libs/x5.jar')
     implementation 'pub.devrel:easypermissions:1.0.1'
-    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'org.greenrobot:greendao:3.2.2' // add library
+    implementation 'com.github.stealthcopter:AndroidNetworkTools:0.4.5.3'
 //    compile 'com.github.Jeromeer:MinaSocket:1.0'
 }
 

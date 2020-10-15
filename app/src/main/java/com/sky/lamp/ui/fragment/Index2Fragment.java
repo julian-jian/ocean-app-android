@@ -34,6 +34,7 @@ import com.sky.lamp.utils.GsonImpl;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
+import com.stealthcopter.networktools.SubnetDevices;
 import com.vondear.rxtools.view.RxToast;
 
 import android.content.Intent;
@@ -62,7 +63,6 @@ public class Index2Fragment extends DelayBaseFragment {
     @BindView(R.id.ll_search)
     LinearLayout llSearch;
     Unbinder unbinder;
-    private DeviceScanManager deviceScanManager;
     private List<IP_MAC> mDeviceList = new ArrayList<IP_MAC>();
 
     @Override
@@ -91,7 +91,6 @@ public class Index2Fragment extends DelayBaseFragment {
                 startFindDevices();
             }
         });
-        deviceScanManager = new DeviceScanManager();
         startFindDevices();
         queryBindDevice();
         return view;
@@ -127,14 +126,28 @@ public class Index2Fragment extends DelayBaseFragment {
     private void startFindDevices() {
         mDeviceList.clear();
         llFindDevicesList.removeAllViews();
-        deviceScanManager.startScan(getActivity().getApplicationContext(), new DeviceScanResult() {
+        SubnetDevices.fromLocalAddress().findDevices(new SubnetDevices.OnSubnetDeviceFound() {
             @Override
-            public void deviceScanResult(final IP_MAC ip_mac) {
-                ((BaseActivity) getActivity()).dismissLoadingDialog();
-                if (!mDeviceList.contains(ip_mac)) {
-                    mDeviceList.add(ip_mac);
-                    addDeviceView(ip_mac);
-                }
+            public void onDeviceFound(com.stealthcopter.networktools.subnet.Device device) {
+                Logger.d(device.toString());
+            }
+
+            @Override
+            public void onFinished(
+                    final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((BaseActivity) getActivity()).dismissLoadingDialog();
+                        for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
+                            IP_MAC ipMac = new IP_MAC(device.ip,device.mac);
+                            if (!TextUtils.isEmpty(device.mac) && !mDeviceList.contains(ipMac) ) {
+                                mDeviceList.add(ipMac);
+                                addDeviceView(ipMac);
+                            }
+                        }
+                    }
+                });
             }
         });
     }
