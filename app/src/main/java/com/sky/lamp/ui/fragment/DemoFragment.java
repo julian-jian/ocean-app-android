@@ -91,7 +91,7 @@ public class DemoFragment extends DelayBaseFragment {
         //时间命中了那个模式，就发送哪个模式
         final Calendar today = Calendar.getInstance();
         final Calendar clockCalendar = Calendar.getInstance();
-        clockCalendar.set(Calendar.HOUR, 0);
+        clockCalendar.set(Calendar.HOUR_OF_DAY, 0);
         clockCalendar.set(Calendar.MINUTE, 0);
         clockCalendar.set(Calendar.DAY_OF_MONTH, today.get(Calendar.DAY_OF_MONTH));
         TimerTask timerTask = new TimerTask() {
@@ -110,7 +110,7 @@ public class DemoFragment extends DelayBaseFragment {
                     String endTime = lightItemMode.getStopTime();
                     Calendar startCalendar = Calendar.getInstance();
                     int startHour = Integer.parseInt(startTime.split(":")[0]);
-                    startCalendar.set(Calendar.HOUR, startHour);
+                    startCalendar.set(Calendar.HOUR_OF_DAY, startHour);
                     int startMinute = Integer.parseInt(startTime.split(":")[1]);
                     startCalendar.set(Calendar.MINUTE, startMinute);
 
@@ -120,7 +120,7 @@ public class DemoFragment extends DelayBaseFragment {
                     int endMinute = Integer.parseInt(endTime.split(":")[1]);
                     endCalendar.set(Calendar.MINUTE, endMinute);
                     boolean hour =
-                            clockCalendar.get(Calendar.HOUR) == startCalendar.get(Calendar.HOUR);
+                            clockCalendar.get(Calendar.HOUR_OF_DAY) == startCalendar.get(Calendar.HOUR_OF_DAY);
                     boolean minute =
                             clockCalendar.get(Calendar.MINUTE) == startCalendar.get(Calendar.MINUTE);
                     boolean isSame = hour && minute;
@@ -134,7 +134,7 @@ public class DemoFragment extends DelayBaseFragment {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        analogClock.refreshView(clockCalendar.get(Calendar.HOUR),
+                        analogClock.refreshView(clockCalendar.get(Calendar.HOUR_OF_DAY),
                                 clockCalendar.get(Calendar.MINUTE));
                     }
                 });

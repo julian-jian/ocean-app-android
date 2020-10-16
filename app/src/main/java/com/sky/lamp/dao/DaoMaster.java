@@ -21,16 +21,16 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
+        RenameMacDao.createTable(db, ifNotExists);
         CommandLightModeDao.createTable(db, ifNotExists);
         LightItemModeDao.createTable(db, ifNotExists);
-        RenameMacDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
+        RenameMacDao.dropTable(db, ifExists);
         CommandLightModeDao.dropTable(db, ifExists);
         LightItemModeDao.dropTable(db, ifExists);
-        RenameMacDao.dropTable(db, ifExists);
     }
 
     /**
@@ -49,9 +49,9 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
+        registerDaoClass(RenameMacDao.class);
         registerDaoClass(CommandLightModeDao.class);
         registerDaoClass(LightItemModeDao.class);
-        registerDaoClass(RenameMacDao.class);
     }
 
     public DaoSession newSession() {

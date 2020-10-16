@@ -67,7 +67,7 @@ public class SocketManager {
                 (byte) 0x55};
         Calendar calendar = Calendar.getInstance();
         // 应该不考虑时间
-        temp[2] = tenToHexByte(calendar.get(Calendar.HOUR));
+        temp[2] = tenToHexByte(calendar.get(Calendar.HOUR_OF_DAY));
         temp[3] = tenToHexByte(calendar.get(Calendar.MINUTE));
         // 检验位
         temp[14] = HexUtils.getVerifyCode(temp);
