@@ -58,7 +58,7 @@
                     android:layout_height="50dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
-                    android:src="@drawable/device" />
+                    android:src="@drawable/model_led" />
 
             <LinearLayout
                     android:layout_width="wrap_content"
