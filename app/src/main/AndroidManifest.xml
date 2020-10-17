@@ -97,6 +97,9 @@
 
         <activity android:name="com.sky.lamp.ui.act.FindPwdAct"
                 android:exported="true" android:screenOrientation="portrait" />
+
+        <activity android:name="com.sky.lamp.ui.act.Index1SubActivity"
+                android:exported="true" android:screenOrientation="portrait" />
         <meta-data
                 android:name="design_width_in_dp"
                 android:value="360"/>

@@ -1,12 +1,14 @@
 package com.sky.lamp.ui.fragment;
 
 import com.sky.lamp.MainActivity;
-import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.ProductListAdapter;
+import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.ui.DelayBaseFragment;
+import com.sky.lamp.ui.act.Index1SubActivity;
 import com.vondear.rxtools.view.RxToast;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -82,6 +84,8 @@ public class IndexFragment extends DelayBaseFragment {
         if (getBaseActivity() instanceof MainActivity) {
             ((MainActivity) getBaseActivity()).tabSelect(1);
         }
+
+//        startActivity(new Intent(getBaseActivity(), Index1SubActivity.class));
         RxToast.showToast("请选择绑定的设备");
     }
 }

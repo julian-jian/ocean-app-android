@@ -262,12 +262,13 @@ public class ModelInfoSettingFragment extends BaseFragment {
         //                    }
         List<Entry> valsCom1 = new ArrayList();
         valsCom1.add(new Entry(0.0f, 0.0f));
-        valsCom1.add(new Entry(0.02f, ((float) getProgress(4)) * 0.04f));
-        valsCom1.add(new Entry(0.07f, ((float) getProgress(3)) * 0.1f));
-        valsCom1.add(new Entry(0.2f, ((float) getProgress(2)) * DEFAULT_BACKOFF_MULT));
-        valsCom1.add(new Entry(0.3f, ((float) getProgress(1)) * 0.13f));
-        valsCom1.add(new Entry(0.4f, ((float) getProgress(5)) * 0.16f));
-        valsCom1.add(new Entry(0.7f, ((float) getProgress(6)) * 0.13f));
+        float zoom = 1.3f;
+        valsCom1.add(new Entry(0.02f, ((float) getProgress(4)) * 0.04f * zoom));
+        valsCom1.add(new Entry(0.07f, ((float) getProgress(3)) * 0.1f * zoom));
+        valsCom1.add(new Entry(0.2f, ((float) getProgress(2)) * DEFAULT_BACKOFF_MULT * zoom));
+        valsCom1.add(new Entry(0.3f, ((float) getProgress(1)) * 0.13f * zoom) );
+        valsCom1.add(new Entry(0.4f, ((float) getProgress(5)) * 0.16f * zoom));
+        valsCom1.add(new Entry(0.7f, ((float) getProgress(6)) * 0.13f * zoom));
         valsCom1.add(new Entry(0.8f, 0.0f));
         mChartHelper.setData(valsCom1);
     }
@@ -377,7 +378,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 delItemModel();
                 break;
             case R.id.btn_add:
-                if (mCommandLightMode.mParameters.size() >= 7) {
+                if (mCommandLightMode.mParameters.size() >= 8) {
                     RxToast.showToast("模式个数已是最大");
                     return;
                 }
@@ -412,14 +413,19 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 saveCurrentModel();
                 saveClick();
                 showSendCommandLoading();
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < 8; i++) {
                     if (i > mCommandLightMode.mParameters.size() - 1) {
                         sendEmptyMode(i);
                     } else {
                         sendUserModel(i);
                     }
                 }
-                dismissLoading();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismissLoading();
+                    }
+                });
             }
         }).start();
     }

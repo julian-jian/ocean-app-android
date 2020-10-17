@@ -137,4 +137,21 @@ public class LightItemMode  {
         return Integer.parseInt(stopTime.split(":")[1]);
     }
 
+    @Override
+    public String toString() {
+        return "LightItemMode{" +
+                "index=" + index +
+                ", light1Level=" + light1Level +
+                ", light2Level=" + light2Level +
+                ", light3Level=" + light3Level +
+                ", light4Level=" + light4Level +
+                ", light5Level=" + light5Level +
+                ", light6Level=" + light6Level +
+                ", light7Level=" + light7Level +
+                ", modeName='" + modeName + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", stopTime='" + stopTime + '\'' +
+                ", parent_id=" + parent_id +
+                '}';
+    }
 }

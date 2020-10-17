@@ -3,12 +3,13 @@ package com.sky.lamp.ui.fragment;
 import static com.sky.lamp.utils.HexUtils.tenToHexByte;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
+import com.orhanobut.logger.Logger;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
@@ -26,10 +27,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import app.socketlib.com.library.ContentServiceHelper;
 import app.socketlib.com.library.socket.SocketConfig;
+import app.socketlib.com.library.utils.LogUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import cn.addapp.pickers.util.DateUtils;
 
 public class DemoFragment extends DelayBaseFragment {
     @BindView(R.id.analogClock)
@@ -40,6 +43,8 @@ public class DemoFragment extends DelayBaseFragment {
     CommandLightMode commandLightMode;
     private Handler mHandler = new Handler();
     Timer timer;
+    public static final String TAG = DemoFragment.class.getSimpleName();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -48,7 +53,6 @@ public class DemoFragment extends DelayBaseFragment {
         unbinder = ButterKnife.bind(this, view);
         return view;
     }
-
 
     public void refreshData() {
         commandLightMode = ((ModeInfoActivity) getBaseActivity()).mCommandLightMode;
@@ -90,10 +94,11 @@ public class DemoFragment extends DelayBaseFragment {
         timer = new Timer();
         //时间命中了那个模式，就发送哪个模式
         final Calendar today = Calendar.getInstance();
+        today.setTime(DateUtils.parseHourDate("00:00"));
+
         final Calendar clockCalendar = Calendar.getInstance();
-        clockCalendar.set(Calendar.HOUR_OF_DAY, 0);
-        clockCalendar.set(Calendar.MINUTE, 0);
-        clockCalendar.set(Calendar.DAY_OF_MONTH, today.get(Calendar.DAY_OF_MONTH));
+        clockCalendar.setTime(DateUtils.parseHourDate("00:00"));
+
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -105,31 +110,13 @@ public class DemoFragment extends DelayBaseFragment {
                 }
 
                 List<LightItemMode> mParameters = commandLightMode.mParameters;
-                for (LightItemMode lightItemMode : mParameters) {
-                    String startTime = lightItemMode.getStartTime();
-                    String endTime = lightItemMode.getStopTime();
-                    Calendar startCalendar = Calendar.getInstance();
-                    int startHour = Integer.parseInt(startTime.split(":")[0]);
-                    startCalendar.set(Calendar.HOUR_OF_DAY, startHour);
-                    int startMinute = Integer.parseInt(startTime.split(":")[1]);
-                    startCalendar.set(Calendar.MINUTE, startMinute);
-
-                    Calendar endCalendar = Calendar.getInstance();
-                    int endHour = Integer.parseInt(endTime.split(":")[0]);
-                    endCalendar.set(Calendar.HOUR, endHour);
-                    int endMinute = Integer.parseInt(endTime.split(":")[1]);
-                    endCalendar.set(Calendar.MINUTE, endMinute);
-                    boolean hour =
-                            clockCalendar.get(Calendar.HOUR_OF_DAY) == startCalendar.get(Calendar.HOUR_OF_DAY);
-                    boolean minute =
-                            clockCalendar.get(Calendar.MINUTE) == startCalendar.get(Calendar.MINUTE);
-                    boolean isSame = hour && minute;
-                    if ((clockCalendar.after(startCalendar) && clockCalendar.before(endCalendar))
-                            || isSame) {
-                        sendCommand(lightItemMode);
-
-                    }
-                    break;
+                LightItemMode holdItemMode = null;
+                holdItemMode = getHoldItemMode(mParameters, holdItemMode, clockCalendar);
+                if (holdItemMode != null) {
+                    Logger.i("当前时间 "+DateUtils.formatDate(clockCalendar.getTime(),"HH:mm")+" 命中 "+holdItemMode);
+                    sendCommand(holdItemMode);
+                } else {
+                    sendEmptyCommand();
                 }
                 mHandler.post(new Runnable() {
                     @Override
@@ -139,11 +126,49 @@ public class DemoFragment extends DelayBaseFragment {
                     }
                 });
                 // SEND COMMAND
-                clockCalendar.add(Calendar.MINUTE, 30);
+                clockCalendar.add(Calendar.MINUTE, 20);
                 System.out.println("DemoFragment.run " + clockCalendar.toString());
             }
         };
-        timer.schedule(timerTask, 0L, 5 * 1000L);
+//        timer.schedule(timerTask, 0L, 5 * 1000L);
+        timer.schedule(timerTask, 0L, 1 * 1000L);
+    }
+
+    private LightItemMode getHoldItemMode(List<LightItemMode> mParameters,
+                                          LightItemMode holdItemMode, Calendar clockCalendar) {
+        for (LightItemMode lightItemMode : mParameters) {
+            String startTime = lightItemMode.getStartTime();
+            String endTime = lightItemMode.getStopTime();
+
+            Calendar startCalendar = Calendar.getInstance();
+            startCalendar.setTime(DateUtils.parseHourDate(startTime));
+
+            Calendar endCalendar = Calendar.getInstance();
+            endCalendar.setTime(DateUtils.parseHourDate(endTime));
+
+            // 区间范围内
+            if (clockCalendar.getTimeInMillis() <= endCalendar.getTimeInMillis()
+                    && clockCalendar.getTimeInMillis() >= startCalendar.getTimeInMillis()) {
+                holdItemMode = lightItemMode;
+                break;
+            }
+        }
+        return holdItemMode;
+    }
+
+    private void sendEmptyCommand() {
+        Logger.w("没有符合的模式 ");
+        LightItemMode lightItemMode = new LightItemMode();
+        lightItemMode.setStartTime("00:00");
+        lightItemMode.setStopTime("00:00");
+        lightItemMode.setLight1Level(0);
+        lightItemMode.setLight2Level(0);
+        lightItemMode.setLight3Level(0);
+        lightItemMode.setLight4Level(0);
+        lightItemMode.setLight5Level(0);
+        lightItemMode.setLight6Level(0);
+        lightItemMode.setLight7Level(0);
+        sendCommand(lightItemMode);
     }
 
     private void sendCommand(LightItemMode lightItemMode) {
@@ -162,23 +187,15 @@ public class DemoFragment extends DelayBaseFragment {
         temp[12] = tenToHexByte(lightItemMode.getLight7Level());
         temp[13] = tenToHexByte(0);
 
-        //                        temp[6] =test();
-        //                        temp[7] =test();
-        //                        temp[8] =test();
-        //                        temp[9] =test();
-        //                        temp[10] =test();
-        //                        temp[11] =test();
-        //                        temp[12] =test();
-        //                        temp[13] =test();
-
         // 检验位
         temp[14] = HexUtils.getVerifyCode(temp);
         index++;
-        System.out.println("sendCommand success " + HexUtils.bytes2Hex(temp));
+        System.out.println("sendCommand success " + HexUtils.bytes2Hex(temp) + " " + lightItemMode);
         ContentServiceHelper.sendClientMsg(temp);
     }
 
     int index = 0;
+
     public byte test() {
         int process = new Random().nextInt(100);
         byte b = tenToHexByte(process);

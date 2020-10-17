@@ -213,6 +213,11 @@ public class DateUtils extends android.text.format.DateUtils {
         return parseDate(dateStr, "yyyy-MM-dd HH:mm:ss");
     }
 
+    public static Date parseHourDate(String dateStr) {
+        return parseDate(dateStr, "HH:mm");
+    }
+
+
     /**
      * 将指定的日期转换为一定格式的字符串
      */
