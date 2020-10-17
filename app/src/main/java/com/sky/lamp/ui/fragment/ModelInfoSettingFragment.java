@@ -198,9 +198,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
             leftTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("CustomAct.onClick");
                     int progress = seekbar.getProgress();
-                    progress = progress - 10;
+                    progress = progress - 1;
                     seekbar.setProgress(Math.max(progress, 0));
                 }
             });
@@ -208,7 +207,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     int progress = seekbar.getProgress();
-                    progress = progress + 10;
+                    progress = progress + 1;
                     seekbar.setProgress(Math.min(progress, 100));
                 }
             });

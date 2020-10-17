@@ -9,14 +9,14 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="32dp"
             android:gravity="center"
             android:orientation="horizontal">
 
         <TextView
                 android:id="@+id/leftTv"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/bg_plus"
                 android:gravity="center"
@@ -36,14 +36,14 @@
         <FrameLayout
                 android:id="@+id/fl_sub_seebar"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="horizontal" />
 
         <TextView
                 android:id="@+id/rightTv"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/bg_plus"
