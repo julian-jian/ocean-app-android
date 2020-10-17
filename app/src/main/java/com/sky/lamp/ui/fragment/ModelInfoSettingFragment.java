@@ -27,6 +27,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,6 +104,11 @@ public class ModelInfoSettingFragment extends BaseFragment {
 
     private void refreshModeItems() {
         radioGroup.removeAllViews();
+        DisplayMetrics me = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(me);
+        int margin = ((mCommandLightMode.mParameters.size() - 1) * 10  + RxImageTool.dp2px(5));
+        int mTimeSingleWidth =
+                (me.widthPixels - margin) /  mCommandLightMode.mParameters.size();
         for (int index = 0; index < mCommandLightMode.mParameters.size(); index++) {
             LightItemMode lightItemMode = mCommandLightMode.mParameters.get(index);
             final RadioButton radioButton = new RadioButton(getActivity());
@@ -112,9 +118,11 @@ public class ModelInfoSettingFragment extends BaseFragment {
             radioButton.setGravity(17);
             radioButton.setTag("rb" + index);
             radioButton.setId(index);
-            radioButton.setWidth(RxImageTool.dp2px(45));
+            radioButton.setWidth(mTimeSingleWidth);
             radioButton.setHeight(RxImageTool.dp2px(23));
             radioButton.setButtonDrawable(new ColorDrawable(0));
+            radioButton.setLayoutParams(new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT,
+                    RxImageTool.dp2px(23), 1f));
             final int finalIndex = index;
             radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -136,7 +144,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
             radioGroup.addView(radioButton);
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) radioButton.getLayoutParams();
-            layoutParams.setMargins(10, 0, 10, 0);
+            layoutParams.setMargins(10, 0, 0, 0);
             radioButton.setLayoutParams(layoutParams);
             // 最后一项选中
             if (index == mCommandLightMode.mParameters.size() - 1) {

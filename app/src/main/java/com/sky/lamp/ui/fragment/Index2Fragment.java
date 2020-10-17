@@ -346,10 +346,10 @@ public class Index2Fragment extends DelayBaseFragment {
                                             ip = ipMac.mIp;
                                         }
                                     }
-                                    if (TextUtils.isEmpty(ip)) {
-                                        RxToast.showToast("设备未上线");
-                                        return;
-                                    }
+//                                    if (TextUtils.isEmpty(ip)) {
+//                                        RxToast.showToast("设备未上线");
+//                                        return;
+//                                    }
                                     ModelSelectBean.deviceId = device.getDeviceSN();
                                     ModelSelectBean.ip = ip;
                                     SelectConfigAct.startUI(getActivity());
