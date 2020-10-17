@@ -3,7 +3,6 @@ package com.sky.lamp.ui.fragment;
 import static com.sky.lamp.utils.HexUtils.tenToHexByte;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import com.github.mikephil.charting.charts.LineChart;
