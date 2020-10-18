@@ -82,6 +82,5 @@ public class IndexFragment extends DelayBaseFragment {
     private void goStep2(String modelName) {
         ModelSelectBean.t1 = modelName;
         startActivity(new Intent(getBaseActivity(), Index1SubActivity.class));
-        RxToast.showToast("请选择绑定的设备");
     }
 }

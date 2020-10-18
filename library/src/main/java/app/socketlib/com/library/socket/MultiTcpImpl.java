@@ -109,7 +109,8 @@ public class MultiTcpImpl {
                     mSession = future.getSession();
                     if (mSession.isConnected()) {
                         setStatus(MultiTcpImpl.ConnectStatus.CONNECTED);
-                        Bus.post(new ConnectSuccessEvent(Contants.CONNECT_SUCCESS_TYPE));
+                        Bus.post(new ConnectSuccessEvent(Contants.CONNECT_SUCCESS_TYPE,
+                                mConfig.getIp()));
                         LogUtil.e("connnectToServer中,Socket连接成功!");
                         for (String string : mCacheStringList) {
                             send(string);
@@ -126,7 +127,7 @@ public class MultiTcpImpl {
                     LogUtil.e("connnectToServer中,Socket连接失败,每3秒连接一次!");
                     if (count == 7) {
                         Bus.post(new ConnectClosedEvent(closeType));
-                        Bus.post(new ConnectFailEvent());
+                        Bus.post(new ConnectFailEvent(mConfig.getIp()));
                     }
                 }
             }

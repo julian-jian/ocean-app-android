@@ -146,6 +146,9 @@ public class Index2Fragment extends DelayBaseFragment {
             public void onFinished(
                     final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
                 mDevicesFound = devicesFound;
+                if (getActivity() == null) {
+                    return;
+                }
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -424,36 +427,44 @@ public class Index2Fragment extends DelayBaseFragment {
             public void onClick(View v) {
                 String name = rxDialogLoading.getEditText().getText().toString();
                 if (!TextUtils.isEmpty(name)) {
-                    List<RenameMac> renameMacs =
-                            DaoManager.getInstance().getDaoSession().getRenameMacDao()
-                                    .loadAll();
-                    boolean findDevice = false;
-                    for (RenameMac renameMac : renameMacs) {
-                        if (renameMac.mac.equals(mac)) {
-                            renameMac.name = name;
-                            findDevice = true;
-                            DaoManager.getInstance().getDaoSession().update(renameMac);
-                            break;
-                        }
-                    }
-                    if (!findDevice) {
-                        RenameMac renameMac = new RenameMac();
-                        renameMac.mac = mac;
-                        renameMac.name = name;
-                        DaoManager.getInstance().getDaoSession().insert(renameMac);
-                    }
-                    llFindDevicesList.removeAllViews();
-                    for (com.stealthcopter.networktools.subnet.Device device : mDevicesFound) {
-                        IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
-                        if (!TextUtils.isEmpty(device.mac)) {
-                            addFindDeviceView(ipMac);
-                        }
-                    }
+                    updateOrInsertRename(name, mac);
+                    refreshLocalDeviceViews();
                     rxDialogLoading.dismiss();
                 }
             }
         });
         rxDialogLoading.show();
+    }
+
+    private void refreshLocalDeviceViews() {
+        llFindDevicesList.removeAllViews();
+        for (com.stealthcopter.networktools.subnet.Device device : mDevicesFound) {
+            IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
+            if (!TextUtils.isEmpty(device.mac)) {
+                addFindDeviceView(ipMac);
+            }
+        }
+    }
+
+    private void updateOrInsertRename(String name, String mac) {
+        List<RenameMac> renameMacs =
+                DaoManager.getInstance().getDaoSession().getRenameMacDao()
+                        .loadAll();
+        boolean findDevice = false;
+        for (RenameMac renameMac : renameMacs) {
+            if (renameMac.mac.equals(mac)) {
+                renameMac.name = name;
+                findDevice = true;
+                DaoManager.getInstance().getDaoSession().update(renameMac);
+                break;
+            }
+        }
+        if (!findDevice) {
+            RenameMac renameMac = new RenameMac();
+            renameMac.mac = mac;
+            renameMac.name = name;
+            DaoManager.getInstance().getDaoSession().insert(renameMac);
+        }
     }
 
 }

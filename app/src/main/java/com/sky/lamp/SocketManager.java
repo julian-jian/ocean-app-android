@@ -36,18 +36,15 @@ public class SocketManager {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ConnectSuccessEvent event) {
         if (event.getConnectType() == Contants.CONNECT_SUCCESS_TYPE) {
-            RxToast.showToast("建立连接成功");
             mConnectSuccess = true;
-            sendSyncTimeCommand();
         } else {
             mConnectSuccess = false;
-            RxToast.showToast("建立连接失败");
         }
     }
 
     public void bindSocket(String ip) {
         SocketConfig socketConfig =
-                ContentServiceHelper.getConfig(MyApplication.getInstance(),ip);
+                ContentServiceHelper.getConfig(MyApplication.getInstance(), ip);
         ContentServiceHelper.bindService(MyApplication.getInstance(), socketConfig);
     }
 
@@ -59,24 +56,5 @@ public class SocketManager {
         return mConnectSuccess;
     }
 
-    private void sendSyncTimeCommand() {
-        final byte[] temp = new byte[] {
-                (byte) 0xaa, (byte) 0x09, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) 0x55};
-        Calendar calendar = Calendar.getInstance();
-        // 应该不考虑时间
-        temp[2] = tenToHexByte(calendar.get(Calendar.HOUR_OF_DAY));
-        temp[3] = tenToHexByte(calendar.get(Calendar.MINUTE));
-        // 检验位
-        temp[14] = HexUtils.getVerifyCode(temp);
-        System.out.println("sendCommand success " + HexUtils.bytes2Hex(temp));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ContentServiceHelper.sendClientMsg(temp);
-            }
-        }, 1000);
-    }
+
 }

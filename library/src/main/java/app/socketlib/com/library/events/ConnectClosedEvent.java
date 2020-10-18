@@ -6,10 +6,14 @@ package app.socketlib.com.library.events;
  * @description：连接关闭的事件
  */
 public class ConnectClosedEvent {
-    int colseType ;
-
+    public int colseType ;
+    public String ip;
     public ConnectClosedEvent(int colseType) {
         this.colseType = colseType;
+    }
+    public ConnectClosedEvent(int colseType,String ip) {
+        this.colseType = colseType;
+        this.ip = ip;
     }
 
     public int getColseType() {

@@ -1,5 +1,7 @@
 package app.socketlib.com.library.events;
 
+import java.util.HashMap;
+
 /**
  * author：JianFeng
  * date：2017/8/18 16:13
@@ -7,6 +9,7 @@ package app.socketlib.com.library.events;
  */
 public class ConnectSuccessEvent {
     public String ip;
+    public HashMap<String,String> ips = new HashMap<>();
     private int connectType;
 
     public ConnectSuccessEvent(int connectType) {

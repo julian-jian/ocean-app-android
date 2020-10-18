@@ -85,15 +85,15 @@ public class Index1SubActivity extends BaseActivity {
 
     public void nextStepClick() {
         List<String> ips = new ArrayList<>();
-        boolean notOnline = true;
+        boolean hasError = false;
         for (Device device : mBindServerList) {
-            if (mLocalDeviceList.get(device.getDeviceSN()) == null) {
-                notOnline = false;
-            } else {
+            if (mLocalDeviceList.get(device.getDeviceSN()) == null && device.isChecked) {
+                hasError = true;
+            } else if( device.isChecked){
                 ips.add(mLocalDeviceList.get(device.getDeviceSN()));
             }
         }
-        if (!notOnline) {
+        if (hasError) {
             RxToast.showToast("所选设备包含未上线设备");
             return;
         }
@@ -107,7 +107,7 @@ public class Index1SubActivity extends BaseActivity {
             return;
         }
         ModelSelectBean.ips = ips;
-        Intent intent = new Intent(this, ConfigAct.class);
+        Intent intent = new Intent(this, SelectConfigAct.class);
         startActivity(intent);
     }
 
@@ -204,7 +204,6 @@ public class Index1SubActivity extends BaseActivity {
 
                     @Override
                     public void onCompleted() {
-                        dismissLoadingDialog();
                     }
 
                     @Override

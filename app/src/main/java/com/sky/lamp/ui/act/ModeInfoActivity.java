@@ -3,6 +3,8 @@ package com.sky.lamp.ui.act;
 import java.util.ArrayList;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import com.chenxi.tabview.adapter.ModelInfoAdapter;
 import com.chenxi.tabview.listener.OnTabSelectedListener;
@@ -15,12 +17,15 @@ import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.ui.fragment.DemoFragment;
 import com.sky.lamp.ui.fragment.ModelInfoSettingFragment;
 import com.sky.lamp.view.TitleBar;
+import com.vondear.rxtools.view.RxToast;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.LinearLayout;
+import app.socketlib.com.library.events.ConnectFailEvent;
+import app.socketlib.com.library.events.ConnectSuccessEvent;
 import app.socketlib.com.library.socket.MultiTcpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,16 +84,30 @@ public class ModeInfoActivity extends BaseActivity {
                 }
             }
         });
+        EventBus.getDefault().register(this);
         refreshTitle(stickyEvent.t1 + "-" + stickyEvent.modelName);
 
         bindServer();
     }
 
     private void bindServer() {
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add(ModelSelectBean.ip);
-        MultiTcpManager.getInstance().connect(strings);
+        if (ModelSelectBean.ips.size() == 0) {
+            finish();
+            return;
+        }
+        MultiTcpManager.getInstance().connect(ModelSelectBean.ips);
         showLoadingDialog("正在建立连接...");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onConnectSuccess(ConnectSuccessEvent event) {
+        dismissLoadingDialog();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onConnectFail(ConnectFailEvent event) {
+        dismissLoadingDialog();
+        RxToast.showToast("连接失败");
     }
 
     public void refreshTitle(String text) {
@@ -97,6 +116,7 @@ public class ModeInfoActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         MultiTcpManager.getInstance().disConnect();
         super.onDestroy();
     }

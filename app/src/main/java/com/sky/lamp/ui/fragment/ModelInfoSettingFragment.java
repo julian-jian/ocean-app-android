@@ -11,7 +11,6 @@ import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.BaseFragment;
 import com.sky.lamp.R;
-import com.sky.lamp.SocketManager;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.dao.DaoManager;
@@ -40,7 +39,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import app.socketlib.com.library.ContentServiceHelper;
 import app.socketlib.com.library.socket.MultiTcpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,10 +68,12 @@ public class ModelInfoSettingFragment extends BaseFragment {
     Button btnSend;
     public static final float DEFAULT_BACKOFF_MULT = 1.0f;
     public static final int DEFAULT_PROGRESS = 50;
+    public static final int MAX_MODE_NUM = 8;
 
     private LightModeChartHelper mChartHelper;
     private CommandLightMode mCommandLightMode;
     private int mIndex;
+    private Thread thread;
 
     @Nullable
     @Override
@@ -86,7 +86,6 @@ public class ModelInfoSettingFragment extends BaseFragment {
         initSeekbar();
         initModel();
         tvStartTime.setClickable(false);
-        tvStartTime.setEnabled(false);
         return view;
     }
 
@@ -106,9 +105,9 @@ public class ModelInfoSettingFragment extends BaseFragment {
         radioGroup.removeAllViews();
         DisplayMetrics me = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(me);
-        int margin = ((mCommandLightMode.mParameters.size() - 1) * 10  + RxImageTool.dp2px(5));
+        int margin = ((mCommandLightMode.mParameters.size() - 1) * 10 + RxImageTool.dp2px(5));
         int mTimeSingleWidth =
-                (me.widthPixels - margin) /  mCommandLightMode.mParameters.size();
+                (me.widthPixels - margin) / mCommandLightMode.mParameters.size();
         for (int index = 0; index < mCommandLightMode.mParameters.size(); index++) {
             LightItemMode lightItemMode = mCommandLightMode.mParameters.get(index);
             final RadioButton radioButton = new RadioButton(getActivity());
@@ -121,8 +120,9 @@ public class ModelInfoSettingFragment extends BaseFragment {
             radioButton.setWidth(mTimeSingleWidth);
             radioButton.setHeight(RxImageTool.dp2px(23));
             radioButton.setButtonDrawable(new ColorDrawable(0));
-            radioButton.setLayoutParams(new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT,
-                    RxImageTool.dp2px(23), 1f));
+            radioButton.setLayoutParams(
+                    new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT,
+                            RxImageTool.dp2px(23), 1f));
             final int finalIndex = index;
             radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -133,9 +133,10 @@ public class ModelInfoSettingFragment extends BaseFragment {
                         initSeekbar();
                         refreshTime();
                         refreshChart();
-                        System.out.println("ModelInfoSettingFragment.onCheckedChanged "+mIndex);
+                        System.out.println("ModelInfoSettingFragment.onCheckedChanged " + mIndex);
                     } else {
-                        System.out.println("ModelInfoSettingFragment.onCheckedChanged "+isChecked);
+                        System.out
+                                .println("ModelInfoSettingFragment.onCheckedChanged " + isChecked);
                         radioButton.setTextColor(getResources().getColor(R.color.text_black));
                     }
                 }
@@ -273,7 +274,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         valsCom1.add(new Entry(0.02f, ((float) getProgress(4)) * 0.04f * zoom));
         valsCom1.add(new Entry(0.07f, ((float) getProgress(3)) * 0.1f * zoom));
         valsCom1.add(new Entry(0.2f, ((float) getProgress(2)) * DEFAULT_BACKOFF_MULT * zoom));
-        valsCom1.add(new Entry(0.3f, ((float) getProgress(1)) * 0.13f * zoom) );
+        valsCom1.add(new Entry(0.3f, ((float) getProgress(1)) * 0.13f * zoom));
         valsCom1.add(new Entry(0.4f, ((float) getProgress(5)) * 0.16f * zoom));
         valsCom1.add(new Entry(0.7f, ((float) getProgress(6)) * 0.13f * zoom));
         valsCom1.add(new Entry(0.8f, 0.0f));
@@ -357,7 +358,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         });
         picker.show();
         // 坑爹不会默认滚动过去
-//        picker.setSelectedItem(Integer.valueOf(time[0]), Integer.valueOf(time[1]));
+        //        picker.setSelectedItem(Integer.valueOf(time[0]), Integer.valueOf(time[1]));
     }
 
     private void saveCurrentModel() {
@@ -385,7 +386,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 delItemModel();
                 break;
             case R.id.btn_add:
-                if (mCommandLightMode.mParameters.size() >= 8) {
+                if (mCommandLightMode.mParameters.size() >= MAX_MODE_NUM) {
                     RxToast.showToast("模式个数已是最大");
                     return;
                 }
@@ -409,31 +410,44 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void sendAllModeCommand() {
-        new Thread(new Runnable() {
+        try {
+            if (thread != null && thread.isAlive()) {
+                thread.interrupt();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
+
                 saveCurrentModel();
                 saveClick();
                 showSendCommandLoading();
                 for (int i = 0; i < 8; i++) {
+                    if (isDetached() || !isActivityValid()) {
+                        break;
+                    }
                     if (i > mCommandLightMode.mParameters.size() - 1) {
                         sendEmptyMode(i);
                     } else {
                         sendUserModel(i);
                     }
                 }
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         dismissLoading();
                     }
                 });
             }
-        }).start();
+        });
+        thread.start();
     }
 
     private void dismissLoading() {
-        getActivity().runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ((BaseActivity) ModelInfoSettingFragment.this.getActivity())
@@ -443,7 +457,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void showSendCommandLoading() {
-        getActivity().runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ((BaseActivity) ModelInfoSettingFragment.this.getActivity())
@@ -464,8 +478,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
         lightItemMode.setLight6Level(0);
         lightItemMode.setLight7Level(0);
         sendCommand(i, lightItemMode);
-        if (i == 6) {
-            getActivity().runOnUiThread(new Runnable() {
+        if (i == (MAX_MODE_NUM - 1)) {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     RxToast.showToast("设置完毕");
@@ -474,7 +488,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
             });
         } else {
             final int finalI1 = i;
-            getActivity().runOnUiThread(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     RxToast.showToast("模式" + (finalI1 + 1) + "发送成功");
@@ -488,21 +502,29 @@ public class ModelInfoSettingFragment extends BaseFragment {
         }
     }
 
+    public void runOnUiThread(Runnable runnable) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(runnable);
+        }
+    }
+
     private void sendUserModel(int i) {
         LightItemMode lightItemMode =
                 mCommandLightMode.mParameters.get(i);
         sendCommand(i, lightItemMode);
         final int finalI = i;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                RxToast.showToast("模式" + (finalI + 1) + "发送成功");
+        if (getActivity() != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    RxToast.showToast("模式" + (finalI + 1) + "发送成功");
+                }
+            });
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        });
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -570,7 +592,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
             lightItemMode.setParent_id(mCommandLightMode.getId());
             DaoManager.getInstance().getDaoSession().getLightItemModeDao().insert(lightItemMode);
         }
-        getActivity().runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 RxToast.showToast("保存成功");
@@ -611,25 +633,32 @@ public class ModelInfoSettingFragment extends BaseFragment {
             SeekBar progressBar = (SeekBar) llSeekbar.findViewWithTag("index" + (index));
             switch (index) {
                 case 0:
-                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight1Level());
+                    progressBar.setProgress(
+                            mCommandLightMode.getMParameters().get(mIndex).getLight1Level());
                     break;
                 case 1:
-                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight2Level());
+                    progressBar.setProgress(
+                            mCommandLightMode.getMParameters().get(mIndex).getLight2Level());
                     break;
                 case 2:
-                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight3Level());
+                    progressBar.setProgress(
+                            mCommandLightMode.getMParameters().get(mIndex).getLight3Level());
                     break;
                 case 3:
-                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight4Level());
+                    progressBar.setProgress(
+                            mCommandLightMode.getMParameters().get(mIndex).getLight4Level());
                     break;
                 case 4:
-                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight5Level());
+                    progressBar.setProgress(
+                            mCommandLightMode.getMParameters().get(mIndex).getLight5Level());
                     break;
                 case 5:
-                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight6Level());
+                    progressBar.setProgress(
+                            mCommandLightMode.getMParameters().get(mIndex).getLight6Level());
                     break;
                 case 6:
-                    progressBar.setProgress(mCommandLightMode.getMParameters().get(mIndex).getLight7Level());
+                    progressBar.setProgress(
+                            mCommandLightMode.getMParameters().get(mIndex).getLight7Level());
                     break;
             }
         }
@@ -637,6 +666,15 @@ public class ModelInfoSettingFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
+        try {
+            if (thread != null && thread.isAlive()) {
+                Logger.d("interrupt ");
+                thread.interrupt();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         super.onDestroyView();
         unbinder.unbind();
     }

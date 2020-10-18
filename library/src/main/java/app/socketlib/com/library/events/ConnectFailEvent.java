@@ -7,8 +7,13 @@ package app.socketlib.com.library.events;
  */
 public class ConnectFailEvent {
     int colseType ;
+    public String ip;
 
     public ConnectFailEvent() {
+    }
+
+    public ConnectFailEvent(String ip) {
+        this.ip = ip;
     }
 
     public int getColseType() {
