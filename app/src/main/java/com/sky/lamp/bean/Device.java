@@ -17,7 +17,7 @@ public class Device {
     private String mTemperature;
     @SerializedName("streamURL")
     private String mStreamUrl;
-
+    public boolean isChecked;
     public String getDeviceSN() {
         return mDeviceSN;
     }

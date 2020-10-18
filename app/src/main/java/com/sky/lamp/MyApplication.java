@@ -21,6 +21,7 @@ import com.vondear.rxtools.RxTool;
 import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
+import app.socketlib.com.library.socket.MultiTcpManager;
 
 //import android.support.multidex.MultiDex;
 
@@ -43,6 +44,7 @@ public class MyApplication extends Application {
         initImageLoader(this);
         DaoManager.getInstance().init(this);
         SocketManager.getInstance();
+        MultiTcpManager.getInstance().init(this);
         new CrashHandler().init(this);
     }
 

@@ -68,7 +68,7 @@
                     android:orientation="vertical">
 
                 <TextView
-                        android:id="@+id/tv_name"
+                        android:id="@+id/tv_item1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
@@ -76,7 +76,7 @@
                         tools:text="@string/app_name" />
 
                 <TextView
-                        android:id="@+id/tv_mac"
+                        android:id="@+id/tv_item2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"

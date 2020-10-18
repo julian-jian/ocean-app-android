@@ -6,13 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.Test;
 
-import com.google.gson.Gson;
-import com.sky.lamp.bean.LightItemMode;
-import com.sky.lamp.bean.LightModelCache;
-import com.sky.lamp.response.BindResponse;
-import com.sky.lamp.response.GetBindDeviceResponse;
-import com.sky.lamp.utils.RxSPUtilTool;
-
 public class TestSend {
     @Test
     public void send() {

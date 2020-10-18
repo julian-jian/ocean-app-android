@@ -41,6 +41,7 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import app.socketlib.com.library.ContentServiceHelper;
+import app.socketlib.com.library.socket.MultiTcpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -396,13 +397,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 saveClick();
                 break;
             case R.id.btn_send:
-                if (!SocketManager.getInstance().isConnect()) {
-                    RxToast.showToast("未建立连接成功，请先确认连接成功");
-
-                } else {
-                    btnSend.setEnabled(false);
-                    sendAllModeCommand();
-                }
+                btnSend.setEnabled(false);
+                sendAllModeCommand();
                 break;
             case R.id.tv_startTime: // 不允许设置开始时间
                 break;
@@ -535,7 +531,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         temp[14] = HexUtils.getVerifyCode(temp);
         Logger.d("sendCommand success index = " + index + " " + HexUtils
                 .bytes2Hex(temp));
-        ContentServiceHelper.sendClientMsg(temp);
+        MultiTcpManager.getInstance().send(temp);
     }
 
     private void delItemModel() {

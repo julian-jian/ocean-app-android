@@ -6,10 +6,16 @@ package app.socketlib.com.library.events;
  * description：socket连接成功,用于通知订阅重新订阅一次
  */
 public class ConnectSuccessEvent {
-    private int connectType ;
+    public String ip;
+    private int connectType;
 
     public ConnectSuccessEvent(int connectType) {
         this.connectType = connectType;
+    }
+
+    public ConnectSuccessEvent(int connectType, String ip) {
+        this.connectType = connectType;
+        this.ip = ip;
     }
 
     public void setConnectType(int connectType) {

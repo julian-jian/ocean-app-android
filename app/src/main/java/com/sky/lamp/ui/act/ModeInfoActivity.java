@@ -3,17 +3,13 @@ package com.sky.lamp.ui.act;
 import java.util.ArrayList;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import com.chenxi.tabview.adapter.ModelInfoAdapter;
 import com.chenxi.tabview.listener.OnTabSelectedListener;
 import com.chenxi.tabview.widget.Tab;
 import com.chenxi.tabview.widget.TabContainerView;
-import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.R;
-import com.sky.lamp.SocketManager;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.ui.fragment.DemoFragment;
@@ -25,12 +21,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.LinearLayout;
-import app.socketlib.com.library.events.ConnectSuccessEvent;
-import app.socketlib.com.library.listener.SocketResponseListener;
+import app.socketlib.com.library.socket.MultiTcpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ModeInfoActivity extends BaseActivity implements SocketResponseListener {
+public class ModeInfoActivity extends BaseActivity {
     @BindView(R.id.actionBar)
     TitleBar actionBar;
     @BindView(R.id.tab_container)
@@ -85,9 +80,14 @@ public class ModeInfoActivity extends BaseActivity implements SocketResponseList
             }
         });
         refreshTitle(stickyEvent.t1 + "-" + stickyEvent.modelName);
-        EventBus.getDefault().register(this);
 
-        SocketManager.getInstance().bindSocket(ModelSelectBean.ip);
+        bindServer();
+    }
+
+    private void bindServer() {
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add(ModelSelectBean.ip);
+        MultiTcpManager.getInstance().connect(strings);
         showLoadingDialog("正在建立连接...");
     }
 
@@ -97,18 +97,8 @@ public class ModeInfoActivity extends BaseActivity implements SocketResponseList
 
     @Override
     protected void onDestroy() {
-        SocketManager.getInstance().unbindSocket();
-        EventBus.getDefault().unregister(this);
+        MultiTcpManager.getInstance().disConnect();
         super.onDestroy();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(ConnectSuccessEvent event) {
-        this.dismissLoadingDialog();
-    }
-
-    @Override
-    public void socketMessageReceived(String msg) {
-        Logger.d("socketMessageReceived() called with: msg = [" + msg + "]");
-    }
 }

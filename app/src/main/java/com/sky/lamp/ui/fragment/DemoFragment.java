@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import app.socketlib.com.library.ContentServiceHelper;
+import app.socketlib.com.library.socket.MultiTcpManager;
 import app.socketlib.com.library.socket.SocketConfig;
 import app.socketlib.com.library.utils.LogUtil;
 import butterknife.BindView;
@@ -44,7 +45,6 @@ public class DemoFragment extends DelayBaseFragment {
     private Handler mHandler = new Handler();
     Timer timer;
     public static final String TAG = DemoFragment.class.getSimpleName();
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -70,12 +70,6 @@ public class DemoFragment extends DelayBaseFragment {
         if (timer != null) {
             timer.cancel();
         }
-        try {
-            ContentServiceHelper.unBindService(getActivity());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     @OnClick(R.id.btn_start)
@@ -191,7 +185,8 @@ public class DemoFragment extends DelayBaseFragment {
         temp[14] = HexUtils.getVerifyCode(temp);
         index++;
         System.out.println("sendCommand success " + HexUtils.bytes2Hex(temp) + " " + lightItemMode);
-        ContentServiceHelper.sendClientMsg(temp);
+        MultiTcpManager.getInstance().send(temp);
+
     }
 
     int index = 0;

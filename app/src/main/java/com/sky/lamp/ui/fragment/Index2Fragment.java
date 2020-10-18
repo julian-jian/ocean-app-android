@@ -175,8 +175,8 @@ public class Index2Fragment extends DelayBaseFragment {
                 bindDeviceRequest(ip_mac.mMac);
             }
         });
-        TextView deviceName = inflate.findViewById(R.id.tv_name);
-        TextView mac = inflate.findViewById(R.id.tv_mac);
+        TextView deviceName = inflate.findViewById(R.id.tv_item1);
+        TextView mac = inflate.findViewById(R.id.tv_item2);
         RenameMac renameMac = new RenameMac();
         renameMac.mac = ip_mac.mMac;
         if (renameMacs.contains(renameMac)) {
@@ -321,14 +321,14 @@ public class Index2Fragment extends DelayBaseFragment {
                                     });
                             ((TextView) swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
                             // 禁用左划
-                            TextView deviceName = inflate.findViewById(R.id.tv_name);
+                            TextView deviceName = inflate.findViewById(R.id.tv_item1);
                             IP_MAC tmp = new IP_MAC("", device.getDeviceSN());
                             if (mDeviceList.contains(tmp)) {
                                 deviceName.setText(device.getDeviceSN() + "(在线)");
                             } else {
                                 deviceName.setText(device.getDeviceSN());
                             }
-                            TextView mac = inflate.findViewById(R.id.tv_mac);
+                            TextView mac = inflate.findViewById(R.id.tv_item2);
                             mac.setVisibility(View.GONE);
 
                             deviceName.setOnClickListener(new View.OnClickListener() {

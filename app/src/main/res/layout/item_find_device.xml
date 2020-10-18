@@ -33,9 +33,9 @@
                     android:background="#FF9D01"
                     android:clickable="true"
                     android:gravity="center"
-                    android:visibility="gone"
                     android:text="重命名"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
 
             <TextView
                     android:id="@+id/tv_2"
@@ -61,23 +61,25 @@
                     android:src="@drawable/model_led" />
 
             <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/checkbox"
                     android:layout_toRightOf="@+id/iv"
                     android:orientation="vertical">
 
                 <TextView
-                        android:id="@+id/tv_name"
+                        android:id="@+id/tv_item1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
                         android:textSize="17sp"
-                        tools:text="@string/app_name" />
+                        tools:text="@string/test_string_long" />
 
                 <TextView
-                        android:id="@+id/tv_mac"
+                        android:id="@+id/tv_item2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"

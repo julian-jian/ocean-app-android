@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import com.daimajia.swipe.SwipeLayout;
-import com.event.NextStepEvent;
 import com.google.gson.reflect.TypeToken;
-import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
@@ -30,76 +27,74 @@ import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
 import com.stealthcopter.networktools.SubnetDevices;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.dialog.RxDialogEditSureCancel;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class Index1SubActivity extends BaseActivity {
 
-    @BindView(R.id.ll_bind_devices_list)
-    LinearLayout llBindDevicesList;
-    @BindView(R.id.ll_find_devices_list)
-    LinearLayout llFindDevicesList;
-    @BindView(R.id.ll_search)
-    LinearLayout llSearch;
-    Unbinder unbinder;
     @BindView(R.id.actionBar)
     TitleBar titleBar;
-    private List<IP_MAC> mDeviceList = new ArrayList<IP_MAC>();
-    private RxDialogEditSureCancel rxDialogLoading;
-    private List<RenameMac> renameMacs;
-
-    ArrayList<com.stealthcopter.networktools.subnet.Device> mDevicesFound = new ArrayList<>();
+    @BindView(R.id.ll_bind_devices_list)
+    LinearLayout llBindDevicesList;
+    private HashMap<String, String> mLocalDeviceList = new HashMap<String, String>();
+    private List<Device> mBindServerList = new ArrayList<>();
+    private List<RenameMac> mRenameMacs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_frament_index2);
-        unbinder = ButterKnife.bind(this);
-        llSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLoadingDialog("正在搜索局域网设备");
-                startFindDevices();
-            }
-        });
-        titleBar.setTitle("设备");
-        titleBar.setRightText("下一步");
-        titleBar.initLeftImageView(this);
+        setContentView(R.layout.act_select_devices);
+        ButterKnife.bind(this);
+        initViews();
         startFindDevices();
         queryBindDevice();
-        renameMacs =
+        mRenameMacs =
                 DaoManager.getInstance().getDaoSession().getRenameMacDao()
                         .loadAll();
-        if (renameMacs == null) {
-            renameMacs = new ArrayList<>();
+        if (mRenameMacs == null) {
+            mRenameMacs = new ArrayList<>();
         }
     }
 
-    public void nextStepClick(NextStepEvent event) {
-        IP_MAC selectDevice = null;
-        for (IP_MAC ip_mac : mDeviceList) {
-            if (ip_mac.mSelect) {
-                selectDevice = ip_mac;
+    private void initViews() {
+        titleBar.setTitle("设备");
+        titleBar.setRightText("下一步");
+        titleBar.getRightTextView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextStepClick();
+            }
+        });
+        titleBar.initLeftImageView(this);
+    }
+
+    public void nextStepClick() {
+        List<String> ips = new ArrayList<>();
+        boolean notOnline = true;
+        for (Device device : mBindServerList) {
+            if (mLocalDeviceList.get(device.getDeviceSN()) == null) {
+                notOnline = false;
+            } else {
+                ips.add(mLocalDeviceList.get(device.getDeviceSN()));
             }
         }
-        if (selectDevice == null) {
-            RxToast.showToast("请先选中设备");
+        if (!notOnline) {
+            RxToast.showToast("所选设备包含未上线设备");
             return;
         }
         if (!MyApplication.getInstance().isLogin()) {
@@ -107,19 +102,17 @@ public class Index1SubActivity extends BaseActivity {
             startActivity(new Intent(this, LoginAct.class));
             return;
         }
+        if (ips.size() == 0) {
+            RxToast.showToast("未选中设备");
+            return;
+        }
+        ModelSelectBean.ips = ips;
         Intent intent = new Intent(this, ConfigAct.class);
-        intent.putExtra("device", selectDevice);
         startActivity(intent);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     private void startFindDevices() {
-        mDeviceList.clear();
-        llFindDevicesList.removeAllViews();
+        showLoadingDialog("局域网搜索中...");
         SubnetDevices.fromLocalAddress().findDevices(new SubnetDevices.OnSubnetDeviceFound() {
             @Override
             public void onDeviceFound(com.stealthcopter.networktools.subnet.Device device) {
@@ -129,88 +122,29 @@ public class Index1SubActivity extends BaseActivity {
             @Override
             public void onFinished(
                     final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
-                mDevicesFound = devicesFound;
+                mLocalDeviceList.clear();
+                for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
+                    mLocalDeviceList.put(device.mac, device.ip);
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         dismissLoadingDialog();
-                        for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
-                            IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
-                            if (!TextUtils.isEmpty(device.mac) && !mDeviceList.contains(ipMac)) {
-                                mDeviceList.add(ipMac);
-                                addFindDeviceView(ipMac);
-                            }
-                        }
-                        queryBindDevice();
+                        addBindViews(mBindServerList);
                     }
                 });
             }
         });
     }
 
-    private void addFindDeviceView(final IP_MAC ip_mac) {
-        View inflate = LayoutInflater
-                .from(this).inflate(R.layout.item_find_device2, null);
-        SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
-
-        swipeLayout.findViewById(R.id.tv_2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bindDeviceRequest(ip_mac.mMac);
-            }
-        });
-        TextView deviceName = inflate.findViewById(R.id.tv_name);
-        TextView mac = inflate.findViewById(R.id.tv_mac);
-        RenameMac renameMac = new RenameMac();
-        renameMac.mac = ip_mac.mMac;
-        if (renameMacs.contains(renameMac)) {
-            RenameMac renameMac1 = renameMacs.get(renameMacs.indexOf(renameMac));
-            deviceName.setText("(" + renameMac1.name + ")" + ip_mac.mIp);
-        } else {
-            deviceName.setText(ip_mac.mIp);
-        }
-        mac.setText(ip_mac.mMac);
-        swipeLayout.findViewById(R.id.tv_1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showRenameDialog(ip_mac.mMac);
-            }
-        });
-        final int pos = mDeviceList.size() - 1;
-        AppCompatCheckBox checkBox = inflate.findViewById(R.id.checkbox);
-        checkBox.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView,
-                                                 boolean isChecked) {
-                        if (!isChecked) {
-                            mDeviceList.get(pos).mSelect = false;
-                            return;
-                        }
-                        for (int i = 0; i < llFindDevicesList.getChildCount(); i++) {
-                            View childAt = llFindDevicesList.getChildAt(i);
-                            AppCompatCheckBox checkBox =
-                                    childAt.findViewById(R.id.checkbox);
-                            if (i != mDeviceList.indexOf(ip_mac)) {
-                                checkBox.setChecked(false);
-                            } else {
-                                mDeviceList.get(pos).mSelect = true;
-                            }
-                        }
-                    }
-                });
-        llFindDevicesList.addView(inflate);
-
-    }
-
-    public void unbindDevice(String deviceID) {
+    public void unbindDeviceRequest(String deviceID) {
         String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
         HashMap<String, Object> map = new HashMap<>();
         map.put("userID", userId);
         map.put("deviceID", deviceID);
         String strEntity = HttpUtil.getRequestString(map);
         RequestBody body = RequestBody
-                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+                .create(MediaType.parse("application/json;charset=UTF-8"), strEntity);
         AppService.createApi(MyApi.class).unBind(body).subscribeOn(Schedulers.io())
                 .observeOn(
                         AndroidSchedulers.mainThread())
@@ -253,7 +187,7 @@ public class Index1SubActivity extends BaseActivity {
         map.put("userID", userId);
         String strEntity = HttpUtil.getRequestString(map);
         RequestBody body = RequestBody
-                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+                .create(MediaType.parse("application/json;charset=UTF-8"), strEntity);
         AppService.createApi(MyApi.class).getBindDevices(body).subscribeOn(Schedulers.io())
                 .observeOn(
                         AndroidSchedulers.mainThread())
@@ -281,157 +215,74 @@ public class Index1SubActivity extends BaseActivity {
                         }
                         Type type = new TypeToken<List<Device>>() {
                         }.getType();
-                        List<Device> list = new GsonImpl().toList(response.result,
+                        mBindServerList = new GsonImpl().toList(response.result,
                                 Device.class, type);
-                        llBindDevicesList.removeAllViews();
-                        for (final Device device : list) {
-                            final View inflate = LayoutInflater
-                                    .from(Index1SubActivity.this).inflate(R.layout.item_find_device,
-                                            null);
-                            SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
-                            swipeLayout.findViewById(R.id.checkbox).setVisibility(View.INVISIBLE);
-                            swipeLayout.findViewById(R.id.tv_1)
-                                    .setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            RxToast.showToast("暂不支持");
-                                        }
-                                    });
-                            swipeLayout.findViewById(R.id.tv_2)
-                                    .setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            unbindDevice(device.getDeviceSN());
-                                        }
-                                    });
-                            ((TextView) swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
-                            // 禁用左划
-                            TextView deviceName = inflate.findViewById(R.id.tv_name);
-                            IP_MAC tmp = new IP_MAC("", device.getDeviceSN());
-                            if (mDeviceList.contains(tmp)) {
-                                deviceName.setText(device.getDeviceSN() + "(在线)");
-                            } else {
-                                deviceName.setText(device.getDeviceSN());
-                            }
-                            TextView mac = inflate.findViewById(R.id.tv_mac);
-                            mac.setVisibility(View.GONE);
-
-                            deviceName.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                    if (TextUtils.isEmpty(ModelSelectBean.t1)) {
-                                        RxToast.showToast("请选择模式");
-                                        return;
-                                    }
-                                    String ip = "";
-                                    for (IP_MAC ipMac : mDeviceList) {
-                                        if (ipMac.mMac.toLowerCase()
-                                                .equals(device.getDeviceSN().toLowerCase())) {
-                                            ip = ipMac.mIp;
-                                        }
-                                    }
-                                    if (TextUtils.isEmpty(ip)) {
-                                        RxToast.showToast("设备未上线");
-                                        return;
-                                    }
-                                    ModelSelectBean.deviceId = device.getDeviceSN();
-                                    ModelSelectBean.ip = ip;
-                                    SelectConfigAct.startUI(Index1SubActivity.this);
-                                }
-                            });
-                            llBindDevicesList.addView(inflate);
+                        for (Device device : mBindServerList) {
+                            device.setDeviceSN(device.getDeviceSN().toLowerCase());
                         }
+                        addBindViews(mBindServerList);
                     }
                 });
     }
 
-    public void bindDeviceRequest(String mac) {
-        if (!MyApplication.getInstance().isLogin()) {
-            RxToast.showToast("请先登录");
-            return;
+    private void addBindViews(List<Device> list) {
+        llBindDevicesList.removeAllViews();
+        for (final Device device : list) {
+            final View inflate = LayoutInflater
+                    .from(Index1SubActivity.this).inflate(R.layout.item_find_device,
+                            null);
+            SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
+            swipeLayout.findViewById(R.id.tv_1)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            RxToast.showToast("暂不支持");
+                        }
+                    });
+            swipeLayout.findViewById(R.id.tv_2)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            unbindDeviceRequest(device.getDeviceSN());
+                        }
+                    });
+            CheckBox checkBox = swipeLayout.findViewById(R.id.checkbox);
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    device.isChecked = isChecked;
+                }
+            });
+            ((TextView) swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
+            // 禁用左划
+            TextView deviceName = inflate.findViewById(R.id.tv_item1);
+            TextView tv2 = inflate.findViewById(R.id.tv_item2);
+            String pre = "";
+            for (RenameMac renameMac : mRenameMacs) {
+                if (renameMac.mac.equals(device.getDeviceSN())) {
+                    pre = renameMac.getName();
+                    break;
+                }
+            }
+            if (TextUtils.isEmpty(pre)) {
+                tv2.setVisibility(View.GONE);
+            } else {
+                tv2.setVisibility(View.VISIBLE);
+                tv2.setText(pre);
+            }
+            if (mLocalDeviceList.get(device.getDeviceSN()) != null) {
+                deviceName.setText(device.getDeviceSN() + "(在线)");
+            } else {
+                deviceName.setText(device.getDeviceSN());
+            }
+
+            deviceName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
+            });
+            llBindDevicesList.addView(inflate);
         }
-        String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("deviceID", mac);
-        map.put("userID", userId);
-        String strEntity = HttpUtil.getRequestString(map);
-        RequestBody body = RequestBody
-                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
-        AppService.createApi(MyApi.class).bind(body).subscribeOn(Schedulers.io()).observeOn(
-                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<BaseResponse>() {
-            @Override
-            public void onStart() {
-                super.onStart();
-                showLoadingDialog();
-            }
-
-            @Override
-            public void onError(Throwable error) {
-                super.onError(error);
-                dismissLoadingDialog();
-            }
-
-            @Override
-            public void onCompleted() {
-                dismissLoadingDialog();
-            }
-
-            @Override
-            public void onNext(final BaseResponse response) {
-                if (response.isSuccess()) {
-                    RxToast.showToast("绑定成功");
-                    queryBindDevice();
-                } else {
-                    RxToast.error(response.result);
-                }
-            }
-        });
     }
 
-    public void showRenameDialog(final String mac) {
-        rxDialogLoading = new RxDialogEditSureCancel(this);
-        rxDialogLoading.setTitle("重命名");
-        rxDialogLoading.getCancelView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rxDialogLoading.dismiss();
-            }
-        });
-        rxDialogLoading.getSureView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = rxDialogLoading.getEditText().getText().toString();
-                if (!TextUtils.isEmpty(name)) {
-                    List<RenameMac> renameMacs =
-                            DaoManager.getInstance().getDaoSession().getRenameMacDao()
-                                    .loadAll();
-                    boolean findDevice = false;
-                    for (RenameMac renameMac : renameMacs) {
-                        if (renameMac.mac.equals(mac)) {
-                            renameMac.name = name;
-                            findDevice = true;
-                            DaoManager.getInstance().getDaoSession().update(renameMac);
-                            break;
-                        }
-                    }
-                    if (!findDevice) {
-                        RenameMac renameMac = new RenameMac();
-                        renameMac.mac = mac;
-                        renameMac.name = name;
-                        DaoManager.getInstance().getDaoSession().insert(renameMac);
-                    }
-                    llFindDevicesList.removeAllViews();
-                    for (com.stealthcopter.networktools.subnet.Device device : mDevicesFound) {
-                        IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
-                        if (!TextUtils.isEmpty(device.mac)) {
-                            addFindDeviceView(ipMac);
-                        }
-                    }
-                    rxDialogLoading.dismiss();
-                }
-            }
-        });
-        rxDialogLoading.show();
-    }
 }
