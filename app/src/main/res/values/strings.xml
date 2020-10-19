@@ -18,6 +18,7 @@
     <string name="ReefSun">ReeSun LED</string>
     <string name="unknown">未知</string>
     <string name="net_error">网络错误</string>
+    <string name="time_set_error">时间设置错误，请检查</string>
 
 </resources>
 

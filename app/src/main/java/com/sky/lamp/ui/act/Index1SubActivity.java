@@ -9,6 +9,7 @@ import com.daimajia.swipe.SwipeLayout;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
+import com.sky.lamp.BuildConfig;
 import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
@@ -93,7 +94,7 @@ public class Index1SubActivity extends BaseActivity {
                 ips.add(mLocalDeviceList.get(device.getDeviceSN()));
             }
         }
-        if (hasError) {
+        if (hasError && !BuildConfig.DEBUG) {
             RxToast.showToast("所选设备包含未上线设备");
             return;
         }

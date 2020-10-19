@@ -101,8 +101,8 @@ public class DemoFragment extends DelayBaseFragment {
                 }
 
                 List<LightItemMode> mParameters = commandLightMode.mParameters;
-                LightItemMode holdItemMode = null;
-                holdItemMode = getHoldItemMode(mParameters, holdItemMode, clockCalendar);
+                LightItemMode  holdItemMode = getHoldItemMode(mParameters,
+                        clockCalendar);
                 if (holdItemMode != null) {
                     Logger.i("当前时间 "+DateUtils.formatDate(clockCalendar.getTime(),"HH:mm")+" 命中 "+holdItemMode);
                     sendCommand(holdItemMode);
@@ -125,8 +125,14 @@ public class DemoFragment extends DelayBaseFragment {
         timer.schedule(timerTask, 0L, BuildConfig.DEBUG ? 1000 : 5 * 1000L);
     }
 
-    private LightItemMode getHoldItemMode(List<LightItemMode> mParameters,
-                                          LightItemMode holdItemMode, Calendar clockCalendar) {
+    /**
+     * @param mParameters
+     * @param clockCalendar
+     *
+     * @return 命中的模式
+     */
+    private LightItemMode getHoldItemMode(List<LightItemMode> mParameters, Calendar clockCalendar) {
+        LightItemMode holdItemMode = null;
         for (LightItemMode lightItemMode : mParameters) {
             String startTime = lightItemMode.getStartTime();
             String endTime = lightItemMode.getStopTime();

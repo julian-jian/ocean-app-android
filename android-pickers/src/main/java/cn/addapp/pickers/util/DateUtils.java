@@ -213,8 +213,16 @@ public class DateUtils extends android.text.format.DateUtils {
         return parseDate(dateStr, "yyyy-MM-dd HH:mm:ss");
     }
 
+    /**
+     * @param dateStr HH:mm
+     *
+     * @return
+     */
     public static Date parseHourDate(String dateStr) {
-        return parseDate(dateStr, "HH:mm");
+        Calendar calendar = Calendar.getInstance();
+        String str =
+                calendar.get(Calendar.YEAR)+"-"+(calendar.get(Calendar.MONTH)+1)+"-"+calendar.get(Calendar.DAY_OF_MONTH)+" ";
+        return parseDate(str+dateStr, "yyyy-MM-dd HH:mm");
     }
 
 

@@ -183,7 +183,7 @@ public class Index2Fragment extends DelayBaseFragment {
         TextView mac = inflate.findViewById(R.id.tv_item2);
         RenameMac renameMac = new RenameMac();
         renameMac.mac = ip_mac.mMac;
-        if (renameMacs.contains(renameMac)) {
+        if (renameMacs.contains(renameMac)) { // 重命名
             RenameMac renameMac1 = renameMacs.get(renameMacs.indexOf(renameMac));
             deviceName.setText("(" + renameMac1.name + ")" + ip_mac.mIp);
         } else {
@@ -448,9 +448,6 @@ public class Index2Fragment extends DelayBaseFragment {
     }
 
     private void updateOrInsertRename(String name, String mac) {
-        List<RenameMac> renameMacs =
-                DaoManager.getInstance().getDaoSession().getRenameMacDao()
-                        .loadAll();
         boolean findDevice = false;
         for (RenameMac renameMac : renameMacs) {
             if (renameMac.mac.equals(mac)) {

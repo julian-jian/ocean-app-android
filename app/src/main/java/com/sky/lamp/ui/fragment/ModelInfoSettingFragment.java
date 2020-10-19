@@ -3,6 +3,8 @@ package com.sky.lamp.ui.fragment;
 import static com.sky.lamp.utils.HexUtils.tenToHexByte;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -25,6 +27,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -45,6 +48,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import cn.addapp.pickers.picker.TimePicker;
+import cn.addapp.pickers.util.DateUtils;
 
 public class ModelInfoSettingFragment extends BaseFragment {
     Unbinder unbinder;
@@ -85,7 +89,6 @@ public class ModelInfoSettingFragment extends BaseFragment {
         readModelCache();
         initSeekbar();
         initModel();
-        tvStartTime.setClickable(false);
         return view;
     }
 
@@ -321,37 +324,36 @@ public class ModelInfoSettingFragment extends BaseFragment {
         picker.setRangeEnd(23, 59);//18:30
         picker.setTopLineVisible(false);
         picker.setLineVisible(false);
-        String time[] = id == R.id.tv_startTime ? tvStartTime.getText().toString().split(":") :
+        final String time[] = id == R.id.tv_startTime ? tvStartTime.getText().toString().split(":") :
                 tvEndTime.getText().toString().split(":");
         picker.setOnTimePickListener(new TimePicker.OnTimePickListener() {
             @Override
             public void onTimePicked(String hour, String minute) {
                 hour = String.format("%02d", Integer.valueOf(hour));
                 minute = String.format("%02d", Integer.valueOf(minute));
+                String selectTime = hour + ":" + minute;
+                String sourceTime = time[0] + ":" + time[1];
                 if (id == R.id.tv_endTime) {
-                    String startTime[] = tvStartTime.getText().toString().split(":");
-                    boolean error = false;
-                    if (Integer.valueOf(startTime[0]) > Integer.valueOf(hour)) {
-                        error = true;
+                    tvEndTime.setText(selectTime);
+                    mCommandLightMode.mParameters.get(mIndex).setStopTime(selectTime);
+                    String error = isTimeValid();
+                    if (!TextUtils.isEmpty(error)) {
+                        tvEndTime.setText(sourceTime);
+                        mCommandLightMode.mParameters.get(mIndex).setStopTime(sourceTime);
+                        RxToast.showToast(error);
                     } else {
-                        int gap = Integer.valueOf(hour) * 60 + Integer.valueOf(minute) - Integer
-                                .valueOf(startTime[0]) - Integer.valueOf(startTime[1]);
-                        if (gap < 60) {
-                            RxToast.showToast("时间设置错误,间隔不能低于1小时");
-                            return;
-                        }
+                        tvEndTime.setText(hour + ":" + minute);
                     }
-
-                    String setStopTime = hour + ":" + minute;
-                    if (setStopTime.equals(tvStartTime.getText().toString())) {
-                        error = true;
-                    }
-                    if (error) {
-                        RxToast.showToast("时间设置错误");
-                        return;
+                } else {
+                    tvStartTime.setText(hour + ":" + minute);
+                    mCommandLightMode.mParameters.get(mIndex).setStartTime(selectTime);
+                    String error = isTimeValid();
+                    if (!TextUtils.isEmpty(error)) { //还原成设置之前的时间
+                        tvStartTime.setText(time[0] + ":" + time[1]);
+                        mCommandLightMode.mParameters.get(mIndex).setStartTime(sourceTime);
+                        RxToast.showToast(error);
                     } else {
-                        mCommandLightMode.getMParameters().get(mIndex).setStopTime(setStopTime);
-                        ((TextView) getView().findViewById(id)).setText(hour + ":" + minute);
+                        tvStartTime.setText(hour + ":" + minute);
                     }
                 }
             }
@@ -360,6 +362,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         // 坑爹不会默认滚动过去
         //        picker.setSelectedItem(Integer.valueOf(time[0]), Integer.valueOf(time[1]));
     }
+
 
     private void saveCurrentModel() {
         if (radioGroup.getCheckedRadioButtonId() == -1) {
@@ -401,7 +404,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 btnSend.setEnabled(false);
                 sendAllModeCommand();
                 break;
-            case R.id.tv_startTime: // 不允许设置开始时间
+            case R.id.tv_startTime:
+                onTimePicker(R.id.tv_startTime);
                 break;
             case R.id.tv_endTime:
                 onTimePicker(R.id.tv_endTime);
@@ -557,7 +561,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void delItemModel() {
-        if (mCommandLightMode.mParameters.size() < 2) {
+        if (mCommandLightMode.mParameters.size() == 1) {
+            RxToast.showToast("已是最后一个");
             return;
         }
         mCommandLightMode.mParameters.remove(mCommandLightMode.mParameters.size() - 1);
@@ -567,6 +572,16 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void saveClick() {
+        final String error = isTimeValid();
+        if (!TextUtils.isEmpty(error)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    RxToast.showToast(error);
+                }
+            });
+            return;
+        }
         if (mCommandLightMode.getId() == 0) {
             DaoManager.getInstance().getDaoSession().getCommandLightModeDao()
                     .insert(mCommandLightMode);
@@ -610,6 +625,16 @@ public class ModelInfoSettingFragment extends BaseFragment {
             lastItemModel =
                     mCommandLightMode.mParameters.get(mCommandLightMode.mParameters.size() - 1);
         }
+        String error = isTimeValid();
+        if (!TextUtils.isEmpty(error)) {
+            RxToast.showToast(getString(R.string.time_set_error));
+        }
+
+        if (lastItemModel.getStopHour() >= 23) {
+            RxToast.showToast("不足一个小时");
+            return;
+        }
+
         LightItemMode lightItemMode = new LightItemMode();
         lightItemMode.setIndex(lastItemModel.getIndex() + 1);
         lightItemMode.setModeName("模式" + lightItemMode.getIndex());
@@ -621,10 +646,51 @@ public class ModelInfoSettingFragment extends BaseFragment {
         lightItemMode.setLight6Level(DEFAULT_PROGRESS);
         lightItemMode.setLight7Level(DEFAULT_PROGRESS);
         lightItemMode.setStartTime(lastItemModel.getStopTime());
-        lightItemMode.setStopTime("23:59");
+        // 增加一小时
+        Date date = DateUtils.parseHourDate(lastItemModel.getStopTime());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY,1);
+
+        String str = DateUtils.formatDate(calendar.getTime(), "HH:mm");
+        lightItemMode.setStopTime(str);
         refreshProgress();
         mCommandLightMode.mParameters.add(lightItemMode);
         refreshModeItems();
+    }
+
+    /**
+     * 规则1： f(n) startTime 需要大于 f(n-1) 的stopTime
+     * 规则2： stopTime 必须比startTime 大于等于1个小时
+     * @return
+     */
+    private String isTimeValid() {
+        String error = null;
+        for (int i = 0; i < mCommandLightMode.mParameters.size(); i++) {
+            LightItemMode lightItemMode = mCommandLightMode.mParameters.get(i);
+            Calendar startCalendar = Calendar.getInstance();
+            startCalendar.setTime(DateUtils.parseHourDate(lightItemMode.getStartTime()));
+            Calendar endCalendar = Calendar.getInstance();
+            endCalendar.setTime(DateUtils.parseHourDate(lightItemMode.getStopTime()));
+            if (i > 0) {
+                LightItemMode lastItem = mCommandLightMode.mParameters.get(i - 1);
+                Calendar lastStopCalendar = Calendar.getInstance();
+                lastStopCalendar.setTime(DateUtils.parseHourDate(lastItem.getStopTime()));
+                if (lastStopCalendar.getTimeInMillis() > startCalendar.getTimeInMillis()) {
+                    Logger.d("时间参数错误");
+                    error = "时间参数错误";
+                }
+            }
+
+            long cal = endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis();
+            if (cal < 3600 * 1000) {
+                Logger.d("间隔不足1小时");
+                error = "间隔不足1小时";
+                break;
+            }
+
+        }
+        return error;
     }
 
     private void refreshProgress() {
