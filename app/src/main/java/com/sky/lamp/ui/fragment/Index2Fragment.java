@@ -146,6 +146,7 @@ public class Index2Fragment extends DelayBaseFragment {
             public void onFinished(
                     final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
                 mDevicesFound = devicesFound;
+                Logger.d("onFinished");
                 if (getActivity() == null) {
                     return;
                 }
@@ -455,7 +456,7 @@ public class Index2Fragment extends DelayBaseFragment {
             if (renameMac.mac.equals(mac)) {
                 renameMac.name = name;
                 findDevice = true;
-                DaoManager.getInstance().getDaoSession().update(renameMac);
+                DaoManager.getInstance().getDaoSession().getRenameMacDao().update(renameMac);
                 break;
             }
         }
@@ -463,7 +464,7 @@ public class Index2Fragment extends DelayBaseFragment {
             RenameMac renameMac = new RenameMac();
             renameMac.mac = mac;
             renameMac.name = name;
-            DaoManager.getInstance().getDaoSession().insert(renameMac);
+            DaoManager.getInstance().getDaoSession().getRenameMacDao().insert(renameMac);
         }
     }
 

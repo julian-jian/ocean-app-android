@@ -6,6 +6,7 @@ import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.MyApplication;
@@ -15,13 +16,16 @@ import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.dao.CommandLightModeDao;
 import com.sky.lamp.dao.DaoManager;
+import com.sky.lamp.dao.DaoMaster;
 import com.sky.lamp.dao.LightItemModeDao;
 import com.sky.lamp.view.TitleBar;
+import com.vondear.rxtools.view.dialog.RxDialogEditSureCancel;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +50,8 @@ public class SelectConfigAct extends BaseActivity {
     @BindView(R.id.btn_reset)
     Button btnReset;
 
+    private RxDialogEditSureCancel rxDialogLoading;
+
     public static void startUI(Context context) {
         Intent intent = new Intent(context, SelectConfigAct.class);
         context.startActivity(intent);
@@ -62,7 +68,6 @@ public class SelectConfigAct extends BaseActivity {
             finish();
             return;
         }
-        initConfig();
     }
 
     private void initConfig() {
@@ -85,12 +90,18 @@ public class SelectConfigAct extends BaseActivity {
             addDefaultView(initDefaultDb("SPS"), false);
             addDefaultView(initDefaultDb("LPS+SPS"), false);
         } else {
-            for (CommandLightMode commandLightMode :where.list()) {
+            for (CommandLightMode commandLightMode : where.list()) {
                 commandLightMode.getMParameters();
                 addDefaultView(commandLightMode,
                         commandLightMode.isCustom);
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initConfig();
     }
 
     /**
@@ -99,10 +110,10 @@ public class SelectConfigAct extends BaseActivity {
      * @param t2Name
      */
     private CommandLightMode initDefaultDb(String t2Name) {
-        return initDefaultDb(t2Name,false);
+        return initDefaultDb(t2Name, false);
     }
 
-    private CommandLightMode initDefaultDb(String t2Name,boolean isCustom) {
+    private CommandLightMode initDefaultDb(String t2Name, boolean isCustom) {
         final CommandLightMode commandLightMode = new CommandLightMode();
         commandLightMode.mUserID = MyApplication.getInstance().getUserId();
         commandLightMode.mDeviceID = ModelSelectBean.deviceId;
@@ -139,16 +150,53 @@ public class SelectConfigAct extends BaseActivity {
 
                     }
                 });
+
                 ((TextView) inflate.findViewById(R.id.textView))
                         .setText(commandLightMode.modelName);
                 if (isCustom) {
                     llCustomConfigs.addView(inflate);
+                    TextView renameTv = inflate.findViewById(R.id.tv_1);
+                    renameTv.setVisibility(View.VISIBLE);
+                    renameTv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showRenameDialog(commandLightMode);
+                        }
+                    });
                 } else {
+                    TextView renameTv = inflate.findViewById(R.id.tv_1);
+                    SwipeLayout swipeRefreshLayout = inflate.findViewById(R.id.swipeLayout);
+                    swipeRefreshLayout.setSwipeEnabled(false);
                     llDefaultConfigs.addView(inflate);
                 }
 
             }
         });
+    }
+
+    public void showRenameDialog(final CommandLightMode commandLightMode) {
+        rxDialogLoading = new RxDialogEditSureCancel(this);
+        rxDialogLoading.setTitle("重命名");
+        rxDialogLoading.getCancelView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rxDialogLoading.dismiss();
+            }
+        });
+        rxDialogLoading.getSureView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = rxDialogLoading.getEditText().getText().toString();
+                if (!TextUtils.isEmpty(name)) {
+                    commandLightMode.modelName = name;
+                    DaoManager.getInstance().getDaoSession().getCommandLightModeDao()
+                            .update(commandLightMode);
+                    initConfig();
+                    rxDialogLoading.dismiss();
+                }
+            }
+        });
+        rxDialogLoading.show();
     }
 
     @OnClick({R.id.btn_add_config, R.id.btn_reset})
@@ -163,7 +211,7 @@ public class SelectConfigAct extends BaseActivity {
                                         CommandLightModeDao.Properties.ModelName.like("自定义%"));
                 CommandLightMode commandLightMode =
                         initDefaultDb("自定义" + (where.list().size() + 1));
-                addDefaultView(commandLightMode, true);
+                commandLightMode.isCustom = true;
                 EventBus.getDefault().postSticky(commandLightMode);
                 startActivity(intent);
                 break;
