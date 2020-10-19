@@ -3,13 +3,13 @@ package com.sky.lamp.ui.fragment;
 import static com.sky.lamp.utils.HexUtils.tenToHexByte;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import com.orhanobut.logger.Logger;
+import com.sky.lamp.BuildConfig;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;
@@ -25,10 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import app.socketlib.com.library.ContentServiceHelper;
 import app.socketlib.com.library.socket.MultiTcpManager;
-import app.socketlib.com.library.socket.SocketConfig;
-import app.socketlib.com.library.utils.LogUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -125,7 +122,7 @@ public class DemoFragment extends DelayBaseFragment {
             }
         };
 //        timer.schedule(timerTask, 0L, 5 * 1000L);
-        timer.schedule(timerTask, 0L, 1 * 1000L);
+        timer.schedule(timerTask, 0L, BuildConfig.DEBUG ? 1000 : 5 * 1000L);
     }
 
     private LightItemMode getHoldItemMode(List<LightItemMode> mParameters,

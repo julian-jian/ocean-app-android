@@ -26,19 +26,22 @@ public class CommandLightMode {
     public String mUserID;
     public String modelName;
     public String t1;
+    public boolean isCustom;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
     /** Used for active entity operations. */
     @Generated(hash = 564579061)
     private transient CommandLightModeDao myDao;
-    @Generated(hash = 1481888654)
-    public CommandLightMode(Long id, String mDeviceID, String mUserID, String modelName, String t1) {
+    @Generated(hash = 147931420)
+    public CommandLightMode(Long id, String mDeviceID, String mUserID, String modelName, String t1,
+            boolean isCustom) {
         this.id = id;
         this.mDeviceID = mDeviceID;
         this.mUserID = mUserID;
         this.modelName = modelName;
         this.t1 = t1;
+        this.isCustom = isCustom;
     }
     @Generated(hash = 2008176647)
     public CommandLightMode() {
@@ -138,5 +141,11 @@ public class CommandLightMode {
     }
     public void setT1(String t1) {
         this.t1 = t1;
+    }
+    public boolean getIsCustom() {
+        return this.isCustom;
+    }
+    public void setIsCustom(boolean isCustom) {
+        this.isCustom = isCustom;
     }
 }

@@ -72,30 +72,25 @@ public class SelectConfigAct extends BaseActivity {
         }
         llDefaultConfigs.removeAllViews();
         llCustomConfigs.removeAllViews();
-        DaoManager.getInstance().getDaoSession().runInTx(new Runnable() {
-            @Override
-            public void run() {
-                QueryBuilder<CommandLightMode> commandLightModeQueryBuilder =
-                        DaoManager.getInstance().getDaoSession()
-                                .queryBuilder(CommandLightMode.class);
-                QueryBuilder<CommandLightMode> where =
-                        commandLightModeQueryBuilder.where(CommandLightModeDao.Properties.MUserID
-                                        .eq(MyApplication.getInstance().getUserId()),
-                                CommandLightModeDao.Properties.T1.eq(ModelSelectBean.t1));
-                if (where.count() == 0) {
-                    // 初始化默认配置
-                    addDefaultView(initDefaultDb("LPS"), false);
-                    addDefaultView(initDefaultDb("SPS"), false);
-                    addDefaultView(initDefaultDb("LPS+SPS"), false);
-                } else {
-                    for (CommandLightMode commandLightMode : where.list()) {
-                        commandLightMode.getMParameters();
-                        addDefaultView(commandLightMode,
-                                commandLightMode.modelName.contains("自定义"));
-                    }
-                }
+        QueryBuilder<CommandLightMode> commandLightModeQueryBuilder =
+                DaoManager.getInstance().getDaoSession()
+                        .queryBuilder(CommandLightMode.class);
+        QueryBuilder<CommandLightMode> where =
+                commandLightModeQueryBuilder.where(CommandLightModeDao.Properties.MUserID
+                                .eq(MyApplication.getInstance().getUserId()),
+                        CommandLightModeDao.Properties.T1.eq(ModelSelectBean.t1));
+        if (where.count() == 0) {
+            // 初始化默认配置
+            addDefaultView(initDefaultDb("LPS"), false);
+            addDefaultView(initDefaultDb("SPS"), false);
+            addDefaultView(initDefaultDb("LPS+SPS"), false);
+        } else {
+            for (CommandLightMode commandLightMode :where.list()) {
+                commandLightMode.getMParameters();
+                addDefaultView(commandLightMode,
+                        commandLightMode.isCustom);
             }
-        });
+        }
     }
 
     /**
@@ -104,11 +99,16 @@ public class SelectConfigAct extends BaseActivity {
      * @param t2Name
      */
     private CommandLightMode initDefaultDb(String t2Name) {
+        return initDefaultDb(t2Name,false);
+    }
+
+    private CommandLightMode initDefaultDb(String t2Name,boolean isCustom) {
         final CommandLightMode commandLightMode = new CommandLightMode();
         commandLightMode.mUserID = MyApplication.getInstance().getUserId();
         commandLightMode.mDeviceID = ModelSelectBean.deviceId;
         commandLightMode.modelName = t2Name;
         commandLightMode.t1 = ModelSelectBean.t1;
+        commandLightMode.isCustom = isCustom;
         commandLightMode.mParameters = new ArrayList<>();
         DaoManager.getInstance().getDaoSession().insert(commandLightMode);
 
