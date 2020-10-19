@@ -241,7 +241,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-
+                    LightItemMode lightItemMode = mCommandLightMode.mParameters.get(mIndex);
+                    sendDebugCommand(lightItemMode);
                 }
             });
             llSeekbar.addView(inflate);
@@ -559,6 +560,31 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 .bytes2Hex(temp));
         MultiTcpManager.getInstance().send(temp);
     }
+
+
+    private void sendDebugCommand(LightItemMode lightItemMode) {
+        byte[] temp = new byte[] {
+                (byte) 0xaa, (byte) 0x0a, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+                (byte) 0x55};
+        // 应该不考虑时间
+        temp[6] = HexUtils.tenToHexByte(lightItemMode.getLight1Level());
+        temp[7] = tenToHexByte(lightItemMode.getLight2Level());
+        temp[8] = tenToHexByte(lightItemMode.getLight3Level());
+        temp[9] = tenToHexByte(lightItemMode.getLight4Level());
+        temp[10] = tenToHexByte(lightItemMode.getLight5Level());
+        temp[11] = tenToHexByte(lightItemMode.getLight6Level());
+        temp[12] = tenToHexByte(lightItemMode.getLight7Level());
+        temp[13] = tenToHexByte(0);
+
+        // 检验位
+        temp[14] = HexUtils.getVerifyCode(temp);
+        Logger.d("sendCommand success " + HexUtils.bytes2Hex(temp) + " " + lightItemMode);
+        MultiTcpManager.getInstance().send(temp);
+
+    }
+
 
     private void delItemModel() {
         if (mCommandLightMode.mParameters.size() == 1) {

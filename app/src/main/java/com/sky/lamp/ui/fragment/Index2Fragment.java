@@ -449,6 +449,7 @@ public class Index2Fragment extends DelayBaseFragment {
 
     private void updateOrInsertRename(String name, String mac) {
         boolean findDevice = false;
+        renameMacs = DaoManager.getInstance().getDaoSession().getRenameMacDao().loadAll();
         for (RenameMac renameMac : renameMacs) {
             if (renameMac.mac.equals(mac)) {
                 renameMac.name = name;
@@ -462,6 +463,7 @@ public class Index2Fragment extends DelayBaseFragment {
             renameMac.mac = mac;
             renameMac.name = name;
             DaoManager.getInstance().getDaoSession().getRenameMacDao().insert(renameMac);
+            renameMacs = DaoManager.getInstance().getDaoSession().getRenameMacDao().loadAll();
         }
     }
 
