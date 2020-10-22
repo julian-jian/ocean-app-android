@@ -77,7 +77,7 @@ public class Index2Fragment extends DelayBaseFragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            queryBindDevice();
+            requestBindDevice();
         }
     }
 
@@ -96,7 +96,8 @@ public class Index2Fragment extends DelayBaseFragment {
             }
         });
         startFindDevices();
-        queryBindDevice();
+        showCache();
+        requestBindDevice();
         renameMacs =
                 DaoManager.getInstance().getDaoSession().getRenameMacDao()
                         .loadAll();
@@ -104,6 +105,18 @@ public class Index2Fragment extends DelayBaseFragment {
             renameMacs = new ArrayList<>();
         }
         return view;
+    }
+
+
+    private void showCache() {
+        String response = RxSPUtilTool.readJSONCache(MyApplication.getInstance(),"bindDevice");
+        if (!TextUtils.isEmpty(response)) {
+            Type type = new TypeToken<List<Device>>() {
+            }.getType();
+            List<Device>  list = new GsonImpl().toList(response,
+                    Device.class, type);
+            refreshBindViews(list);
+        }
     }
 
     @Subscribe
@@ -161,7 +174,7 @@ public class Index2Fragment extends DelayBaseFragment {
                                 addFindDeviceView(ipMac);
                             }
                         }
-                        queryBindDevice();
+                        requestBindDevice();
                     }
                 });
             }
@@ -257,13 +270,13 @@ public class Index2Fragment extends DelayBaseFragment {
                             RxToast.showToast(response.result);
                             return;
                         }
-                        queryBindDevice();
+                        requestBindDevice();
 
                     }
                 });
     }
 
-    public void queryBindDevice() {
+    public void requestBindDevice() {
         String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
         if (TextUtils.isEmpty(userId)) {
             Logger.d("not login");
@@ -303,66 +316,73 @@ public class Index2Fragment extends DelayBaseFragment {
                         }.getType();
                         List<Device> list = new GsonImpl().toList(response.result,
                                 Device.class, type);
-                        llBindDevicesList.removeAllViews();
-                        for (final Device device : list) {
-                            final View inflate = LayoutInflater
-                                    .from(getActivity()).inflate(R.layout.item_find_device, null);
-                            SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
-                            swipeLayout.findViewById(R.id.checkbox).setVisibility(View.INVISIBLE);
-                            swipeLayout.findViewById(R.id.tv_1)
-                                    .setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            RxToast.showToast("暂不支持");
-                                        }
-                                    });
-                            swipeLayout.findViewById(R.id.tv_2)
-                                    .setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            unbindDevice(device.getDeviceSN());
-                                        }
-                                    });
-                            ((TextView) swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
-                            // 禁用左划
-                            TextView deviceName = inflate.findViewById(R.id.tv_item1);
-                            IP_MAC tmp = new IP_MAC("", device.getDeviceSN());
-                            if (mDeviceList.contains(tmp)) {
-                                deviceName.setText(device.getDeviceSN() + "(在线)");
-                            } else {
-                                deviceName.setText(device.getDeviceSN());
-                            }
-                            TextView mac = inflate.findViewById(R.id.tv_item2);
-                            mac.setVisibility(View.GONE);
+                        if (list.size() > 0) {
+                            RxSPUtilTool.putJSONCache(MyApplication.getInstance(),"bindDevice",response.result);
+                        }
+                        refreshBindViews(list);
+                    }
+                });
+    }
 
-                            deviceName.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+    private void refreshBindViews(List<Device> list) {
+        llBindDevicesList.removeAllViews();
+        for (final Device device : list) {
+            final View inflate = LayoutInflater
+                    .from(getActivity()).inflate(R.layout.item_find_device, null);
+            SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
+            swipeLayout.findViewById(R.id.checkbox).setVisibility(View.INVISIBLE);
+            swipeLayout.findViewById(R.id.tv_1)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            RxToast.showToast("暂不支持");
+                        }
+                    });
+            swipeLayout.findViewById(R.id.tv_2)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            unbindDevice(device.getDeviceSN());
+                        }
+                    });
+            ((TextView) swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
+            // 禁用左划
+            TextView deviceName = inflate.findViewById(R.id.tv_item1);
+            IP_MAC tmp = new IP_MAC("", device.getDeviceSN());
+            if (mDeviceList.contains(tmp)) {
+                deviceName.setText(device.getDeviceSN() + "(在线)");
+            } else {
+                deviceName.setText(device.getDeviceSN());
+            }
+            TextView mac = inflate.findViewById(R.id.tv_item2);
+            mac.setVisibility(View.GONE);
 
-                                    if (TextUtils.isEmpty(ModelSelectBean.t1)) {
-                                        RxToast.showToast("请选择模式");
-                                        return;
-                                    }
-                                    String ip = "";
-                                    for (IP_MAC ipMac : mDeviceList) {
-                                        if (ipMac.mMac.toLowerCase()
-                                                .equals(device.getDeviceSN().toLowerCase())) {
-                                            ip = ipMac.mIp;
-                                        }
-                                    }
+            deviceName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (TextUtils.isEmpty(ModelSelectBean.t1)) {
+                        RxToast.showToast("请选择模式");
+                        return;
+                    }
+                    String ip = "";
+                    for (IP_MAC ipMac : mDeviceList) {
+                        if (ipMac.mMac.toLowerCase()
+                                .equals(device.getDeviceSN().toLowerCase())) {
+                            ip = ipMac.mIp;
+                        }
+                    }
 //                                    if (TextUtils.isEmpty(ip)) {
 //                                        RxToast.showToast("设备未上线");
 //                                        return;
 //                                    }
-                                    ModelSelectBean.deviceId = device.getDeviceSN();
-                                    ModelSelectBean.ip = ip;
-                                    SelectConfigAct.startUI(getActivity());
-                                }
-                            });
-                            llBindDevicesList.addView(inflate);
-                        }
-                    }
-                });
+                    ModelSelectBean.deviceId = device.getDeviceSN();
+                    ModelSelectBean.ip = ip;
+                    SelectConfigAct.startUI(getActivity());
+                }
+            });
+            llBindDevicesList.addView(inflate);
+        }
     }
 
     @Override
@@ -406,7 +426,7 @@ public class Index2Fragment extends DelayBaseFragment {
             public void onNext(final BaseResponse response) {
                 if (response.isSuccess()) {
                     RxToast.showToast("绑定成功");
-                    queryBindDevice();
+                    requestBindDevice();
                 } else {
                     RxToast.error(response.result);
                 }

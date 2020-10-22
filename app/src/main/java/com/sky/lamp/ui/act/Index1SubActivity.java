@@ -63,13 +63,25 @@ public class Index1SubActivity extends BaseActivity {
         ButterKnife.bind(this);
         initViews();
         startFindDevices();
-        queryBindDevice();
+        showCache();
+        requestBindDevice();
         mRenameMacs =
                 DaoManager.getInstance().getDaoSession().getRenameMacDao()
                         .loadAll();
         if (mRenameMacs == null) {
             mRenameMacs = new ArrayList<>();
         }
+    }
+
+    private void showCache() {
+        String response = RxSPUtilTool.readJSONCache(MyApplication.getInstance(),"bindDevice");
+        if (!TextUtils.isEmpty(response)) {
+            Type type = new TypeToken<List<Device>>() {
+            }.getType();
+            mBindServerList = new GsonImpl().toList(response,
+                    Device.class, type);
+        }
+        refreshBindDeviceViews();
     }
 
     private void initViews() {
@@ -172,13 +184,13 @@ public class Index1SubActivity extends BaseActivity {
                             RxToast.showToast(response.result);
                             return;
                         }
-                        queryBindDevice();
+                        requestBindDevice();
 
                     }
                 });
     }
 
-    public void queryBindDevice() {
+    public void requestBindDevice() {
         String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
         if (TextUtils.isEmpty(userId)) {
             Logger.d("not login");
@@ -217,12 +229,19 @@ public class Index1SubActivity extends BaseActivity {
                         }.getType();
                         mBindServerList = new GsonImpl().toList(response.result,
                                 Device.class, type);
-                        for (Device device : mBindServerList) {
-                            device.setDeviceSN(device.getDeviceSN().toLowerCase());
+                        if (mBindServerList.size() > 0) {
+                            RxSPUtilTool.putJSONCache(MyApplication.getInstance(),"bindDevice",response.result);
                         }
-                        addBindViews(mBindServerList);
+                        refreshBindDeviceViews();
                     }
                 });
+    }
+
+    private void refreshBindDeviceViews() {
+        for (Device device : mBindServerList) {
+            device.setDeviceSN(device.getDeviceSN().toLowerCase());
+        }
+        addBindViews(mBindServerList);
     }
 
     private void addBindViews(List<Device> list) {
