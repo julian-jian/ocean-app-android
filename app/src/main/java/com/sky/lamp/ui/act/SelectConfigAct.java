@@ -16,7 +16,6 @@ import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.dao.CommandLightModeDao;
 import com.sky.lamp.dao.DaoManager;
-import com.sky.lamp.dao.DaoMaster;
 import com.sky.lamp.dao.LightItemModeDao;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.dialog.RxDialogEditSureCancel;
@@ -25,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,13 +84,13 @@ public class SelectConfigAct extends BaseActivity {
                         CommandLightModeDao.Properties.T1.eq(ModelSelectBean.t1));
         if (where.count() == 0) {
             // 初始化默认配置
-            addDefaultView(initDefaultDb("LPS"), false);
-            addDefaultView(initDefaultDb("SPS"), false);
-            addDefaultView(initDefaultDb("LPS+SPS"), false);
+            addConfigView(initDefaultDb("LPS"), false);
+            addConfigView(initDefaultDb("SPS"), false);
+            addConfigView(initDefaultDb("LPS+SPS"), false);
         } else {
             for (CommandLightMode commandLightMode : where.list()) {
                 commandLightMode.getMParameters();
-                addDefaultView(commandLightMode,
+                addConfigView(commandLightMode,
                         commandLightMode.isCustom);
             }
         }
@@ -133,7 +131,7 @@ public class SelectConfigAct extends BaseActivity {
         return commandLightMode;
     }
 
-    private void addDefaultView(final CommandLightMode commandLightMode, final boolean isCustom) {
+    private void addConfigView(final CommandLightMode commandLightMode, final boolean isCustom) {
         // add view
         SelectConfigAct.this.runOnUiThread(new Runnable() {
             @Override
@@ -141,10 +139,10 @@ public class SelectConfigAct extends BaseActivity {
                 View inflate = LayoutInflater.from(SelectConfigAct.this)
                         .inflate(R.layout.select_config_item
                                 , llDefaultConfigs, false);
-                inflate.setOnClickListener(new View.OnClickListener() {
+                SwipeLayout swipeRefreshLayout = inflate.findViewById(R.id.swipeLayout);
+                swipeRefreshLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // go custom activity
                         Intent intent = new Intent(SelectConfigAct.this, ModeInfoActivity.class);
                         EventBus.getDefault().postSticky(commandLightMode);
                         startActivity(intent);
@@ -166,7 +164,6 @@ public class SelectConfigAct extends BaseActivity {
                     });
                 } else {
                     TextView renameTv = inflate.findViewById(R.id.tv_1);
-                    SwipeLayout swipeRefreshLayout = inflate.findViewById(R.id.swipeLayout);
                     swipeRefreshLayout.setSwipeEnabled(false);
                     llDefaultConfigs.addView(inflate);
                 }
