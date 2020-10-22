@@ -107,13 +107,12 @@ public class Index2Fragment extends DelayBaseFragment {
         return view;
     }
 
-
     private void showCache() {
-        String response = RxSPUtilTool.readJSONCache(MyApplication.getInstance(),"bindDevice");
+        String response = RxSPUtilTool.readJSONCache(MyApplication.getInstance(), "bindDevice");
         if (!TextUtils.isEmpty(response)) {
             Type type = new TypeToken<List<Device>>() {
             }.getType();
-            List<Device>  list = new GsonImpl().toList(response,
+            List<Device> list = new GsonImpl().toList(response,
                     Device.class, type);
             refreshBindViews(list);
         }
@@ -149,36 +148,46 @@ public class Index2Fragment extends DelayBaseFragment {
     private void startFindDevices() {
         mDeviceList.clear();
         llFindDevicesList.removeAllViews();
-        SubnetDevices.fromLocalAddress().findDevices(new SubnetDevices.OnSubnetDeviceFound() {
-            @Override
-            public void onDeviceFound(com.stealthcopter.networktools.subnet.Device device) {
-                Logger.d(device.toString());
-            }
-
-            @Override
-            public void onFinished(
-                    final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
-                mDevicesFound = devicesFound;
-                Logger.d("onFinished");
-                if (getActivity() == null) {
-                    return;
+        try {
+            SubnetDevices.fromLocalAddress().findDevices(new SubnetDevices.OnSubnetDeviceFound() {
+                @Override
+                public void onDeviceFound(com.stealthcopter.networktools.subnet.Device device) {
+                    Logger.d(device.toString());
                 }
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((BaseActivity) getActivity()).dismissLoadingDialog();
-                        for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
-                            IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
-                            if (!TextUtils.isEmpty(device.mac) && !mDeviceList.contains(ipMac)) {
-                                mDeviceList.add(ipMac);
-                                addFindDeviceView(ipMac);
-                            }
-                        }
-                        requestBindDevice();
+
+                @Override
+                public void onFinished(
+                        final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
+                    mDevicesFound = devicesFound;
+                    Logger.d("onFinished");
+                    if (getActivity() == null) {
+                        return;
                     }
-                });
-            }
-        });
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!isAdded()) {
+                                return;
+                            }
+                            ((BaseActivity) getActivity()).dismissLoadingDialog();
+                            for (com.stealthcopter.networktools.subnet.Device device :
+                                    devicesFound) {
+                                IP_MAC ipMac = new IP_MAC(device.ip, device.mac);
+                                if (!TextUtils.isEmpty(device.mac) && !mDeviceList
+                                        .contains(ipMac)) {
+                                    mDeviceList.add(ipMac);
+                                    addFindDeviceView(ipMac);
+                                }
+                            }
+                            requestBindDevice();
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void addFindDeviceView(final IP_MAC ip_mac) {
@@ -317,7 +326,8 @@ public class Index2Fragment extends DelayBaseFragment {
                         List<Device> list = new GsonImpl().toList(response.result,
                                 Device.class, type);
                         if (list.size() > 0) {
-                            RxSPUtilTool.putJSONCache(MyApplication.getInstance(),"bindDevice",response.result);
+                            RxSPUtilTool.putJSONCache(MyApplication.getInstance(), "bindDevice",
+                                    response.result);
                         }
                         refreshBindViews(list);
                     }
@@ -372,10 +382,10 @@ public class Index2Fragment extends DelayBaseFragment {
                             ip = ipMac.mIp;
                         }
                     }
-//                                    if (TextUtils.isEmpty(ip)) {
-//                                        RxToast.showToast("设备未上线");
-//                                        return;
-//                                    }
+                    //                                    if (TextUtils.isEmpty(ip)) {
+                    //                                        RxToast.showToast("设备未上线");
+                    //                                        return;
+                    //                                    }
                     ModelSelectBean.deviceId = device.getDeviceSN();
                     ModelSelectBean.ip = ip;
                     SelectConfigAct.startUI(getActivity());

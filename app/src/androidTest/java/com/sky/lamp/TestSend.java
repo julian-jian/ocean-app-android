@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.sky.lamp.bean.LightItemMode;
+import com.sky.lamp.ui.fragment.ModelInfoSettingFragment;
 
 public class TestSend {
     @Test
@@ -61,6 +65,110 @@ public class TestSend {
     }
 
     @Test
-    public void testCache() {
+    public void testTimeValid() {
+        List<LightItemMode> list = new ArrayList<>();
+        LightItemMode a = new LightItemMode();
+        LightItemMode b = new LightItemMode();
+        a.startTime = "01:00";
+        a.stopTime = "02:00";
+
+        b.startTime = "01:30";
+        b.stopTime = "02:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+        list.clear();
+        a.startTime = "02:00";
+        a.stopTime = "03:00";
+        b.startTime = "05:00";
+        b.stopTime = "02:30";
+        list.add(a);
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+//        01:00 - 03:00  01:00 -02:00
+        list.clear();
+        a.startTime = "01:00";
+        a.stopTime = "03:00";
+        b.startTime = "01:00";
+        b.stopTime = "02:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+        list.clear();
+        a.startTime = "01:00";
+        a.stopTime = "02:00";
+        b.startTime = "01:00";
+        b.stopTime = "02:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+        list.clear();
+        a.startTime = "01:00";
+        a.stopTime = "02:00";
+        b.startTime = "03:00";
+        b.stopTime = "03:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+
+        list.clear();
+        a.startTime = "01:00";
+        a.stopTime = "02:00";
+        b.startTime = "03:00";
+        b.stopTime = "02:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+
+        list.clear();
+        a.startTime = "03:00";
+        a.stopTime = "02:00";
+        b.startTime = "04:00";
+        b.stopTime = "01:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+
+        // 正常数据-------------------------------
+
+
+        list.clear();
+        a.startTime = "01:00";
+        a.stopTime = "02:00";
+        b.startTime = "03:00";
+        b.stopTime = "04:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+
+        list.clear();
+        a.startTime = "01:00";
+        a.stopTime = "02:00";
+        b.startTime = "03:00";
+        b.stopTime = "01:00";
+        list.add(a);
+        list.add(b);
+        Assert.assertNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+
+
+
+
     }
 }

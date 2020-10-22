@@ -54,7 +54,7 @@ public class Index1SubActivity extends BaseActivity {
     LinearLayout llBindDevicesList;
     private HashMap<String, String> mLocalDeviceList = new HashMap<String, String>();
     private List<Device> mBindServerList = new ArrayList<>();
-    private List<RenameMac> mRenameMacs;
+    private List<RenameMac> mRenameMacs = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,14 +63,14 @@ public class Index1SubActivity extends BaseActivity {
         ButterKnife.bind(this);
         initViews();
         startFindDevices();
-        showCache();
-        requestBindDevice();
         mRenameMacs =
                 DaoManager.getInstance().getDaoSession().getRenameMacDao()
                         .loadAll();
         if (mRenameMacs == null) {
             mRenameMacs = new ArrayList<>();
         }
+        showCache();
+        requestBindDevice();
     }
 
     private void showCache() {
