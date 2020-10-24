@@ -356,7 +356,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 } else {
                     tvStartTime.setText(hour + ":" + minute);
                     mCommandLightMode.mParameters.get(mIndex).setStartTime(selectTime);
-                    String error = isTimeValid(mCommandLightMode.mParameters);
+                    String error = null;
                     if (!TextUtils.isEmpty(error)) { //还原成设置之前的时间
                         tvStartTime.setText(time[0] + ":" + time[1]);
                         mCommandLightMode.mParameters.get(mIndex).setStartTime(sourceTime);

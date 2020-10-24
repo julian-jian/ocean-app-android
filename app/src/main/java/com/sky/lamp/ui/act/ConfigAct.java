@@ -206,8 +206,6 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
             mHandler.removeCallbacksAndMessages(null);
             mHandler.sendEmptyMessage(2);
             bindDeviceRequest();
-        } else {
-
         }
     }
 

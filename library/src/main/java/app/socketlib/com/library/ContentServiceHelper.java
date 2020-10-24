@@ -58,15 +58,15 @@ public class ContentServiceHelper {
         }
     }
 
-    public static SocketConfig getConfig(Context context,String ip) {
+    public static SocketConfig getConfig(Context context, String ip) {
         return new SocketConfig.Builder(context.getApplicationContext())
                 .setIp(ip)//ip
                 .setPort(61818)//端口
                 .setReadBufferSize(1024)//readBuffer
-                .setIdleTimeOut(30)//客户端空闲时间,客户端在超过此时间内不向服务器发送数据,则视为idle状态,则进入心跳状态
-                .setTimeOutCheckInterval(60*10)//客户端连接超时时间,超过此时间则视为连接超时
-                .setRequestInterval(10)//请求超时间隔时间
-                //                .setHeartbeatRequest("(1,1)\r\n")//与服务端约定的发送过去的心跳包
+                .setIdleTimeOut(Integer.MAX_VALUE)//客户端空闲时间,客户端在超过此时间内不向服务器发送数据,则视为idle状态,则进入心跳状态
+                .setTimeOutCheckInterval(60 * 10)//客户端连接超时时间,超过此时间则视为连接超时
+                .setRequestInterval(10)//请求超时间隔时间,心跳间隔
+                .setHeartbeatRequest("(1,1)\r\n")//与服务端约定的发送过去的心跳包
                 //                .setHeartbeatResponse("(10,10)\r\n") //与服务端约定的接收到的心跳包
                 .builder();
 

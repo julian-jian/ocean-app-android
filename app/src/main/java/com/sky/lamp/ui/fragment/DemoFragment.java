@@ -100,6 +100,14 @@ public class DemoFragment extends DelayBaseFragment {
                     return;
                 }
 
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        analogClock.refreshView(clockCalendar.get(Calendar.HOUR_OF_DAY),
+                                clockCalendar.get(Calendar.MINUTE));
+                    }
+                });
+
                 List<LightItemMode> mParameters = commandLightMode.mParameters;
                 LightItemMode  holdItemMode = getHoldItemMode(mParameters,
                         clockCalendar);
@@ -109,20 +117,14 @@ public class DemoFragment extends DelayBaseFragment {
                 } else {
                     sendEmptyCommand();
                 }
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        analogClock.refreshView(clockCalendar.get(Calendar.HOUR_OF_DAY),
-                                clockCalendar.get(Calendar.MINUTE));
-                    }
-                });
+
                 // SEND COMMAND
                 clockCalendar.add(Calendar.MINUTE, 20);
                 System.out.println("DemoFragment.run " + clockCalendar.toString());
             }
         };
 //        timer.schedule(timerTask, 0L, 5 * 1000L);
-        timer.schedule(timerTask, 0L, BuildConfig.DEBUG ? 1000 : 5 * 1000L);
+        timer.schedule(timerTask, 0L, 5 * 1000L);
     }
 
     /**

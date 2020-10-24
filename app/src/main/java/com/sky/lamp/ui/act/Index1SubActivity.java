@@ -35,7 +35,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -54,7 +53,7 @@ public class Index1SubActivity extends BaseActivity {
     @BindView(R.id.actionBar)
     TitleBar titleBar;
     @BindView(R.id.ll_bind_devices_list)
-    LinearLayout llBindDevicesList;
+    LinearLayout llBindDeviceViews;
     private HashMap<String, String> mLocalDeviceList = new HashMap<String, String>();
     private List<Device> mBindServerList = new ArrayList<>();
     private List<RenameMac> mRenameMacs = new ArrayList<>();
@@ -71,8 +70,8 @@ public class Index1SubActivity extends BaseActivity {
         if (mRenameMacs == null) {
             mRenameMacs = new ArrayList<>();
         }
-        startFindDevices();
         showCache();
+        startFindDevices();
         requestBindDevice();
     }
 
@@ -134,7 +133,7 @@ public class Index1SubActivity extends BaseActivity {
             return;
         }
         showLoadingDialog("局域网搜索中...");
-        SubnetDevices.fromLocalAddress().findDevices(new SubnetDevices.OnSubnetDeviceFound() {
+        SubnetDevices.fromLocalAddress().setTimeOutMillis(5000).findDevices(new SubnetDevices.OnSubnetDeviceFound() {
             @Override
             public void onDeviceFound(com.stealthcopter.networktools.subnet.Device device) {
                 Logger.d(device.toString());
@@ -145,8 +144,8 @@ public class Index1SubActivity extends BaseActivity {
                     final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
                 if (devicesFound != null) {
                     Logger.d("onFinished size = " + devicesFound.size());
-                }else{
-                    Logger.d("onFinished size = " +0);
+                } else {
+                    Logger.d("onFinished size = " + 0);
                 }
                 mLocalDeviceList.clear();
                 for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
@@ -156,7 +155,7 @@ public class Index1SubActivity extends BaseActivity {
                     @Override
                     public void run() {
                         dismissLoadingDialog();
-                        addBindViews(mBindServerList);
+                        refreshBindDeviceViews();
                     }
                 });
             }
@@ -258,7 +257,7 @@ public class Index1SubActivity extends BaseActivity {
     }
 
     private void addBindViews(List<Device> list) {
-        llBindDevicesList.removeAllViews();
+        llBindDeviceViews.removeAllViews();
         for (final Device device : list) {
             final View inflate = LayoutInflater
                     .from(Index1SubActivity.this).inflate(R.layout.item_find_device,
@@ -313,7 +312,7 @@ public class Index1SubActivity extends BaseActivity {
                 public void onClick(View v) {
                 }
             });
-            llBindDevicesList.addView(inflate);
+            llBindDeviceViews.addView(inflate);
         }
     }
 

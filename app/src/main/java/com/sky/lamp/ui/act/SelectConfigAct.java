@@ -50,11 +50,6 @@ public class SelectConfigAct extends BaseActivity {
 
     private RxDialogEditSureCancel rxDialogLoading;
 
-    public static void startUI(Context context) {
-        Intent intent = new Intent(context, SelectConfigAct.class);
-        context.startActivity(intent);
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
