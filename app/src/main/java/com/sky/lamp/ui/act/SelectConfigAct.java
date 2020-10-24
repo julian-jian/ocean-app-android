@@ -123,7 +123,8 @@ public class SelectConfigAct extends BaseActivity {
 
         LightItemMode itemMode = new LightItemMode();
         itemMode.setIndex(0);
-        itemMode.setStopTime("01:00");
+        itemMode.setStartTime("05:00");
+        itemMode.setStopTime("06:00");
         itemMode.parent_id = commandLightMode.id;
         DaoManager.getInstance().getDaoSession().insert(itemMode);
         commandLightMode.mParameters.add(itemMode);
