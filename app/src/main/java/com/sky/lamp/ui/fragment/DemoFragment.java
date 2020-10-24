@@ -96,6 +96,7 @@ public class DemoFragment extends DelayBaseFragment {
                 System.out.println("DemoFragment.run " + Thread.currentThread());
                 if (clockCalendar.get(Calendar.DAY_OF_MONTH) != today.get(Calendar.DAY_OF_MONTH)) {
                     System.out.println("DemoFragment.run finish");
+                    sendEmptyCommand();
                     timer.cancel();
                     return;
                 }
@@ -169,6 +170,7 @@ public class DemoFragment extends DelayBaseFragment {
         lightItemMode.setLight7Level(0);
         sendCommand(lightItemMode);
     }
+
 
     private void sendCommand(LightItemMode lightItemMode) {
         byte[] temp = new byte[] {
