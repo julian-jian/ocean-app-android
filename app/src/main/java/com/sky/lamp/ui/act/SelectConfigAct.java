@@ -120,14 +120,20 @@ public class SelectConfigAct extends BaseActivity {
         commandLightMode.isCustom = isCustom;
         commandLightMode.mParameters = new ArrayList<>();
         DaoManager.getInstance().getDaoSession().insert(commandLightMode);
+        for (int i = 0; i < 5; i++) {
+            LightItemMode itemMode = new LightItemMode();
+            itemMode.setIndex(i);
+            itemMode.setStartTime("0" + (i + 5) + ":00");
+            if (i == 4) {
+                itemMode.setStopTime("10:00");
+            }else{
+                itemMode.setStopTime("0" + (i + 6) + ":00");
+            }
 
-        LightItemMode itemMode = new LightItemMode();
-        itemMode.setIndex(0);
-        itemMode.setStartTime("05:00");
-        itemMode.setStopTime("06:00");
-        itemMode.parent_id = commandLightMode.id;
-        DaoManager.getInstance().getDaoSession().insert(itemMode);
-        commandLightMode.mParameters.add(itemMode);
+            itemMode.parent_id = commandLightMode.id;
+            DaoManager.getInstance().getDaoSession().insert(itemMode);
+            commandLightMode.mParameters.add(itemMode);
+        }
         DaoManager.getInstance().getDaoSession().update(commandLightMode);
         return commandLightMode;
     }

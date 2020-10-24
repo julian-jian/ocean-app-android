@@ -167,6 +167,11 @@ public class TestSend {
 
 
 
+        list.clear();
+        a.startTime = "05:00";
+        a.stopTime = "02:00";
+        list.add(a);
+        Assert.assertNull("",new ModelInfoSettingFragment().isTimeValid(list));
 
 
 

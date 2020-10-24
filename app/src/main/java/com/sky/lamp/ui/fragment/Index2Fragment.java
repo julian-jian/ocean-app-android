@@ -1,6 +1,7 @@
 package com.sky.lamp.ui.fragment;
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import com.sky.lamp.utils.GsonImpl;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
+import com.stealthcopter.networktools.IPTools;
 import com.stealthcopter.networktools.SubnetDevices;
 import com.vondear.rxtools.view.RxToast;
 import com.vondear.rxtools.view.dialog.RxDialogEditSureCancel;
@@ -146,6 +148,11 @@ public class Index2Fragment extends DelayBaseFragment {
     }
 
     private void startFindDevices() {
+        InetAddress ipv4 = IPTools.getLocalIPv4Address();
+        if (ipv4 == null) {
+            RxToast.showToast("请检查网络");
+            return;
+        }
         mDeviceList.clear();
         llFindDevicesList.removeAllViews();
         try {
@@ -367,30 +374,30 @@ public class Index2Fragment extends DelayBaseFragment {
             TextView mac = inflate.findViewById(R.id.tv_item2);
             mac.setVisibility(View.GONE);
 
-            deviceName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (TextUtils.isEmpty(ModelSelectBean.t1)) {
-                        RxToast.showToast("请选择模式");
-                        return;
-                    }
-                    String ip = "";
-                    for (IP_MAC ipMac : mDeviceList) {
-                        if (ipMac.mMac.toLowerCase()
-                                .equals(device.getDeviceSN().toLowerCase())) {
-                            ip = ipMac.mIp;
-                        }
-                    }
-                    //                                    if (TextUtils.isEmpty(ip)) {
-                    //                                        RxToast.showToast("设备未上线");
-                    //                                        return;
-                    //                                    }
-                    ModelSelectBean.deviceId = device.getDeviceSN();
-                    ModelSelectBean.ip = ip;
-                    SelectConfigAct.startUI(getActivity());
-                }
-            });
+//            deviceName.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                    if (TextUtils.isEmpty(ModelSelectBean.t1)) {
+//                        RxToast.showToast("请选择模式");
+//                        return;
+//                    }
+//                    String ip = "";
+//                    for (IP_MAC ipMac : mDeviceList) {
+//                        if (ipMac.mMac.toLowerCase()
+//                                .equals(device.getDeviceSN().toLowerCase())) {
+//                            ip = ipMac.mIp;
+//                        }
+//                    }
+//                    //                                    if (TextUtils.isEmpty(ip)) {
+//                    //                                        RxToast.showToast("设备未上线");
+//                    //                                        return;
+//                    //                                    }
+//                    ModelSelectBean.deviceId = device.getDeviceSN();
+//                    ModelSelectBean.ip = ip;
+//                    SelectConfigAct.startUI(getActivity());
+//                }
+//            });
             llBindDevicesList.addView(inflate);
         }
     }

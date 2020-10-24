@@ -1,6 +1,7 @@
 package com.sky.lamp.ui.act;
 
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
+import com.stealthcopter.networktools.IPTools;
 import com.stealthcopter.networktools.SubnetDevices;
 import com.vondear.rxtools.view.RxToast;
 
@@ -125,6 +127,11 @@ public class Index1SubActivity extends BaseActivity {
     }
 
     private void startFindDevices() {
+        InetAddress ipv4 = IPTools.getLocalIPv4Address();
+        if (ipv4 == null) {
+            RxToast.showToast("请检查网络");
+            return;
+        }
         showLoadingDialog("局域网搜索中...");
         SubnetDevices.fromLocalAddress().findDevices(new SubnetDevices.OnSubnetDeviceFound() {
             @Override

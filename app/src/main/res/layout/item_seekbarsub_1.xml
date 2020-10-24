@@ -9,5 +9,5 @@
         android:max="100"
         android:maxHeight="6dp"
         android:progress="10"
-        android:progressDrawable="@drawable/bg_process1"
+        android:progressDrawable="@drawable/bg_process4"
         android:thumb="@drawable/ball1" />
