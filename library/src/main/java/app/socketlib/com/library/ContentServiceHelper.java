@@ -40,6 +40,7 @@ public class ContentServiceHelper {
 
     //绑定服务
     public static boolean bindService(Context context, SocketConfig socketConfig) {
+        Log.d(TAG,"socketConfig 连接中 " +socketConfig.getIp());
         Intent intent = new Intent(Contants.ACTION_SERVICE_CONTENT);
         intent.setPackage(context.getPackageName());
         Bundle bundle = new Bundle();

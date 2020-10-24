@@ -141,6 +141,20 @@ public class TestSend {
         Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
 
 
+        // 分成2段 第一段start - 23：59
+        // 第二段00：00 - END
+        // start  - 6 - 7 - 8 - 9 - 10 - 11 -12 - 13 - 14 - 15 - 16 -17 - 18 -19 -20 -21 -22 -23:59
+        // -1
+        // -2 - END
+
+        list.clear();
+        a.startTime = "05:00";
+        a.stopTime = "03:00";
+        list.add(a);
+        b.startTime = "03:00";
+        b.stopTime = "06:00";
+        list.add(b);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
 
         // 正常数据-------------------------------
 
@@ -175,5 +189,16 @@ public class TestSend {
 
 
 
+        list.clear();
+        a.startTime = "05:00";
+        a.stopTime = "03:00";
+        list.add(a);
+        b.startTime = "03:00";
+        b.stopTime = "04:00";
+        list.add(b);
+        Assert.assertNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
     }
+
+
 }

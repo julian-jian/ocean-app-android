@@ -52,15 +52,13 @@
                 android:layout_marginTop="14.5dp"
                 android:layout_marginRight="30dp">
 
-            <EditText
+            <com.sky.lamp.view.PasswordToggleEditText
                     android:id="@+id/et_wifi_pwd"
                     style="@style/Edit"
                     android:layout_width="match_parent"
                     android:gravity="center_vertical"
-                    android:hint="请输入WIFI密码"
-                    android:inputType="textPassword"
+                    android:hint="请再次输入新密码"
                     android:paddingLeft="35dp"
-                    android:paddingRight="35dp"
                     android:textSize="@dimen/text_et" />
 
             <ImageView
@@ -70,15 +68,6 @@
                     android:layout_marginLeft="9dp"
                     android:src="@drawable/ic_pwd" />
 
-            <ImageView
-                    android:id="@+id/iv_pwd_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="9dp"
-                    android:layout_marginRight="9dp"
-                    android:src="@drawable/ic_pwd" />
 
         </RelativeLayout>
 

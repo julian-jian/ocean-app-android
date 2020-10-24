@@ -124,6 +124,7 @@ public class TitleBar extends LinearLayout {
      * @return
      */
     public TitleBar initLeftImageView(final BaseActivity baseActivity) {
+        mLeftImageView.setVisibility(View.VISIBLE);
         mLeftImageView.setImageResource(R.drawable.back);
         mLeftImageView.setOnClickListener(new OnClickListener() {
             @Override
@@ -135,7 +136,8 @@ public class TitleBar extends LinearLayout {
     }
 
     public TitleBar initLeftImageView(final BaseFragment taFragment) {
-//        mLeftImageView.setImageResource(R.drawable.back_selector);
+        mLeftImageView.setVisibility(View.VISIBLE);
+        mLeftImageView.setImageResource(R.drawable.back);
         mLeftImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

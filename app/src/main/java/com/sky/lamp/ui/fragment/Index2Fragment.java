@@ -166,7 +166,7 @@ public class Index2Fragment extends DelayBaseFragment {
                 public void onFinished(
                         final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
                     mDevicesFound = devicesFound;
-                    Logger.d("onFinished");
+                    Logger.d("onFinished ");
                     if (getActivity() == null) {
                         return;
                     }

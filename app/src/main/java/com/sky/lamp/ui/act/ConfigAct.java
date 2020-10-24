@@ -1,7 +1,6 @@
 package com.sky.lamp.ui.act;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,18 +30,16 @@ import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
 import com.sky.lamp.response.WifiResponse;
-import com.sky.lamp.ui.fragment.DemoFragment;
-import com.sky.lamp.utils.HexUtils;
 import com.sky.lamp.utils.HttpUtil;
 import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
 import com.vondear.rxtools.view.RxToast;
-import com.vondear.rxtools.view.dialog.RxDialogEditSureCancel;
 
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,7 +48,6 @@ import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import app.socketlib.com.library.ContentServiceHelper;
 import app.socketlib.com.library.events.ConnectFailEvent;
 import app.socketlib.com.library.events.ConnectSuccessEvent;
@@ -73,8 +69,6 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     EditText etWifiName;
     @BindView(R.id.et_wifi_pwd)
     EditText etWifiPwd;
-    @BindView(R.id.iv_pwd_show)
-    ImageView ivPwdShow;
     @BindView(R.id.btn_search)
     Button btnSearch;
     @BindView(R.id.btn_send_pwd)
@@ -86,6 +80,18 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
     private WifiManager mWifiManager;
     private WiFiScanHandler mWiFiScanHandler;
     private IP_MAC ipMac;
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 2:
+                    RxToast.showToast("wifi设置成功");
+                    dismissLoadingDialog();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -143,6 +149,14 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
                     RxToast.showToast("格式不对");
                     return;
                 }
+                showLoadingDialog("WIFI密码发送中...");
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismissLoadingDialog();
+                        RxToast.showToast("连接超时，发送失败");
+                    }
+                }, 30 * 1000);
                 sendWifiPwdToDevice();
                 break;
         }
@@ -189,8 +203,11 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
         Logger.d("socketMessageReceived() called with: msg = [" + msg + "]");
         if (msg.contains("WIFI SET SUCCESS")) {
             System.out.println("ConfigAct.socketMessageReceived set wifi success");
-            RxToast.showToast("wifi设置成功");
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler.sendEmptyMessage(2);
             bindDeviceRequest();
+        } else {
+
         }
     }
 
@@ -212,6 +229,7 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
 
     @Override
     protected void onDestroy() {
+        mHandler.removeCallbacksAndMessages(null);
         try {
             if (mWiFiBroadcastReceiver != null) {
                 unregisterReceiver(mWiFiBroadcastReceiver);

@@ -147,18 +147,17 @@ public class SelectConfigAct extends BaseActivity {
                         .inflate(R.layout.select_config_item
                                 , llDefaultConfigs, false);
                 SwipeLayout swipeRefreshLayout = inflate.findViewById(R.id.swipeLayout);
-                swipeRefreshLayout.setOnClickListener(new View.OnClickListener() {
+
+                TextView textView = ((TextView) inflate.findViewById(R.id.textView));
+                textView.setText(commandLightMode.modelName);
+                textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(SelectConfigAct.this, ModeInfoActivity.class);
                         EventBus.getDefault().postSticky(commandLightMode);
                         startActivity(intent);
-
                     }
                 });
-
-                ((TextView) inflate.findViewById(R.id.textView))
-                        .setText(commandLightMode.modelName);
                 if (isCustom) {
                     llCustomConfigs.addView(inflate);
                     TextView renameTv = inflate.findViewById(R.id.tv_1);

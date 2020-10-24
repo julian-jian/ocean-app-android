@@ -35,6 +35,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -64,13 +65,13 @@ public class Index1SubActivity extends BaseActivity {
         setContentView(R.layout.act_select_devices);
         ButterKnife.bind(this);
         initViews();
-        startFindDevices();
         mRenameMacs =
                 DaoManager.getInstance().getDaoSession().getRenameMacDao()
                         .loadAll();
         if (mRenameMacs == null) {
             mRenameMacs = new ArrayList<>();
         }
+        startFindDevices();
         showCache();
         requestBindDevice();
     }
@@ -142,6 +143,11 @@ public class Index1SubActivity extends BaseActivity {
             @Override
             public void onFinished(
                     final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
+                if (devicesFound != null) {
+                    Logger.d("onFinished size = " + devicesFound.size());
+                }else{
+                    Logger.d("onFinished size = " +0);
+                }
                 mLocalDeviceList.clear();
                 for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
                     mLocalDeviceList.put(device.mac, device.ip);

@@ -497,14 +497,6 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     btnSend.setEnabled(true);
                 }
             });
-        } else {
-            final int finalI1 = i;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    RxToast.showToast("模式" + (finalI1 + 1) + "发送成功");
-                }
-            });
         }
         try {
             Thread.sleep(3000);
@@ -523,14 +515,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         LightItemMode lightItemMode =
                 mCommandLightMode.mParameters.get(i);
         sendCommand(i, lightItemMode);
-        final int finalI = i;
         if (getActivity() != null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    RxToast.showToast("模式" + (finalI + 1) + "发送成功");
-                }
-            });
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
