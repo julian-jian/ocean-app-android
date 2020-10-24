@@ -345,7 +345,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 if (id == R.id.tv_endTime) {
                     tvEndTime.setText(selectTime);
                     mCommandLightMode.mParameters.get(mIndex).setStopTime(selectTime);
-                    String error = isTimeValid(mCommandLightMode.mParameters);
+                    String error = null;
                     if (!TextUtils.isEmpty(error)) {
                         tvEndTime.setText(sourceTime);
                         mCommandLightMode.mParameters.get(mIndex).setStopTime(sourceTime);
@@ -575,12 +575,12 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 (byte) 0x55};
         // 应该不考虑时间
         temp[6] = HexUtils.tenToHexByte(lightItemMode.getLight1Level());
-        temp[7] = tenToHexByte(lightItemMode.getLight2Level());
-        temp[8] = tenToHexByte(lightItemMode.getLight3Level());
-        temp[9] = tenToHexByte(lightItemMode.getLight4Level());
-        temp[10] = tenToHexByte(lightItemMode.getLight5Level());
-        temp[11] = tenToHexByte(lightItemMode.getLight6Level());
-        temp[12] = tenToHexByte(lightItemMode.getLight7Level());
+        temp[7] = tenToHexByte(lightItemMode.getLight4Level());
+        temp[8] = tenToHexByte(lightItemMode.getLight2Level());
+        temp[9] = tenToHexByte(lightItemMode.getLight7Level());
+        temp[10] = tenToHexByte(lightItemMode.getLight6Level());
+        temp[11] = tenToHexByte(lightItemMode.getLight3Level());
+        temp[12] = tenToHexByte(lightItemMode.getLight5Level());
         temp[13] = tenToHexByte(0);
 
         // 检验位
@@ -723,10 +723,14 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     error = "时间参数错误,包含重复";
                 } else if (nextStopCalendar.getTimeInMillis() > endCalendar.getTimeInMillis()
                         && nextStartCalendar.getTimeInMillis() < startCalendar.getTimeInMillis()) {
-                    //01:00 - 02:00  00:59 - 03:00
-                    // 01:00 - 03:00  01:00 - 02:00
-                    Logger.d("时间参数错误3");
-                    error = "时间参数错误,包含重复";
+                    if (nextStartCalendar.getTimeInMillis() < nextStopCalendar.getTimeInMillis() &&
+                            endCalendar.getTimeInMillis() > startCalendar.getTimeInMillis()
+                    ) {
+                        //01:00 - 02:00  00:59 - 03:00
+                        Logger.d("时间参数错误3");
+                        error = "时间参数错误,包含重复";
+                    }
+
                 } else if (nextLIM.stopTime.equals(lightItemMode.stopTime)
                         && nextLIM.startTime.equals(lightItemMode.startTime)) {
                     Logger.d("时间参数错误4");
@@ -737,7 +741,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     if (startCalendar.getTimeInMillis() > endCalendar.getTimeInMillis()) {
                         Logger.d("时间参数错误7");
                         error = "时间参数错误,包含重复";
-                    }else{
+                    } else {
                         // 5:00 - 3:00
                         // 5:00  - 23:59 第一段
                         // 00:00 - 3:00
@@ -754,11 +758,13 @@ public class ModelInfoSettingFragment extends BaseFragment {
                         firstEndCal.setTime(DateUtils.parseHourDate(nextLIM.getStopTime()));
 
                         if (startCalendar.getTimeInMillis() < firstEndCal.getTimeInMillis()
-                                && startCalendar.getTimeInMillis() > firStartCal.getTimeInMillis()) {
+                                && startCalendar.getTimeInMillis() > firStartCal
+                                .getTimeInMillis()) {
                             Logger.d("时间参数错误5");
                             error = "时间参数错误,包含重复";
                         } else if (startCalendar.getTimeInMillis() < secEndCal.getTimeInMillis()
-                                && startCalendar.getTimeInMillis() > secStartCal.getTimeInMillis()) {
+                                && startCalendar.getTimeInMillis() > secStartCal
+                                .getTimeInMillis()) {
                             Logger.d("时间参数错误6");
                             error = "时间参数错误,包含重复";
                         }

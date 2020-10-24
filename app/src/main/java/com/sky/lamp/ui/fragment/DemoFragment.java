@@ -176,12 +176,12 @@ public class DemoFragment extends DelayBaseFragment {
                 (byte) 0x55};
         // 应该不考虑时间
         temp[6] = HexUtils.tenToHexByte(lightItemMode.getLight1Level());
-        temp[7] = tenToHexByte(lightItemMode.getLight2Level());
-        temp[8] = tenToHexByte(lightItemMode.getLight3Level());
-        temp[9] = tenToHexByte(lightItemMode.getLight4Level());
-        temp[10] = tenToHexByte(lightItemMode.getLight5Level());
-        temp[11] = tenToHexByte(lightItemMode.getLight6Level());
-        temp[12] = tenToHexByte(lightItemMode.getLight7Level());
+        temp[7] = tenToHexByte(lightItemMode.getLight4Level());
+        temp[8] = tenToHexByte(lightItemMode.getLight2Level());
+        temp[9] = tenToHexByte(lightItemMode.getLight7Level());
+        temp[10] = tenToHexByte(lightItemMode.getLight6Level());
+        temp[11] = tenToHexByte(lightItemMode.getLight3Level());
+        temp[12] = tenToHexByte(lightItemMode.getLight5Level());
         temp[13] = tenToHexByte(0);
 
         // 检验位
