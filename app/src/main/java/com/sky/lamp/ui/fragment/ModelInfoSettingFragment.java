@@ -136,6 +136,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
                         initSeekbar();
                         refreshTime();
                         refreshChart();
+                        LightItemMode lightItemMode = mCommandLightMode.mParameters.get(mIndex);
+                        sendDebugCommand(lightItemMode);
                         System.out.println("ModelInfoSettingFragment.onCheckedChanged " + mIndex);
                     } else {
                         System.out
