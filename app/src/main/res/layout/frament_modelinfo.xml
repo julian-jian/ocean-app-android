@@ -6,181 +6,177 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-    <ScrollView
+
+    <LinearLayout
+            android:id="@+id/ll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <LinearLayout
-                android:id="@+id/ll"
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/chart"
+        <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+            <RadioGroup
+                    android:id="@+id/radioGroup"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp" />
-
-            <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
-
-                <RadioGroup
-                        android:id="@+id/radioGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp"
-                        android:orientation="horizontal"
-                        >
-
-                </RadioGroup>
-
-            </HorizontalScrollView>
-
-            <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/divide" />
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="15dp">
-
-                <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/split" />
-
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:text="时间段设置"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:orientation="horizontal">
 
-                <TextView
-                        android:id="@+id/tv_startTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        tools:text="00:00" />
+            </RadioGroup>
 
-                <TextView
-                        android:layout_width="2dp"
-                        android:layout_height="30dp"
-                        android:text="|"
-                        android:textColor="@color/divide" />
+        </HorizontalScrollView>
 
-                <TextView
-                        android:id="@+id/tv_endTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        tools:text="00:00" />
+        <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/divide" />
 
-            </LinearLayout>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp">
 
-            <View
+            <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/divide" />
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/split" />
+
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="时间段设置"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
             <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="4dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="15dp">
-
-                <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/split" />
-
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:text="亮度设置"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
             </LinearLayout>
+        </LinearLayout>
 
-            <LinearLayout
-                    android:id="@+id/ll_seekbar"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal">
 
-            <RelativeLayout
+            <TextView
+                    android:id="@+id/tv_startTime"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="52dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="52dp">
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    tools:text="00:00" />
 
-                <ImageView
-                        android:id="@+id/btn_del"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_alignParentLeft="true"
-                        android:src="@drawable/del" />
+            <TextView
+                    android:layout_width="2dp"
+                    android:layout_height="30dp"
+                    android:text="|"
+                    android:textColor="@color/divide" />
 
-                <ImageView
-                        android:id="@+id/btn_add"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/add" />
-
-                <ImageView
-                        android:id="@+id/btn_save"
-                        android:layout_width="45dp"
-                        android:layout_height="45dp"
-                        android:layout_alignParentRight="true"
-                        android:src="@drawable/save" />
-            </RelativeLayout>
-
-            <Button
-                    android:id="@+id/btn_send"
-                    style="@style/Btn"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginTop="4dp"
-                    android:text="发送" />
+            <TextView
+                    android:id="@+id/tv_endTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    tools:text="00:00" />
 
         </LinearLayout>
-    </ScrollView>
+
+        <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/divide" />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp">
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/split" />
+
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="亮度设置"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/ll_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="52dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="52dp">
+
+            <ImageView
+                    android:id="@+id/btn_del"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/del" />
+
+            <ImageView
+                    android:id="@+id/btn_add"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/add" />
+
+            <ImageView
+                    android:id="@+id/btn_save"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/save" />
+        </RelativeLayout>
+
+        <Button
+                android:id="@+id/btn_send"
+                style="@style/Btn"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="15dp"
+                android:text="发送" />
+
+    </LinearLayout>
 
 
 </LinearLayout>
