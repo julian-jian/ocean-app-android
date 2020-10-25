@@ -3,15 +3,12 @@ package com.sky;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.sky.lamp.MyApplication;
+import com.orhanobut.logger.Logger;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
-import android.os.Build;
 import android.os.Bundle;
 
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class MyActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
     private static MyActivityLifecycleCallbacks single;
     private List<Activity> activities = new LinkedList<>();
@@ -19,7 +16,7 @@ public class MyActivityLifecycleCallbacks implements Application.ActivityLifecyc
 
     public static MyActivityLifecycleCallbacks getInstance() {
         if (single == null) {
-            return new MyActivityLifecycleCallbacks();
+            single  = new MyActivityLifecycleCallbacks();
         }
         return single;
     }
@@ -90,6 +87,7 @@ public class MyActivityLifecycleCallbacks implements Application.ActivityLifecyc
     public void removeAllActivities() {
         for (Activity activity : activities) {
             if (null != activity) {
+                Logger.i("removeAllActivities "+activity);
                 activity.finish();
                 activity.overridePendingTransition(0, sAnimationId);
             }
