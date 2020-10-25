@@ -17,7 +17,7 @@ public abstract class MySubscriber<T> extends Subscriber<T> {
 
     @Override
     public void onError(Throwable error) {
-//        com.orhanobut.logger.Logger.e(error.getMessage());
+        com.orhanobut.logger.Logger.e(error.getMessage());
         if (!RxNetTool.isNetworkAvailable(MyApplication.getInstance())) {
             RxToast.showToast("当前无网络，请检查");
         } else {

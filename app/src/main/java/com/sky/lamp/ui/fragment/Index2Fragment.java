@@ -16,12 +16,15 @@ import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
+import com.sky.lamp.bean.BindDeviceBean;
 import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.Device;
 import com.sky.lamp.bean.RenameMac;
+import com.sky.lamp.dao.BindDeviceBeanDao;
 import com.sky.lamp.dao.DaoManager;
+import com.sky.lamp.dao.DaoMaster;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
@@ -54,6 +57,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import okhttp3.RequestBody;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -110,14 +114,8 @@ public class Index2Fragment extends DelayBaseFragment {
     }
 
     private void showCache() {
-        String response = RxSPUtilTool.readJSONCache(MyApplication.getInstance(), "bindDevice");
-        if (!TextUtils.isEmpty(response)) {
-            Type type = new TypeToken<List<Device>>() {
-            }.getType();
-            List<Device> list = new GsonImpl().toList(response,
-                    Device.class, type);
-            refreshBindViews(list);
-        }
+        List<BindDeviceBean> bindDeviceBeans = queryBindFromDatabase();
+        refreshBindViews(bindDeviceBeans);
     }
 
     @Subscribe
@@ -254,6 +252,22 @@ public class Index2Fragment extends DelayBaseFragment {
 
     public void unbindDevice(String deviceID) {
         String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
+        if (TextUtils.isEmpty(userId)) {
+            RxToast.showToast("请先登录");
+            return;
+        }
+        List<BindDeviceBean> bindDeviceBeans =
+                DaoManager.getInstance().getDaoSession().getBindDeviceBeanDao().loadAll();
+        BindDeviceBean del = null;
+        for (BindDeviceBean bindDeviceBean : bindDeviceBeans) {
+            if (bindDeviceBean.deviceId.equals(deviceID) && bindDeviceBean.userId.equals(userId)) {
+                DaoManager.getInstance().getDaoSession().getBindDeviceBeanDao().delete(bindDeviceBean);
+                del = bindDeviceBean;
+                break;
+            }
+        }
+        bindDeviceBeans.remove(del);
+        refreshBindViews(bindDeviceBeans);
         HashMap<String, Object> map = new HashMap<>();
         map.put("userID", userId);
         map.put("deviceID", deviceID);
@@ -263,87 +277,82 @@ public class Index2Fragment extends DelayBaseFragment {
         AppService.createApi(MyApi.class).unBind(body).subscribeOn(Schedulers.io())
                 .observeOn(
                         AndroidSchedulers.mainThread())
-                .subscribe(new MySubscriber<BaseResponse>() {
+                .subscribe(new Subscriber<BaseResponse>() {
                     @Override
                     public void onStart() {
                         super.onStart();
-                        getBaseActivity().showLoadingDialog();
                     }
 
-                    @Override
-                    public void onError(Throwable error) {
-                        super.onError(error);
-                        getBaseActivity().dismissLoadingDialog();
-                    }
 
                     @Override
                     public void onCompleted() {
                     }
 
                     @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
                     public void onNext(final BaseResponse response) {
-                        if (!response.isSuccess()) {
-                            RxToast.showToast(response.result);
-                            return;
-                        }
-                        requestBindDevice();
+//                        if (!response.isSuccess()) {
+//                            RxToast.showToast(response.result);
+//                            return;
+//                        }
+//                        requestBindDevice();
 
                     }
                 });
     }
 
     public void requestBindDevice() {
-        String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
-        if (TextUtils.isEmpty(userId)) {
-            Logger.d("not login");
-            return;
-        }
-        final HashMap<String, Object> map = new HashMap<>();
-        map.put("userID", userId);
-        String strEntity = HttpUtil.getRequestString(map);
-        RequestBody body = RequestBody
-                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
-        AppService.createApi(MyApi.class).getBindDevices(body).subscribeOn(Schedulers.io())
-                .observeOn(
-                        AndroidSchedulers.mainThread())
-                .subscribe(new MySubscriber<GetBindDeviceResponse>() {
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        //                        super.onError(error);
-                    }
-
-                    @Override
-                    public void onCompleted() {
-                        getBaseActivity().dismissLoadingDialog();
-                    }
-
-                    @Override
-                    public void onNext(final GetBindDeviceResponse response) {
-                        if (!response.isSuccess()) {
-                            RxToast.showToast(response.result);
-                            return;
-                        }
-                        Type type = new TypeToken<List<Device>>() {
-                        }.getType();
-                        List<Device> list = new GsonImpl().toList(response.result,
-                                Device.class, type);
-                        if (list.size() > 0) {
-                            RxSPUtilTool.putJSONCache(MyApplication.getInstance(), "bindDevice",
-                                    response.result);
-                        }
-                        refreshBindViews(list);
-                    }
-                });
+        showCache();
+//        final HashMap<String, Object> map = new HashMap<>();
+//        map.put("userID", userId);
+//        String strEntity = HttpUtil.getRequestString(map);
+//        RequestBody body = RequestBody
+//                .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
+//        AppService.createApi(MyApi.class).getBindDevices(body).subscribeOn(Schedulers.io())
+//                .observeOn(
+//                        AndroidSchedulers.mainThread())
+//                .subscribe(new MySubscriber<GetBindDeviceResponse>() {
+//                    @Override
+//                    public void onStart() {
+//                        super.onStart();
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable error) {
+//                        //                        super.onError(error);
+//                    }
+//
+//                    @Override
+//                    public void onCompleted() {
+//                        getBaseActivity().dismissLoadingDialog();
+//                    }
+//
+//                    @Override
+//                    public void onNext(final GetBindDeviceResponse response) {
+//                        if (!response.isSuccess()) {
+//                            RxToast.showToast(response.result);
+//                            return;
+//                        }
+////                        Type type = new TypeToken<List<Device>>() {
+////                        }.getType();
+////                        List<Device> list = new GsonImpl().toList(response.result,
+////                                Device.class, type);
+////                        if (list.size() > 0) {
+////                            RxSPUtilTool.putJSONCache(MyApplication.getInstance(), "bindDevice",
+////                                    response.result);
+////                        }
+////                        refreshBindViews(list);
+//                    }
+//                });
     }
 
-    private void refreshBindViews(List<Device> list) {
+    private void refreshBindViews(List<BindDeviceBean> list) {
         llBindDevicesList.removeAllViews();
-        for (final Device device : list) {
+        for (final BindDeviceBean device : list) {
             final View inflate = LayoutInflater
                     .from(getActivity()).inflate(R.layout.item_find_device, null);
             SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
@@ -359,17 +368,17 @@ public class Index2Fragment extends DelayBaseFragment {
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            unbindDevice(device.getDeviceSN());
+                            unbindDevice(device.deviceId);
                         }
                     });
             ((TextView) swipeLayout.findViewById(R.id.tv_2)).setText("解除绑定");
             // 禁用左划
             TextView deviceName = inflate.findViewById(R.id.tv_item1);
-            IP_MAC tmp = new IP_MAC("", device.getDeviceSN());
+            IP_MAC tmp = new IP_MAC("", device.deviceId);
             if (mDeviceList.contains(tmp)) {
-                deviceName.setText(device.getDeviceSN() + "(在线)");
+                deviceName.setText(device.deviceId + "(在线)");
             } else {
-                deviceName.setText(device.getDeviceSN());
+                deviceName.setText(device.deviceId);
             }
             TextView mac = inflate.findViewById(R.id.tv_item2);
             mac.setVisibility(View.GONE);
@@ -414,6 +423,23 @@ public class Index2Fragment extends DelayBaseFragment {
             return;
         }
         String userId = RxSPUtilTool.getString(getActivity(), Constants.USER_ID);
+        List<BindDeviceBean> bindDeviceBeans = queryBindFromDatabase();
+        BindDeviceBean tmp = null;
+        for (BindDeviceBean bindDeviceBean : bindDeviceBeans) {
+            if (bindDeviceBean.deviceId.equals(mac) && bindDeviceBean.userId.equals(userId)) {
+                tmp = bindDeviceBean;
+            }
+        }
+        if (tmp == null && !TextUtils.isEmpty(mac)) {
+            tmp = new BindDeviceBean();
+            tmp.userId = userId;
+            tmp.deviceId = mac;
+            DaoManager.getInstance().getDaoSession().getBindDeviceBeanDao().insert(tmp);
+            RxToast.showToast("绑定成功");
+        } else {
+            RxToast.showToast("已绑定");
+        }
+        refreshBindViews(queryBindFromDatabase());
         HashMap<String, Object> map = new HashMap<>();
         map.put("deviceID", mac);
         map.put("userID", userId);
@@ -421,34 +447,38 @@ public class Index2Fragment extends DelayBaseFragment {
         RequestBody body = RequestBody
                 .create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
         AppService.createApi(MyApi.class).bind(body).subscribeOn(Schedulers.io()).observeOn(
-                AndroidSchedulers.mainThread()).subscribe(new MySubscriber<BaseResponse>() {
+                AndroidSchedulers.mainThread()).subscribe(new Subscriber<BaseResponse>() {
             @Override
             public void onStart() {
                 super.onStart();
-                getBaseActivity().showLoadingDialog();
+//                getBaseActivity().showLoadingDialog();
             }
 
             @Override
             public void onError(Throwable error) {
-                super.onError(error);
-                getBaseActivity().dismissLoadingDialog();
+//                getBaseActivity().dismissLoadingDialog();
             }
 
             @Override
             public void onCompleted() {
-                getBaseActivity().dismissLoadingDialog();
+//                getBaseActivity().dismissLoadingDialog();
             }
 
             @Override
             public void onNext(final BaseResponse response) {
-                if (response.isSuccess()) {
-                    RxToast.showToast("绑定成功");
-                    requestBindDevice();
-                } else {
-                    RxToast.error(response.result);
-                }
+//                if (response.isSuccess()) {
+//                    RxToast.showToast("绑定成功");
+//                    requestBindDevice();
+//                } else {
+//                    RxToast.error(response.result);
+//                }
             }
         });
+    }
+
+    private List<BindDeviceBean> queryBindFromDatabase() {
+        return MyApplication.getInstance().queryCurrentBindDevice();
+
     }
 
     public void showRenameDialog(final String mac) {

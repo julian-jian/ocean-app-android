@@ -3,6 +3,7 @@ package com.sky.lamp;
 import static com.sky.lamp.Constants.USERNAME;
 import static com.sky.lamp.Constants.USER_ID;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,6 +13,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.sky.CrashHandler;
 import com.sky.MyActivityLifecycleCallbacks;
+import com.sky.lamp.bean.BindDeviceBean;
+import com.sky.lamp.dao.BindDeviceBeanDao;
 import com.sky.lamp.dao.DaoManager;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.vondear.rxtools.RxDeviceTool;
@@ -88,8 +91,10 @@ public class MyApplication extends Application {
 //        MultiDex.install(this);
     }
 
-    public void initDao() {
-
+    public List<BindDeviceBean> queryCurrentBindDevice() {
+        String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
+        return DaoManager.getInstance().getDaoSession().getBindDeviceBeanDao().queryBuilder()
+                .where(BindDeviceBeanDao.Properties.UserId.eq(userId)).list();
     }
 
 

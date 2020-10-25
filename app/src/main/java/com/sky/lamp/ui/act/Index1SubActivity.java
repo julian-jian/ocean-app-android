@@ -1,29 +1,24 @@
 package com.sky.lamp.ui.act;
 
-import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.daimajia.swipe.SwipeLayout;
-import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
-import com.sky.lamp.bean.Device;
+import com.sky.lamp.bean.BindDeviceBean;
 import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.bean.RenameMac;
 import com.sky.lamp.dao.DaoManager;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
-import com.sky.lamp.response.GetBindDeviceResponse;
-import com.sky.lamp.utils.GsonImpl;
 import com.sky.lamp.utils.HttpUtil;
-import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.sky.lamp.view.TitleBar;
 import com.stealthcopter.networktools.IPTools;
@@ -44,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -54,7 +50,7 @@ public class Index1SubActivity extends BaseActivity {
     @BindView(R.id.ll_bind_devices_list)
     LinearLayout llBindDeviceViews;
     private HashMap<String, String> mLocalDeviceList = new HashMap<String, String>();
-    private List<Device> mBindServerList = new ArrayList<>();
+    private List<BindDeviceBean> mBindServerList = new ArrayList<>();
     private List<RenameMac> mRenameMacs = new ArrayList<>();
 
     @Override
@@ -69,19 +65,20 @@ public class Index1SubActivity extends BaseActivity {
         if (mRenameMacs == null) {
             mRenameMacs = new ArrayList<>();
         }
-        showCache();
+        refreshBindData();
         startFindDevices();
-        requestBindDevice();
     }
 
-    private void showCache() {
-        String response = RxSPUtilTool.readJSONCache(MyApplication.getInstance(),"bindDevice");
-        if (!TextUtils.isEmpty(response)) {
-            Type type = new TypeToken<List<Device>>() {
-            }.getType();
-            mBindServerList = new GsonImpl().toList(response,
-                    Device.class, type);
-        }
+    private void refreshBindData() {
+        //        String response = RxSPUtilTool.readJSONCache(MyApplication.getInstance(),
+        //        "bindDevice");
+        //        if (!TextUtils.isEmpty(response)) {
+        //            Type type = new TypeToken<List<Device>>() {
+        //            }.getType();
+        //            mBindServerList = new GsonImpl().toList(response,
+        //                    Device.class, type);
+        //        }
+        mBindServerList = MyApplication.getInstance().queryCurrentBindDevice();
         refreshBindDeviceViews();
     }
 
@@ -100,7 +97,7 @@ public class Index1SubActivity extends BaseActivity {
     public void nextStepClick() {
         List<String> ips = new ArrayList<>();
         boolean isCheck = false;
-        for (Device device : mBindServerList) {
+        for (BindDeviceBean device : mBindServerList) {
             if (device.isChecked) {
                 isCheck = true;
                 break;
@@ -112,7 +109,7 @@ public class Index1SubActivity extends BaseActivity {
         }
 
         boolean hasError = false;
-        for (Device device : mBindServerList) {
+        for (BindDeviceBean device : mBindServerList) {
             if (mLocalDeviceList.get(device.getDeviceSN()) == null && device.isChecked) {
                 hasError = true;
             }
@@ -140,37 +137,50 @@ public class Index1SubActivity extends BaseActivity {
             return;
         }
         showLoadingDialog("局域网搜索中...");
-        SubnetDevices.fromLocalAddress().setTimeOutMillis(5000).findDevices(new SubnetDevices.OnSubnetDeviceFound() {
-            @Override
-            public void onDeviceFound(com.stealthcopter.networktools.subnet.Device device) {
-                Logger.d(device.toString());
-            }
-
-            @Override
-            public void onFinished(
-                    final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
-                if (devicesFound != null) {
-                    Logger.d("onFinished size = " + devicesFound.size());
-                } else {
-                    Logger.d("onFinished size = " + 0);
-                }
-                mLocalDeviceList.clear();
-                for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
-                    mLocalDeviceList.put(device.mac, device.ip);
-                }
-                runOnUiThread(new Runnable() {
+        SubnetDevices.fromLocalAddress().setTimeOutMillis(5000)
+                .findDevices(new SubnetDevices.OnSubnetDeviceFound() {
                     @Override
-                    public void run() {
-                        dismissLoadingDialog();
-                        refreshBindDeviceViews();
+                    public void onDeviceFound(com.stealthcopter.networktools.subnet.Device device) {
+                        Logger.d(device.toString());
+                    }
+
+                    @Override
+                    public void onFinished(
+                            final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
+                        if (devicesFound != null) {
+                            Logger.d("onFinished size = " + devicesFound.size());
+                        } else {
+                            Logger.d("onFinished size = " + 0);
+                        }
+                        mLocalDeviceList.clear();
+                        for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
+                            mLocalDeviceList.put(device.mac, device.ip);
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dismissLoadingDialog();
+                                refreshBindDeviceViews();
+                            }
+                        });
                     }
                 });
-            }
-        });
     }
 
     public void unbindDeviceRequest(String deviceID) {
         String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
+        List<BindDeviceBean> bindDeviceBeans =
+                DaoManager.getInstance().getDaoSession().getBindDeviceBeanDao().loadAll();
+        BindDeviceBean del = null;
+        for (BindDeviceBean bindDeviceBean : bindDeviceBeans) {
+            if (bindDeviceBean.deviceId.equals(deviceID) && bindDeviceBean.userId.equals(userId)) {
+                DaoManager.getInstance().getDaoSession().getBindDeviceBeanDao().delete(bindDeviceBean);
+                del = bindDeviceBean;
+                break;
+            }
+        }
+        bindDeviceBeans.remove(del);
+        refreshBindData();
         HashMap<String, Object> map = new HashMap<>();
         map.put("userID", userId);
         map.put("deviceID", deviceID);
@@ -180,17 +190,16 @@ public class Index1SubActivity extends BaseActivity {
         AppService.createApi(MyApi.class).unBind(body).subscribeOn(Schedulers.io())
                 .observeOn(
                         AndroidSchedulers.mainThread())
-                .subscribe(new MySubscriber<BaseResponse>() {
+                .subscribe(new Subscriber<BaseResponse>() {
                     @Override
                     public void onStart() {
                         super.onStart();
-                        showLoadingDialog();
+//                        showLoadingDialog();
                     }
 
                     @Override
                     public void onError(Throwable error) {
-                        super.onError(error);
-                        dismissLoadingDialog();
+//                        dismissLoadingDialog();
                     }
 
                     @Override
@@ -199,73 +208,24 @@ public class Index1SubActivity extends BaseActivity {
 
                     @Override
                     public void onNext(final BaseResponse response) {
-                        if (!response.isSuccess()) {
-                            RxToast.showToast(response.result);
-                            return;
-                        }
-                        requestBindDevice();
-
-                    }
-                });
-    }
-
-    public void requestBindDevice() {
-        String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
-        if (TextUtils.isEmpty(userId)) {
-            Logger.d("not login");
-            return;
-        }
-        final HashMap<String, Object> map = new HashMap<>();
-        map.put("userID", userId);
-        String strEntity = HttpUtil.getRequestString(map);
-        RequestBody body = RequestBody
-                .create(MediaType.parse("application/json;charset=UTF-8"), strEntity);
-        AppService.createApi(MyApi.class).getBindDevices(body).subscribeOn(Schedulers.io())
-                .observeOn(
-                        AndroidSchedulers.mainThread())
-                .subscribe(new MySubscriber<GetBindDeviceResponse>() {
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        //                        super.onError(error);
-                    }
-
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onNext(final GetBindDeviceResponse response) {
-                        if (!response.isSuccess()) {
-                            RxToast.showToast(response.result);
-                            return;
-                        }
-                        Type type = new TypeToken<List<Device>>() {
-                        }.getType();
-                        mBindServerList = new GsonImpl().toList(response.result,
-                                Device.class, type);
-                        if (mBindServerList.size() > 0) {
-                            RxSPUtilTool.putJSONCache(MyApplication.getInstance(),"bindDevice",response.result);
-                        }
-                        refreshBindDeviceViews();
+//                        if (!response.isSuccess()) {
+//                            RxToast.showToast(response.result);
+//                            return;
+//                        }
                     }
                 });
     }
 
     private void refreshBindDeviceViews() {
-        for (Device device : mBindServerList) {
-            device.setDeviceSN(device.getDeviceSN().toLowerCase());
+        for (BindDeviceBean device : mBindServerList) {
+            device.deviceId = (device.deviceId.toLowerCase());
         }
         addBindViews(mBindServerList);
     }
 
-    private void addBindViews(List<Device> list) {
+    private void addBindViews(List<BindDeviceBean> list) {
         llBindDeviceViews.removeAllViews();
-        for (final Device device : list) {
+        for (final BindDeviceBean device : list) {
             final View inflate = LayoutInflater
                     .from(Index1SubActivity.this).inflate(R.layout.item_find_device,
                             null);
