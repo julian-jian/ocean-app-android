@@ -335,6 +335,10 @@ public class ModelInfoSettingFragment extends BaseFragment {
         picker.setRangeEnd(23, 59);//18:30
         picker.setTopLineVisible(false);
         picker.setLineVisible(false);
+        picker.setTextSize(RxImageTool.dip2px(5));
+        picker.setWeightEnable(true);
+        picker.setSelectedTextColor(getResources().getColor(R.color.black));//前四位值是透明度
+//        picker.setUnSelectedTextColor(0xFF999999);
         final String time[] =
                 id == R.id.tv_startTime ? tvStartTime.getText().toString().split(":") :
                         tvEndTime.getText().toString().split(":");
