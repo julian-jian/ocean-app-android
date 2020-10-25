@@ -338,7 +338,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         picker.setTextSize(RxImageTool.dip2px(5));
         picker.setWeightEnable(true);
         picker.setSelectedTextColor(getResources().getColor(R.color.black));//前四位值是透明度
-//        picker.setUnSelectedTextColor(0xFF999999);
+        //        picker.setUnSelectedTextColor(0xFF999999);
         final String time[] =
                 id == R.id.tv_startTime ? tvStartTime.getText().toString().split(":") :
                         tvEndTime.getText().toString().split(":");
@@ -374,7 +374,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 }
             }
         });
-        picker.setSelectedItem(Integer.valueOf(time[0]),Integer.valueOf(time[1]));
+        picker.setSelectedItem(Integer.valueOf(time[0]), Integer.valueOf(time[1]));
         picker.show();
 
     }
@@ -411,8 +411,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 saveCurrentModel();
                 addNewItemModel();
                 break;
-            case R.id.btn_save:
-            {
+            case R.id.btn_save: {
                 final String error = isTimeValid(mCommandLightMode.mParameters);
                 if (!TextUtils.isEmpty(error)) {
                     runOnUiThread(new Runnable() {
@@ -426,7 +425,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     saveClick();
                 }
             }
-                break;
+            break;
             case R.id.btn_send:
                 final String error = isTimeValid(mCommandLightMode.mParameters);
                 if (!TextUtils.isEmpty(error)) {
@@ -702,6 +701,9 @@ public class ModelInfoSettingFragment extends BaseFragment {
     public String isTimeValid(List<LightItemMode> list) {
         String error = null;
         for (int i = 0; i < list.size(); i++) {
+            if (!TextUtils.isEmpty(error)) {
+                break;
+            }
             LightItemMode lightItemMode = list.get(i);
             Calendar startCalendar = Calendar.getInstance();
             startCalendar.setTime(TimeHelper.parseHourDate(lightItemMode.getStartTime()));
@@ -710,72 +712,62 @@ public class ModelInfoSettingFragment extends BaseFragment {
             //
             for (int j = i + 1; j < list.size(); j++) {
                 LightItemMode nextLIM = list.get(j);
+
                 Calendar nextStartCalendar = Calendar.getInstance();
-                Calendar nextStopCalendar = Calendar.getInstance();
                 nextStartCalendar.setTime(TimeHelper.parseHourDate(nextLIM.getStartTime()));
-                nextStopCalendar.setTime(TimeHelper.parseHourDate(nextLIM.getStopTime()));
+                Calendar nextEndCalendar = Calendar.getInstance();
+                nextEndCalendar.setTime(TimeHelper.parseHourDate(nextLIM.getStopTime()));
 
-                if (startCalendar.getTimeInMillis() < nextStartCalendar.getTimeInMillis() &&
-                        nextStartCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()) {
-                    // 01:00 - 02:00  01:30 - 03:00
-                    Logger.d("时间参数错误1");
-                    error = "时间参数错误,包含重复";
-                } else if (startCalendar.getTimeInMillis() < nextStopCalendar.getTimeInMillis() &&
-                        nextStopCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()) {
-                    //  2:00 - 3:00   5:00 - 2：30
-                    Logger.d("时间参数错误2");
-                    error = "时间参数错误,包含重复";
-                } else if (nextStopCalendar.getTimeInMillis() > endCalendar.getTimeInMillis()
-                        && nextStartCalendar.getTimeInMillis() < startCalendar.getTimeInMillis()) {
-                    if (nextStartCalendar.getTimeInMillis() < nextStopCalendar.getTimeInMillis() &&
-                            endCalendar.getTimeInMillis() > startCalendar.getTimeInMillis()
-                    ) {
-                        //01:00 - 02:00  00:59 - 03:00
-                        Logger.d("时间参数错误3");
-                        error = "时间参数错误,包含重复";
-                    }
-
-                } else if (nextLIM.stopTime.equals(lightItemMode.stopTime)
-                        && nextLIM.startTime.equals(lightItemMode.startTime)) {
-                    Logger.d("时间参数错误4");
-                    error = "时间参数错误,包含重复";
-                } else if (nextStopCalendar.getTimeInMillis() < nextStartCalendar
-                        .getTimeInMillis()) {
-
-                    if (startCalendar.getTimeInMillis() > endCalendar.getTimeInMillis()) {
-                        Logger.d("时间参数错误7");
-                        error = "时间参数错误,包含重复";
-                    } else {
-                        // 5:00 - 3:00
-                        // 5:00  - 23:59 第一段
-                        // 00:00 - 3:00
-                        Calendar firStartCal = Calendar.getInstance();
-                        firStartCal.setTime(TimeHelper.parseHourDate(nextLIM.getStartTime()));
-
-                        Calendar firstEndCal = Calendar.getInstance();
-                        firstEndCal.setTime(TimeHelper.parseHourDate("23:59"));
-
-                        Calendar secStartCal = Calendar.getInstance();
-                        firStartCal.setTime(TimeHelper.parseHourDate("00:00"));
-
-                        Calendar secEndCal = Calendar.getInstance();
-                        firstEndCal.setTime(TimeHelper.parseHourDate(nextLIM.getStopTime()));
-
-                        if (startCalendar.getTimeInMillis() < firstEndCal.getTimeInMillis()
-                                && startCalendar.getTimeInMillis() > firStartCal
-                                .getTimeInMillis()) {
-                            Logger.d("时间参数错误5");
-                            error = "时间参数错误,包含重复";
-                        } else if (startCalendar.getTimeInMillis() < secEndCal.getTimeInMillis()
-                                && startCalendar.getTimeInMillis() > secStartCal
-                                .getTimeInMillis()) {
-                            Logger.d("时间参数错误6");
-                            error = "时间参数错误,包含重复";
-                        }
-                    }
-
+                // 2个都过载了
+                if (isOverTime(lightItemMode.getStartTime(), lightItemMode.getStopTime())
+                        && isOverTime(nextLIM.getStartTime(), nextLIM.getStopTime())) {
+                    error = "错误1";
+                    break;
                 }
 
+                // 第一个过载
+                if (isOverTime(lightItemMode.getStartTime(), lightItemMode.getStopTime())) {
+                    // 拆分成2个时间段 start -- 23:59 第二段 00：00 - end
+                    String errorMsg = checkOver(lightItemMode, nextLIM);
+                    if (!TextUtils.isEmpty(errorMsg)) {
+                        error = errorMsg;
+                        break;
+                    }
+                }
+                // 第二个过载
+                if (isOverTime(nextLIM.getStartTime(), nextLIM.getStopTime())) {
+                    // 拆分成2个时间段 start -- 23:59 第二段 00：00 - end
+                    String errorMsg = checkOver(nextLIM, lightItemMode);
+                    if (!TextUtils.isEmpty(errorMsg)) {
+                        error = errorMsg;
+                        break;
+                    }
+                }
+
+                if (startCalendar.getTimeInMillis() == nextStartCalendar.getTimeInMillis()) {
+                    error = "错误10";
+                    break;
+                }
+
+                if (isContainsTime(startCalendar, nextStartCalendar, nextEndCalendar)) {
+                    error = "错误6";
+                    break;
+                }
+
+                if (isContainsTime(endCalendar, nextStartCalendar, nextEndCalendar)) {
+                    error = "错误7";
+                    break;
+                }
+
+                if (isContainsTime(nextStartCalendar, startCalendar, endCalendar)) {
+                    error = "错误8";
+                    break;
+                }
+
+                if (isContainsTime(nextEndCalendar, startCalendar, endCalendar)) {
+                    error = "错误9";
+                    break;
+                }
             }
 
             long cal = Math.abs(endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
@@ -787,6 +779,61 @@ public class ModelInfoSettingFragment extends BaseFragment {
 
         }
         return error;
+    }
+
+    private String checkOver(LightItemMode lightItemMode, LightItemMode nextLIM) {
+
+        Calendar nextStartCalendar = Calendar.getInstance();
+        Calendar nextStopCalendar = Calendar.getInstance();
+        nextStartCalendar.setTime(TimeHelper.parseHourDate(nextLIM.getStartTime()));
+        nextStopCalendar.setTime(TimeHelper.parseHourDate(nextLIM.getStopTime()));
+
+        String error = null;
+        Calendar firstStartCal = Calendar.getInstance();
+        firstStartCal.setTime(TimeHelper.parseHourDate(lightItemMode.getStartTime()));
+        Calendar firstEndCal = Calendar.getInstance();
+        firstEndCal.setTime(TimeHelper.parseHourDate("23:59"));
+        Calendar secStartCal = Calendar.getInstance();
+        secStartCal.setTime(TimeHelper.parseHourDate("00:00"));
+        Calendar secEndCal = Calendar.getInstance();
+        secEndCal.setTime(TimeHelper.parseHourDate(lightItemMode.getStopTime()));
+
+        if (isContainsTime(nextStartCalendar, firstStartCal, firstEndCal)) {
+            error = "错误2";
+        } else if (isContainsTime(nextStartCalendar, secStartCal, secEndCal)) {
+            error = "错误3";
+        } else if (isContainsTime(nextStopCalendar, firstStartCal, firstEndCal)) {
+            error = "错误4";
+        } else if (isContainsTime(nextStopCalendar, secStartCal, secEndCal)) {
+            error = "错误5";
+        }
+        return error;
+    }
+
+    private boolean isContainsTime(Calendar firstStart, Calendar secStart,
+                                   Calendar secEnd) {
+        if (firstStart.getTimeInMillis() < secEnd.getTimeInMillis()
+                && firstStart.getTimeInMillis() > secStart.getTimeInMillis()
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 5:00 - 2:00
+     *
+     * @param startTime
+     * @param endTime
+     *
+     * @return
+     */
+    boolean isOverTime(String startTime, String endTime) {
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(TimeHelper.parseHourDate(startTime));
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(TimeHelper.parseHourDate(endTime));
+        return startCalendar.getTimeInMillis() > endCalendar.getTimeInMillis();
     }
 
     private void refreshProgress() {

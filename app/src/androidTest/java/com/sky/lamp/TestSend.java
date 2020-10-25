@@ -69,6 +69,7 @@ public class TestSend {
         List<LightItemMode> list = new ArrayList<>();
         LightItemMode a = new LightItemMode();
         LightItemMode b = new LightItemMode();
+        LightItemMode c = new LightItemMode();
         a.startTime = "01:00";
         a.stopTime = "02:00";
 
@@ -156,6 +157,22 @@ public class TestSend {
         list.add(b);
         Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
 
+
+
+        list.clear();
+        a.startTime = "05:00";
+        a.stopTime = "03:00";
+        list.add(a);
+
+        b.startTime = "03:00";
+        b.stopTime = "04:00";
+        list.add(b);
+
+        b.startTime = "04:00";
+        b.stopTime = "05:02";
+        list.add(c);
+        Assert.assertNotNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
         // 正常数据-------------------------------
 
 
@@ -197,6 +214,9 @@ public class TestSend {
         b.stopTime = "04:00";
         list.add(b);
         Assert.assertNull("",new ModelInfoSettingFragment().isTimeValid(list));
+
+
+
 
     }
 
