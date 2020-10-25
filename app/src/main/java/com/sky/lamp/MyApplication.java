@@ -6,13 +6,12 @@ import static com.sky.lamp.Constants.USER_ID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.greenrobot.greendao.AbstractDaoMaster;
-
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.sky.CrashHandler;
+import com.sky.MyActivityLifecycleCallbacks;
 import com.sky.lamp.dao.DaoManager;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.vondear.rxtools.RxDeviceTool;
@@ -32,7 +31,6 @@ import app.socketlib.com.library.socket.MultiTcpManager;
 public class MyApplication extends Application {
 
     private static MyApplication application;
-    public ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 
     @Override
@@ -46,6 +44,7 @@ public class MyApplication extends Application {
         SocketManager.getInstance();
         MultiTcpManager.getInstance().init(this);
         new CrashHandler().init(this);
+        registerActivityLifecycleCallbacks(MyActivityLifecycleCallbacks.getInstance());
     }
 
     /**
@@ -92,5 +91,6 @@ public class MyApplication extends Application {
     public void initDao() {
 
     }
+
 
 }

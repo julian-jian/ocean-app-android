@@ -19,6 +19,7 @@ import com.sky.lamp.dao.DaoManager;
 import com.sky.lamp.dao.LightItemModeDao;
 import com.sky.lamp.ui.act.ModeInfoActivity;
 import com.sky.lamp.utils.HexUtils;
+import com.sky.lamp.utils.TimeHelper;
 import com.sky.lamp.view.LightModeChartHelper;
 import com.vondear.rxtools.RxImageTool;
 import com.vondear.rxtools.view.RxToast;
@@ -369,9 +370,9 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 }
             }
         });
+        picker.setSelectedItem(Integer.valueOf(time[0]),Integer.valueOf(time[1]));
         picker.show();
-        // 坑爹不会默认滚动过去
-        //        picker.setSelectedItem(Integer.valueOf(time[0]), Integer.valueOf(time[1]));
+
     }
 
     private void saveCurrentModel() {
@@ -407,11 +408,33 @@ public class ModelInfoSettingFragment extends BaseFragment {
                 addNewItemModel();
                 break;
             case R.id.btn_save:
-                saveCurrentModel();
-                saveClick();
+            {
+                final String error = isTimeValid(mCommandLightMode.mParameters);
+                if (!TextUtils.isEmpty(error)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            RxToast.showToast(error);
+                        }
+                    });
+                } else {
+                    saveCurrentModel();
+                    saveClick();
+                }
+            }
                 break;
             case R.id.btn_send:
-                sendAllModeCommand();
+                final String error = isTimeValid(mCommandLightMode.mParameters);
+                if (!TextUtils.isEmpty(error)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            RxToast.showToast(error);
+                        }
+                    });
+                } else {
+                    sendAllModeCommand();
+                }
                 break;
             case R.id.tv_startTime:
                 onTimePicker(R.id.tv_startTime);
@@ -589,16 +612,6 @@ public class ModelInfoSettingFragment extends BaseFragment {
     }
 
     private void saveClick() {
-        final String error = isTimeValid(mCommandLightMode.mParameters);
-        if (!TextUtils.isEmpty(error)) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    RxToast.showToast(error);
-                }
-            });
-            return;
-        }
         if (mCommandLightMode.getId() == 0) {
             DaoManager.getInstance().getDaoSession().getCommandLightModeDao()
                     .insert(mCommandLightMode);
@@ -664,7 +677,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         lightItemMode.setLight7Level(DEFAULT_PROGRESS);
         lightItemMode.setStartTime(lastItemModel.getStopTime());
         // 增加一小时
-        Date date = DateUtils.parseHourDate(lastItemModel.getStopTime());
+        Date date = TimeHelper.parseHourDate(lastItemModel.getStopTime());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.HOUR_OF_DAY, 1);
@@ -687,16 +700,16 @@ public class ModelInfoSettingFragment extends BaseFragment {
         for (int i = 0; i < list.size(); i++) {
             LightItemMode lightItemMode = list.get(i);
             Calendar startCalendar = Calendar.getInstance();
-            startCalendar.setTime(DateUtils.parseHourDate(lightItemMode.getStartTime()));
+            startCalendar.setTime(TimeHelper.parseHourDate(lightItemMode.getStartTime()));
             Calendar endCalendar = Calendar.getInstance();
-            endCalendar.setTime(DateUtils.parseHourDate(lightItemMode.getStopTime()));
+            endCalendar.setTime(TimeHelper.parseHourDate(lightItemMode.getStopTime()));
             //
             for (int j = i + 1; j < list.size(); j++) {
                 LightItemMode nextLIM = list.get(j);
                 Calendar nextStartCalendar = Calendar.getInstance();
                 Calendar nextStopCalendar = Calendar.getInstance();
-                nextStartCalendar.setTime(DateUtils.parseHourDate(nextLIM.getStartTime()));
-                nextStopCalendar.setTime(DateUtils.parseHourDate(nextLIM.getStopTime()));
+                nextStartCalendar.setTime(TimeHelper.parseHourDate(nextLIM.getStartTime()));
+                nextStopCalendar.setTime(TimeHelper.parseHourDate(nextLIM.getStopTime()));
 
                 if (startCalendar.getTimeInMillis() < nextStartCalendar.getTimeInMillis() &&
                         nextStartCalendar.getTimeInMillis() < endCalendar.getTimeInMillis()) {
@@ -733,16 +746,16 @@ public class ModelInfoSettingFragment extends BaseFragment {
                         // 5:00  - 23:59 第一段
                         // 00:00 - 3:00
                         Calendar firStartCal = Calendar.getInstance();
-                        firStartCal.setTime(DateUtils.parseHourDate(nextLIM.getStartTime()));
+                        firStartCal.setTime(TimeHelper.parseHourDate(nextLIM.getStartTime()));
 
                         Calendar firstEndCal = Calendar.getInstance();
-                        firstEndCal.setTime(DateUtils.parseHourDate("23:59"));
+                        firstEndCal.setTime(TimeHelper.parseHourDate("23:59"));
 
                         Calendar secStartCal = Calendar.getInstance();
-                        firStartCal.setTime(DateUtils.parseHourDate("00:00"));
+                        firStartCal.setTime(TimeHelper.parseHourDate("00:00"));
 
                         Calendar secEndCal = Calendar.getInstance();
-                        firstEndCal.setTime(DateUtils.parseHourDate(nextLIM.getStopTime()));
+                        firstEndCal.setTime(TimeHelper.parseHourDate(nextLIM.getStopTime()));
 
                         if (startCalendar.getTimeInMillis() < firstEndCal.getTimeInMillis()
                                 && startCalendar.getTimeInMillis() > firStartCal

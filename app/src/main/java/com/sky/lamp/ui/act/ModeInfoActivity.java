@@ -92,7 +92,7 @@ public class ModeInfoActivity extends BaseActivity {
 
     private void bindServer() {
         if (ModelSelectBean.ips.size() == 0) {
-            finish();
+            RxToast.showToast("无效设备");
             return;
         }
         MultiTcpManager.getInstance().connect(ModelSelectBean.ips);
@@ -101,6 +101,7 @@ public class ModeInfoActivity extends BaseActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onConnectSuccess(ConnectSuccessEvent event) {
+        RxToast.showToast("连接成功");
         dismissLoadingDialog();
     }
 

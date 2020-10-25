@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/ucrop" />
           </set>
         </option>
+        <option name="resolveExternalAnnotations" value="false" />
         <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>

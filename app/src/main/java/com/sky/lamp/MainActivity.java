@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
         mainViewAdapter.setHasMsgIndex(3);
         tabContainer.setAdapter(mainViewAdapter);
         actionBar.getRootView().setVisibility(View.VISIBLE);
-        actionBar.getTitleTextView().setText("ReeSun LED");
+        actionBar.getTitleTextView().setText(R.string.reefSun);
         tabContainer.setOnTabSelectedListener(new OnTabSelectedListener() {
             /**
              * @param tab
@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity {
                 switch (tab.getIndex()) {
                     case 0:
                         actionBar.getRootView().setVisibility(View.VISIBLE);
-                        actionBar.getTitleTextView().setText("ReeSun LED");
+                        actionBar.getTitleTextView().setText(R.string.reefSun);
                         actionBar.setRightText("");
                         break;
                     case 1:

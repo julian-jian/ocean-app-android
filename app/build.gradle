@@ -111,7 +111,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation project(path: ':library')
-    implementation project(path: ':android-pickers')
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.9.5'
     //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -155,6 +154,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'org.greenrobot:greendao:3.2.2' // add library
     implementation 'com.github.stealthcopter:AndroidNetworkTools:0.4.5.3'
+    implementation 'com.github.addappcn:android-pickers:1.0.3'
 //    compile 'com.github.Jeromeer:MinaSocket:1.0'
 }
 

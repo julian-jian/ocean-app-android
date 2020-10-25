@@ -10,7 +10,6 @@ import com.daimajia.swipe.SwipeLayout;
 import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
-import com.sky.lamp.BuildConfig;
 import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
@@ -100,25 +99,33 @@ public class Index1SubActivity extends BaseActivity {
 
     public void nextStepClick() {
         List<String> ips = new ArrayList<>();
+        boolean isCheck = false;
+        for (Device device : mBindServerList) {
+            if (device.isChecked) {
+                isCheck = true;
+                break;
+            }
+        }
+        if (!isCheck) {
+            RxToast.showToast("请先选择设备");
+            return;
+        }
+
         boolean hasError = false;
         for (Device device : mBindServerList) {
             if (mLocalDeviceList.get(device.getDeviceSN()) == null && device.isChecked) {
                 hasError = true;
-            } else if( device.isChecked){
+            }
+            if (device.isChecked && mLocalDeviceList.get(device.getDeviceSN()) != null) {
                 ips.add(mLocalDeviceList.get(device.getDeviceSN()));
             }
         }
-        if (hasError && !BuildConfig.DEBUG) {
+        if (hasError) {
             RxToast.showToast("所选设备包含未上线设备");
-            return;
         }
         if (!MyApplication.getInstance().isLogin()) {
             RxToast.showToast("请先登录");
             startActivity(new Intent(this, LoginAct.class));
-            return;
-        }
-        if (ips.size() == 0) {
-            RxToast.showToast("未选中设备");
             return;
         }
         ModelSelectBean.ips = ips;

@@ -16,6 +16,7 @@ import com.sky.lamp.bean.LightItemMode;
 import com.sky.lamp.ui.DelayBaseFragment;
 import com.sky.lamp.ui.act.ModeInfoActivity;
 import com.sky.lamp.utils.HexUtils;
+import com.sky.lamp.utils.TimeHelper;
 import com.sky.lamp.view.MyAnalogClock;
 
 import android.os.Bundle;
@@ -85,10 +86,10 @@ public class DemoFragment extends DelayBaseFragment {
         timer = new Timer();
         //时间命中了那个模式，就发送哪个模式
         final Calendar today = Calendar.getInstance();
-        today.setTime(DateUtils.parseHourDate("00:00"));
+        today.setTime(TimeHelper.parseHourDate("00:00"));
 
         final Calendar clockCalendar = Calendar.getInstance();
-        clockCalendar.setTime(DateUtils.parseHourDate("00:00"));
+        clockCalendar.setTime(TimeHelper.parseHourDate("00:00"));
 
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -141,10 +142,10 @@ public class DemoFragment extends DelayBaseFragment {
             String endTime = lightItemMode.getStopTime();
 
             Calendar startCalendar = Calendar.getInstance();
-            startCalendar.setTime(DateUtils.parseHourDate(startTime));
+            startCalendar.setTime(TimeHelper.parseHourDate(startTime));
 
             Calendar endCalendar = Calendar.getInstance();
-            endCalendar.setTime(DateUtils.parseHourDate(endTime));
+            endCalendar.setTime(TimeHelper.parseHourDate(endTime));
 
             // 区间范围内
             if (clockCalendar.getTimeInMillis() <= endCalendar.getTimeInMillis()

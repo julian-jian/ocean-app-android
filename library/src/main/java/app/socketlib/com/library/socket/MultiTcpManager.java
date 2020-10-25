@@ -34,6 +34,9 @@ public class MultiTcpManager {
     }
 
     public void connect(List<String> ipList) {
+        if (ipList == null) {
+            return;
+        }
         List<SocketConfig> list = new ArrayList<>();
         for (String ip : ipList) {
             SocketConfig socketConfig =
