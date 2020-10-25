@@ -162,6 +162,16 @@ public class SelectConfigAct extends BaseActivity {
                             showRenameDialog(commandLightMode);
                         }
                     });
+
+                    TextView delTv = inflate.findViewById(R.id.tv_2);
+                    delTv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DaoManager.getInstance().getDaoSession()
+                                    .getCommandLightModeDao().delete(commandLightMode);
+                            initConfig();
+                        }
+                    });
                 } else {
                     TextView renameTv = inflate.findViewById(R.id.tv_1);
                     swipeRefreshLayout.setSwipeEnabled(false);

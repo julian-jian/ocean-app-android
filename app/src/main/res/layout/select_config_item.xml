@@ -13,7 +13,7 @@
 
         <LinearLayout
                 android:id="@+id/bottom_wrapper"
-                android:layout_width="80dp"
+                android:layout_width="160dp"
                 android:layout_height="match_parent"
                 android:tag="Bottom1"
                 android:weightSum="1">
@@ -28,6 +28,17 @@
                     android:clickable="true"
                     android:gravity="center"
                     android:text="重命名"
+                    android:textColor="@color/white" />
+
+
+            <TextView
+                    android:id="@+id/tv_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:background="#E50011"
+                    android:gravity="center"
+                    android:text="删除"
                     android:textColor="@color/white" />
 
         </LinearLayout>
