@@ -779,9 +779,9 @@ public class ModelInfoSettingFragment extends BaseFragment {
             }
 
             long cal = Math.abs(endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis());
-            if (cal < 3600 * 1000) {
-                Logger.d("间隔不足1小时");
-                error = "间隔不足1小时";
+            if (cal < 1800 * 1000) {
+                Logger.d("间隔不足半小时");
+                error = "间隔不足半小时";
                 break;
             }
 

@@ -85,8 +85,7 @@ public class SelectConfigAct extends BaseActivity {
         } else {
             for (CommandLightMode commandLightMode : where.list()) {
                 commandLightMode.getMParameters();
-                addConfigView(commandLightMode,
-                        commandLightMode.isCustom);
+                addConfigView(commandLightMode,commandLightMode.isCustom);
             }
         }
     }
