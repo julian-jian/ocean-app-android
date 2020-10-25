@@ -218,8 +218,7 @@ public class SelectConfigAct extends BaseActivity {
                                 .where(CommandLightModeDao.Properties.T1.eq(ModelSelectBean.t1),
                                         CommandLightModeDao.Properties.ModelName.like("自定义%"));
                 CommandLightMode commandLightMode =
-                        initDefaultDb("自定义" + (where.list().size() + 1));
-                commandLightMode.isCustom = true;
+                        initDefaultDb("自定义" + (where.list().size() + 1),true);
                 EventBus.getDefault().postSticky(commandLightMode);
                 startActivity(intent);
                 break;
