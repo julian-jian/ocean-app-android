@@ -6,7 +6,6 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-
     <LinearLayout
             android:id="@+id/ll"
             android:layout_width="match_parent"
@@ -16,8 +15,7 @@
         <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chart"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="150dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp" />
 
@@ -136,7 +134,8 @@
         <LinearLayout
                 android:id="@+id/ll_seekbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:orientation="vertical" />
 
         <RelativeLayout
@@ -171,6 +170,7 @@
         <Button
                 android:id="@+id/btn_send"
                 style="@style/Btn"
+                android:visibility="gone"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginRight="15dp"

@@ -331,14 +331,13 @@ public class ModelInfoSettingFragment extends BaseFragment {
     public void onTimePicker(final int id) {
 
         final TimePicker picker = new TimePicker(this.getActivity(), TimePicker.HOUR_24);
-        picker.setRangeStart(00, 0);//09:00
-        picker.setRangeEnd(23, 59);//18:30
+        picker.setRangeStart(00, 0); // 09:00
+        picker.setRangeEnd(23, 59); // 18:30
         picker.setTopLineVisible(false);
         picker.setLineVisible(false);
         picker.setTextSize(RxImageTool.dip2px(5));
         picker.setWeightEnable(true);
         picker.setSelectedTextColor(getResources().getColor(R.color.black));//前四位值是透明度
-        //        picker.setUnSelectedTextColor(0xFF999999);
         final String time[] =
                 id == R.id.tv_startTime ? tvStartTime.getText().toString().split(":") :
                         tvEndTime.getText().toString().split(":");
@@ -424,20 +423,22 @@ public class ModelInfoSettingFragment extends BaseFragment {
                     saveCurrentModel();
                     saveClick();
                 }
+                {
+                    final String error2 = isTimeValid(mCommandLightMode.mParameters);
+                    if (!TextUtils.isEmpty(error)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                RxToast.showToast(error2);
+                            }
+                        });
+                    } else {
+                        sendAllModeCommand();
+                    }
+                }
             }
             break;
             case R.id.btn_send:
-                final String error = isTimeValid(mCommandLightMode.mParameters);
-                if (!TextUtils.isEmpty(error)) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            RxToast.showToast(error);
-                        }
-                    });
-                } else {
-                    sendAllModeCommand();
-                }
                 break;
             case R.id.tv_startTime:
                 onTimePicker(R.id.tv_startTime);
@@ -500,7 +501,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
             @Override
             public void run() {
                 ((BaseActivity) ModelInfoSettingFragment.this.getActivity())
-                        .showLoadingDialog("发送中...");
+                        .showLoadinNoTouchgDialog("发送中...");
             }
         });
     }
@@ -521,7 +522,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    RxToast.showToast("设置完毕");
+                    RxToast.showToast("保存成功");
                     btnSend.setEnabled(true);
                 }
             });
@@ -640,12 +641,12 @@ public class ModelInfoSettingFragment extends BaseFragment {
             lightItemMode.setParent_id(mCommandLightMode.getId());
             DaoManager.getInstance().getDaoSession().getLightItemModeDao().insert(lightItemMode);
         }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                RxToast.showToast("保存成功");
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                RxToast.showToast("保存成功");
+//            }
+//        });
 
     }
 
@@ -781,7 +782,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         return error;
     }
 
-    private String checkOver(LightItemMode lightItemMode, LightItemMode nextLIM) {
+    public static String checkOver(LightItemMode lightItemMode, LightItemMode nextLIM) {
 
         Calendar nextStartCalendar = Calendar.getInstance();
         Calendar nextStopCalendar = Calendar.getInstance();
@@ -810,7 +811,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
         return error;
     }
 
-    private boolean isContainsTime(Calendar firstStart, Calendar secStart,
+    public static boolean isContainsTime(Calendar firstStart, Calendar secStart,
                                    Calendar secEnd) {
         if (firstStart.getTimeInMillis() < secEnd.getTimeInMillis()
                 && firstStart.getTimeInMillis() > secStart.getTimeInMillis()
@@ -828,7 +829,7 @@ public class ModelInfoSettingFragment extends BaseFragment {
      *
      * @return
      */
-    boolean isOverTime(String startTime, String endTime) {
+    public static boolean isOverTime(String startTime, String endTime) {
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.setTime(TimeHelper.parseHourDate(startTime));
         Calendar endCalendar = Calendar.getInstance();

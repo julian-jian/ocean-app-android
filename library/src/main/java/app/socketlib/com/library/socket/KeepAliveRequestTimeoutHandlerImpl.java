@@ -24,6 +24,6 @@ public class KeepAliveRequestTimeoutHandlerImpl implements KeepAliveRequestTimeo
     @Override
     public void keepAliveRequestTimedOut(KeepAliveFilter keepAliveFilter, IoSession ioSession) throws Exception {
      LogUtil.w("keepAliveRequestTimedOut心跳超时,重新连接:"+closeType);
-        Bus.post(new ConnectClosedEvent(closeType));
+//        Bus.post(new ConnectClosedEvent(closeType));
     }
 }

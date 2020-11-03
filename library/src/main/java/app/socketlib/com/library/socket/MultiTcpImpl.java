@@ -15,6 +15,7 @@ import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
 import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.greenrobot.eventbus.Subscribe;
 
 import android.util.Log;
 import app.socketlib.com.library.events.ConnectClosedEvent;
@@ -78,7 +79,7 @@ public class MultiTcpImpl {
                         mConfig.getHeartbeatResponse());
         //设置心跳
         KeepAliveFilter heartBeat =
-                new KeepAliveFilter(heartBeatFactory, IdleStatus.BOTH_IDLE, heartBeatHandler);
+                new KeepAliveFilter(heartBeatFactory, IdleStatus.WRITER_IDLE, heartBeatHandler);
         //是否回发
         heartBeat.setForwardEvent(false);
         //设置心跳间隔
@@ -89,6 +90,7 @@ public class MultiTcpImpl {
         mCacheObjectList.clear();
         mCacheStringList.clear();
     }
+
 
     /**
      * 与服务器连接
@@ -111,7 +113,7 @@ public class MultiTcpImpl {
                         setStatus(MultiTcpImpl.ConnectStatus.CONNECTED);
                         Bus.post(new ConnectSuccessEvent(Contants.CONNECT_SUCCESS_TYPE,
                                 mConfig.getIp()));
-                        LogUtil.e("connnectToServer中,Socket连接成功!");
+                        LogUtil.e("connectToServer中,Socket连接成功!");
                         for (String string : mCacheStringList) {
                             send(string);
                         }
@@ -133,6 +135,7 @@ public class MultiTcpImpl {
             }
         }
     }
+
 
     public void send(String msg) {
         send(msg, false);

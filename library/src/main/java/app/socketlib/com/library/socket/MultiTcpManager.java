@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import android.content.Context;
+import android.util.Log;
 import app.socketlib.com.library.ContentServiceHelper;
-import app.socketlib.com.library.events.ConnectSuccessEvent;
+import app.socketlib.com.library.events.ConnectClosedEvent;
 import app.socketlib.com.library.utils.Contants;
 import app.socketlib.com.library.utils.HexUtils;
 
@@ -18,6 +20,7 @@ public class MultiTcpManager {
     private static MultiTcpManager INSTANCE;
     private List<MultiTcpImpl> multiTcpList = new CopyOnWriteArrayList<>();
     private Context mContext;
+    private List<String> mIpList;
 
     public MultiTcpManager() {
     }
@@ -29,14 +32,17 @@ public class MultiTcpManager {
         return INSTANCE;
     }
 
-    public void init(Context context) {
+    public void init(Context context)    {
         mContext = context;
+        EventBus.getDefault().register(this);
     }
 
     public void connect(List<String> ipList) {
+        Log.w("SOCKET", "connect() called with: ipList = [" + ipList + "]");
         if (ipList == null) {
             return;
         }
+        mIpList = ipList;
         List<SocketConfig> list = new ArrayList<>();
         for (String ip : ipList) {
             SocketConfig socketConfig =
@@ -44,6 +50,17 @@ public class MultiTcpManager {
             list.add(socketConfig);
         }
         connectServer(list);
+    }
+
+    @Subscribe
+    public void reconnect(ConnectClosedEvent connectClosedEvent) {
+        Log.w("SOCKET", "reconnect");
+        if (multiTcpList.size() > 0 && mIpList.size() > 0) {
+            for (MultiTcpImpl multiTcp : multiTcpList) {
+                multiTcp.disConnect();
+            }
+            connect(mIpList);
+        }
     }
 
     public void connectServer(final List<SocketConfig> list) {

@@ -1,7 +1,9 @@
 package com.sky.lamp.ui.fragment;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,31 +13,22 @@ import org.greenrobot.eventbus.Subscribe;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.event.NextStepEvent;
-import com.google.gson.reflect.TypeToken;
 import com.guo.duoduo.wifidetective.core.devicescan.IP_MAC;
 import com.orhanobut.logger.Logger;
 import com.sky.lamp.BaseActivity;
 import com.sky.lamp.Constants;
 import com.sky.lamp.bean.BindDeviceBean;
-import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
-import com.sky.lamp.bean.Device;
 import com.sky.lamp.bean.RenameMac;
-import com.sky.lamp.dao.BindDeviceBeanDao;
 import com.sky.lamp.dao.DaoManager;
-import com.sky.lamp.dao.DaoMaster;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
-import com.sky.lamp.response.GetBindDeviceResponse;
 import com.sky.lamp.ui.DelayBaseFragment;
 import com.sky.lamp.ui.act.ConfigAct;
 import com.sky.lamp.ui.act.LoginAct;
-import com.sky.lamp.ui.act.SelectConfigAct;
-import com.sky.lamp.utils.GsonImpl;
 import com.sky.lamp.utils.HttpUtil;
-import com.sky.lamp.utils.MySubscriber;
 import com.sky.lamp.utils.RxSPUtilTool;
 import com.stealthcopter.networktools.IPTools;
 import com.stealthcopter.networktools.SubnetDevices;
@@ -47,6 +40,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,10 +158,19 @@ public class Index2Fragment extends DelayBaseFragment {
                 public void onFinished(
                         final ArrayList<com.stealthcopter.networktools.subnet.Device> devicesFound) {
                     mDevicesFound = devicesFound;
-                    Logger.d("onFinished ");
+                    Logger.d("onFinished "+Thread.currentThread());
                     if (getActivity() == null) {
                         return;
                     }
+                    List list = new ArrayList();
+                    // 过滤非设备的情况
+                    for (com.stealthcopter.networktools.subnet.Device device : mDevicesFound) {
+                        boolean device1 = isDevice(device.ip);
+                        if (!device1) {
+                            list.add(device);
+                        }
+                    }
+                    mDevicesFound.removeAll(list);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -512,6 +515,30 @@ public class Index2Fragment extends DelayBaseFragment {
                 addFindDeviceView(ipMac);
             }
         }
+    }
+
+    public boolean isDevice(String ip) {
+        boolean conn = false;
+        Socket soc = null;
+        try {
+            soc = new Socket();
+            soc.connect(new InetSocketAddress(ip, 61818),2000);
+            //获取socket的输入输出流
+            conn = soc.isConnected();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            if (soc != null && soc.isConnected()) {
+                try {
+                    soc.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Log.d("SOCKET", "conn ip" +ip +" "+conn);
+        return conn;
     }
 
     private void updateOrInsertRename(String name, String mac) {

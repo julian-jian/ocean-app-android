@@ -16,5 +16,4 @@ public class TestAct extends ActivityInstrumentationTestCase2 {
     }
 
 
-
 }

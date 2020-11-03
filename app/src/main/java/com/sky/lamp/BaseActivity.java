@@ -42,6 +42,18 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void showLoadinNoTouchgDialog(String text){
+        dismissLoadingDialog();
+        if (rxDialogLoading == null) {
+            rxDialogLoading = new RxDialogLoading(this);
+            rxDialogLoading.setCanceledOnTouchOutside(false);
+            if (!TextUtils.isEmpty(text)) {
+                rxDialogLoading.setLoadingText(text);
+            }
+            rxDialogLoading.show();
+        }
+    }
+
     public void dismissLoadingDialog() {
         if (rxDialogLoading != null && rxDialogLoading.isShowing()) {
             rxDialogLoading.dismiss();

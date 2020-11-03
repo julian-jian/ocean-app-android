@@ -95,13 +95,6 @@ public class DemoFragment extends DelayBaseFragment {
             @Override
             public void run() {
                 System.out.println("DemoFragment.run " + Thread.currentThread());
-                if (clockCalendar.get(Calendar.DAY_OF_MONTH) != today.get(Calendar.DAY_OF_MONTH)) {
-                    System.out.println("DemoFragment.run finish");
-                    sendEmptyCommand();
-                    timer.cancel();
-                    return;
-                }
-
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -109,6 +102,12 @@ public class DemoFragment extends DelayBaseFragment {
                                 clockCalendar.get(Calendar.MINUTE));
                     }
                 });
+                if (clockCalendar.get(Calendar.DAY_OF_MONTH) != today.get(Calendar.DAY_OF_MONTH)) {
+                    System.out.println("DemoFragment.run finish");
+                    sendEmptyCommand();
+                    timer.cancel();
+                    return;
+                }
 
                 List<LightItemMode> mParameters = commandLightMode.mParameters;
                 LightItemMode  holdItemMode = getHoldItemMode(mParameters,
@@ -117,6 +116,7 @@ public class DemoFragment extends DelayBaseFragment {
                     Logger.i("当前时间 "+DateUtils.formatDate(clockCalendar.getTime(),"HH:mm")+" 命中 "+holdItemMode);
                     sendCommand(holdItemMode);
                 } else {
+                    Logger.i("当前时间 "+DateUtils.formatDate(clockCalendar.getTime(),"HH:mm")+" 未命中");
                     sendEmptyCommand();
                 }
 
@@ -126,7 +126,7 @@ public class DemoFragment extends DelayBaseFragment {
             }
         };
 //        timer.schedule(timerTask, 0L, 5 * 1000L);
-        timer.schedule(timerTask, 0L, 5 * 1000L);
+        timer.schedule(timerTask, 0L, 3 * 1000L);
     }
 
     /**
@@ -146,6 +146,29 @@ public class DemoFragment extends DelayBaseFragment {
 
             Calendar endCalendar = Calendar.getInstance();
             endCalendar.setTime(TimeHelper.parseHourDate(endTime));
+
+            // fix 23:00  -2:00
+            if (ModelInfoSettingFragment.isOverTime(startTime, endTime)) {
+                Calendar firstStartCal = Calendar.getInstance();
+                firstStartCal.setTime(TimeHelper.parseHourDate(lightItemMode.getStartTime()));
+                Calendar firstEndCal = Calendar.getInstance();
+                firstEndCal.setTime(TimeHelper.parseHourDate("23:59"));
+
+                Calendar secStartCal = Calendar.getInstance();
+                secStartCal.setTime(TimeHelper.parseHourDate("00:00"));
+                Calendar secEndCal = Calendar.getInstance();
+                secEndCal.setTime(TimeHelper.parseHourDate(lightItemMode.getStopTime()));
+
+                if (clockCalendar.getTimeInMillis() <= firstEndCal.getTimeInMillis() && clockCalendar.getTimeInMillis() >= firstStartCal.getTimeInMillis()) {
+                    holdItemMode = lightItemMode;
+                    break;
+                }
+                if (clockCalendar.getTimeInMillis() >= secStartCal.getTimeInMillis()
+                        && clockCalendar.getTimeInMillis() <= secEndCal.getTimeInMillis() ) {
+                    holdItemMode = lightItemMode;
+                    break;
+                }
+            }
 
             // 区间范围内
             if (clockCalendar.getTimeInMillis() <= endCalendar.getTimeInMillis()

@@ -1,22 +1,31 @@
 package com.sky.lamp;
 
-import org.junit.Test;
-
 public class Solution {
-    @Test
-    public void test() {
-        int ar[] = new int[] {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-        new Solution().maxSubArray(ar);
+
+    class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode(int x) {
+            val = x;
+        }
     }
-    public int maxSubArray(int[] nums) {
-        if (nums.length == 1) {
-            return nums[0];
+
+    public boolean isPalindrome(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = slow.next;
+        boolean isPalindrome = false;
+        while (fast == null || slow ==null) {
+            if (slow == fast) {
+                isPalindrome = true;
+                break;
+            }
+            slow = slow.next;
+            fast = fast.next;
+            if (fast != null) {
+                fast = fast.next;
+            }
         }
-        int max = nums[0];
-        for (int i = 1; i < nums.length; i++) {
-            int preMax = Math.max(max, nums[i]);
-            max = Math.max(max, max + preMax);
-        }
-        return max;
+        return isPalindrome;
     }
 }
