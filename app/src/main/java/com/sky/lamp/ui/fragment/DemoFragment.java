@@ -104,7 +104,7 @@ public class DemoFragment extends DelayBaseFragment {
                 });
                 if (clockCalendar.get(Calendar.DAY_OF_MONTH) != today.get(Calendar.DAY_OF_MONTH)) {
                     System.out.println("DemoFragment.run finish");
-                    sendEmptyCommand();
+                    sendEmptyCommand(true);
                     timer.cancel();
                     return;
                 }
@@ -180,7 +180,7 @@ public class DemoFragment extends DelayBaseFragment {
         return holdItemMode;
     }
 
-    private void sendEmptyCommand() {
+    private void sendEmptyCommand(boolean isExit) {
         Logger.w("没有符合的模式 ");
         LightItemMode lightItemMode = new LightItemMode();
         lightItemMode.setStartTime("00:00");
@@ -192,16 +192,26 @@ public class DemoFragment extends DelayBaseFragment {
         lightItemMode.setLight5Level(0);
         lightItemMode.setLight6Level(0);
         lightItemMode.setLight7Level(0);
-        sendCommand(lightItemMode);
+        sendCommand(lightItemMode,isExit);
     }
 
+    private void sendEmptyCommand() {
+        sendEmptyCommand(false);
+    }
 
     private void sendCommand(LightItemMode lightItemMode) {
+       sendCommand(lightItemMode,false);
+
+    }
+    private void sendCommand(LightItemMode lightItemMode,boolean isExit) {
         byte[] temp = new byte[] {
                 (byte) 0xaa, (byte) 0x0a, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
                 (byte) 0x55};
+        if (isExit) {
+            temp[1] = 0x0b;
+        }
         // 应该不考虑时间
         temp[6] = HexUtils.tenToHexByte(lightItemMode.getLight1Level());
         temp[7] = tenToHexByte(lightItemMode.getLight4Level());

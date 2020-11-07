@@ -194,12 +194,12 @@ public class Index1SubActivity extends BaseActivity {
                     @Override
                     public void onStart() {
                         super.onStart();
-//                        showLoadingDialog();
+                        //                        showLoadingDialog();
                     }
 
                     @Override
                     public void onError(Throwable error) {
-//                        dismissLoadingDialog();
+                        //                        dismissLoadingDialog();
                     }
 
                     @Override
@@ -208,10 +208,10 @@ public class Index1SubActivity extends BaseActivity {
 
                     @Override
                     public void onNext(final BaseResponse response) {
-//                        if (!response.isSuccess()) {
-//                            RxToast.showToast(response.result);
-//                            return;
-//                        }
+                        //                        if (!response.isSuccess()) {
+                        //                            RxToast.showToast(response.result);
+                        //                            return;
+                        //                        }
                     }
                 });
     }
@@ -228,7 +228,7 @@ public class Index1SubActivity extends BaseActivity {
         for (final BindDeviceBean device : list) {
             final View inflate = LayoutInflater
                     .from(Index1SubActivity.this).inflate(R.layout.item_find_device,
-                            llBindDeviceViews);
+                            null);
             SwipeLayout swipeLayout = inflate.findViewById(R.id.swipeLayout);
             swipeLayout.findViewById(R.id.tv_1)
                     .setOnClickListener(new View.OnClickListener() {
@@ -279,7 +279,7 @@ public class Index1SubActivity extends BaseActivity {
                 public void onClick(View v) {
                 }
             });
-//            llBindDeviceViews.addView(inflate);
+            llBindDeviceViews.addView(inflate);
         }
     }
 

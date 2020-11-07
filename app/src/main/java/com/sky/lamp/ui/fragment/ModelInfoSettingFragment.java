@@ -197,7 +197,8 @@ public class ModelInfoSettingFragment extends BaseFragment {
         llSeekbar.removeAllViews();
         for (int index = 0; index < 7; index++) {
             View inflate =
-                    LayoutInflater.from(getActivity()).inflate(R.layout.item_seekbar, null);
+                    LayoutInflater.from(getActivity()).inflate(R.layout.item_seekbar, llSeekbar,
+                            false);
             View inflate1 =
                     LayoutInflater.from(getActivity()).inflate(getSeekbarLayoutId(index), null);
             ((ViewGroup) inflate.findViewById(R.id.fl_sub_seebar)).addView(inflate1);
