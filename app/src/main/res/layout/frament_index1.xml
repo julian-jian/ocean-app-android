@@ -6,11 +6,25 @@
         android:orientation="vertical">
 
 
-    <LinearLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="-2dp"
-            android:background="@drawable/banner" />
+            android:background="@drawable/banner">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxEms="15"
+                android:padding="5dp"
+                android:layout_marginTop="20dp"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/reefSun" />
+
+    </RelativeLayout>
 
 
     <RelativeLayout

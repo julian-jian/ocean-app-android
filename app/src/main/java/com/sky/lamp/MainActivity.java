@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity {
                 switch (tab.getIndex()) {
                     case 0:
                         actionBar.getRootView().setVisibility(View.GONE);
-                        actionBar.getTitleTextView().setText(R.string.reefSun);
+//                        actionBar.getTitleTextView().setText(R.string.reefSun);
                         actionBar.setRightText("");
                         break;
                     case 1:
@@ -102,11 +102,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void changeStatusColor(int index) {
-
         if (index == 2) {
             StatusBarCompat.setStatusBarColor(this, getResources().getColor(R.color.mine_blue));
-        }else if (index == 0) {
-            StatusBarCompat.setStatusBarColor(this, getResources().getColor(R.color.index1));
         } else {
             StatusBarCompat.setStatusBarColor(this, getResources().getColor(android.R.color.white));
         }

@@ -5,6 +5,7 @@ import com.sky.lamp.adapter.ProductListAdapter;
 import com.sky.lamp.bean.ModelSelectBean;
 import com.sky.lamp.ui.DelayBaseFragment;
 import com.sky.lamp.ui.act.Index1SubActivity;
+import com.sky.lamp.ui.act.ZaoLangAct;
 import com.vondear.rxtools.view.RxToast;
 
 import android.content.Intent;
@@ -61,9 +62,10 @@ public class IndexFragment extends DelayBaseFragment {
                 goStep2("LED");
                 break;
             case R.id.ll_zaolang:
-                RxToast.showToast("该功能正在开发");
+                ZaoLangAct.startUi(getContext(),true);
+                break;
             case R.id.ll_shuibang:
-                RxToast.showToast("该功能正在开发");
+                ZaoLangAct.startUi(getContext(),false);
                 break;
             case R.id.ll_lps:
                 goStep2("LPS");
