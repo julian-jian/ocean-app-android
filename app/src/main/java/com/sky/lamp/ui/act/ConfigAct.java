@@ -26,6 +26,9 @@ import com.sky.lamp.Constants;
 import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.WifiListAdapter;
+import com.sky.lamp.bean.BindDeviceBean;
+import com.sky.lamp.dao.DaoManager;
+import com.sky.lamp.event.RefreshBindDeviceDeviceEvent;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
@@ -206,6 +209,9 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
             mHandler.removeCallbacksAndMessages(null);
             mHandler.sendEmptyMessage(2);
             bindDeviceRequest();
+            String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
+            insertBindDatabase(userId);
+            finish();
         }
     }
 
@@ -247,6 +253,8 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
             return;
         }
         String userId = RxSPUtilTool.getString(this, Constants.USER_ID);
+
+        insertBindDatabase(userId);
         HashMap<String, Object> map = new HashMap<>();
         map.put("deviceID", ipMac.mMac);
         map.put("userID", userId);
@@ -258,30 +266,50 @@ public class ConfigAct extends BaseActivity implements SocketResponseListener {
             @Override
             public void onStart() {
                 super.onStart();
-                showLoadingDialog();
             }
 
             @Override
             public void onError(Throwable error) {
                 super.onError(error);
-                dismissLoadingDialog();
             }
 
             @Override
             public void onCompleted() {
-                dismissLoadingDialog();
             }
 
             @Override
             public void onNext(final BaseResponse response) {
                 if (response.isSuccess()) {
-                    RxToast.showToast("绑定成功");
-                    finish();
+//                    RxToast.showToast("绑定成功");
+//                    finish();
                 } else {
-                    RxToast.error(response.result);
+//                    RxToast.error(response.result);
                 }
             }
         });
+    }
+
+    private void insertBindDatabase(String userId) {
+        List<BindDeviceBean> bindDeviceBeans = queryBindFromDatabase();
+        BindDeviceBean tmp = null;
+        for (BindDeviceBean bindDeviceBean : bindDeviceBeans) {
+            if (bindDeviceBean.deviceId.equals(ipMac.mMac) && bindDeviceBean.userId.equals(userId)) {
+                tmp = bindDeviceBean;
+            }
+        }
+        if (tmp == null && !TextUtils.isEmpty(ipMac.mMac)) {
+            tmp = new BindDeviceBean();
+            tmp.userId = userId;
+            tmp.deviceId = ipMac.mMac;
+            DaoManager.getInstance().getDaoSession().getBindDeviceBeanDao().insert(tmp);
+        } else {
+            Logger.d("已绑定");
+        }
+        EventBus.getDefault().post(new RefreshBindDeviceDeviceEvent());
+    }
+
+    private List<BindDeviceBean> queryBindFromDatabase() {
+        return MyApplication.getInstance().queryCurrentBindDevice();
     }
 
     public static class WiFiScanHandler extends android.os.Handler {

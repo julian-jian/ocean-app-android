@@ -5,79 +5,86 @@
         android:background="@android:color/white"
         android:orientation="vertical">
 
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-2dp"
+            android:background="@drawable/banner" />
+
+
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="37dp"
-        android:layout_marginTop="31dp"
-        android:layout_marginRight="37dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="37dp"
+            android:layout_marginRight="37dp">
 
-    <LinearLayout
-            android:id="@+id/ll_led"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:background="@drawable/bg_rectangle_with_arc"
-            android:gravity="center"
-            android:orientation="vertical">
+        <LinearLayout
+                android:id="@+id/ll_led"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@drawable/bg_rectangle_with_arc"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/model_led" />
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/model_led" />
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="9sp"
-                android:text="LED" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LED"
+                    android:textSize="9sp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <LinearLayout
-            android:id="@+id/ll_zaolang"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/bg_rectangle_with_arc"
-            android:gravity="center"
-            android:orientation="vertical">
+        <LinearLayout
+                android:id="@+id/ll_zaolang"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/bg_rectangle_with_arc"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/model_zhaolang" />
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/model_zhaolang" />
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="9sp"
-                android:text="造浪模式" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="造浪模式"
+                    android:textSize="9sp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <LinearLayout
-            android:id="@+id/ll_shuibang"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/bg_rectangle_with_arc"
-            android:gravity="center"
-            android:orientation="vertical">
+        <LinearLayout
+                android:id="@+id/ll_shuibang"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/bg_rectangle_with_arc"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/model_shuibang" />
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/model_shuibang" />
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="9sp"
-                android:text="水泵模式" />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="水泵模式"
+                    android:textSize="9sp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-</RelativeLayout>
+    </RelativeLayout>
 
 
     <RelativeLayout
@@ -104,8 +111,8 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="9sp"
-                    android:text="LPS" />
+                    android:text="LPS"
+                    android:textSize="9sp" />
 
         </LinearLayout>
 
@@ -126,8 +133,8 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="9sp"
-                    android:text="SPS模式" />
+                    android:text="SPS模式"
+                    android:textSize="9sp" />
 
         </LinearLayout>
 
@@ -148,8 +155,8 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="9sp"
-                    android:text="LPS+SPS模式" />
+                    android:text="LPS+SPS模式"
+                    android:textSize="9sp" />
 
         </LinearLayout>
 

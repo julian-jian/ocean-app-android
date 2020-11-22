@@ -1,6 +1,5 @@
 package com.sky.lamp.ui.fragment;
 
-import com.sky.lamp.MainActivity;
 import com.sky.lamp.R;
 import com.sky.lamp.adapter.ProductListAdapter;
 import com.sky.lamp.bean.ModelSelectBean;
@@ -14,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -22,17 +20,17 @@ import butterknife.Unbinder;
 
 public class IndexFragment extends DelayBaseFragment {
     @BindView(R.id.ll_led)
-    LinearLayout llLed;
+    View llLed;
     @BindView(R.id.ll_zaolang)
-    LinearLayout llZaolang;
+    View llZaolang;
     @BindView(R.id.ll_shuibang)
-    LinearLayout llShuibang;
+    View llShuibang;
     @BindView(R.id.ll_lps)
-    LinearLayout llLps;
+    View llLps;
     @BindView(R.id.ll_sps)
-    LinearLayout llSps;
+    View llSps;
     @BindView(R.id.ll_lps_sps)
-    LinearLayout llLpsSps;
+    View llLpsSps;
     Unbinder unbinder;
     private ProductListAdapter productListAdapter;
 

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.event.NextStepEvent;
@@ -22,6 +23,7 @@ import com.sky.lamp.MyApplication;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.RenameMac;
 import com.sky.lamp.dao.DaoManager;
+import com.sky.lamp.event.RefreshBindDeviceDeviceEvent;
 import com.sky.lamp.http.AppService;
 import com.sky.lamp.http.MyApi;
 import com.sky.lamp.response.BaseResponse;
@@ -309,6 +311,10 @@ public class Index2Fragment extends DelayBaseFragment {
     }
 
     public void requestBindDevice() {
+        requestBindDevice(null);
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void requestBindDevice(RefreshBindDeviceDeviceEvent refreshBindDeviceDeviceEvent) {
         showCache();
 //        final HashMap<String, Object> map = new HashMap<>();
 //        map.put("userID", userId);

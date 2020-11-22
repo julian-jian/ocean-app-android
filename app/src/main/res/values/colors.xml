@@ -22,6 +22,7 @@
     <color name="title_bg">#F4F6F8</color>
     <color name="color_status">#ff3488ea</color>
     <color name="mine_blue">#545DFF</color>
+    <color name="index1">#6082F7</color>
 
     <color name="bg_model_select">#7F65FF</color>
 </resources>
