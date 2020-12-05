@@ -154,7 +154,9 @@ public class Index1SubActivity extends BaseActivity {
                         }
                         mLocalDeviceList.clear();
                         for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
-                            mLocalDeviceList.put(device.mac, device.ip);
+                            if (!device.ip.contains(":")) {
+                                mLocalDeviceList.put(device.mac, device.ip);
+                            }
                         }
                         runOnUiThread(new Runnable() {
                             @Override
@@ -165,6 +167,16 @@ public class Index1SubActivity extends BaseActivity {
                         });
                     }
                 });
+    }
+
+    public static boolean isNumeric(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            System.out.println(str.charAt(i));
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void unbindDeviceRequest(String deviceID) {
