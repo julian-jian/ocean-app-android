@@ -154,8 +154,16 @@ public class Index1SubActivity extends BaseActivity {
                         }
                         mLocalDeviceList.clear();
                         for (com.stealthcopter.networktools.subnet.Device device : devicesFound) {
-                            if (!device.ip.contains(":")) {
-                                mLocalDeviceList.put(device.mac, device.ip);
+                            if (!device.ip.contains(":") && !TextUtils.isEmpty(device.mac)) {
+                                // mac全部小写
+                                if (device.mac.toLowerCase().startsWith("8c:")) {
+                                    mLocalDeviceList.put(device.mac.toLowerCase(), device.ip);
+                                    // 8c改为8e
+                                    String newMac =  device.mac.replace("8c:","8e:");
+                                    mLocalDeviceList.put(newMac.toLowerCase(), device.ip);
+                                } else {
+                                    mLocalDeviceList.put(device.mac.toLowerCase(), device.ip);
+                                }
                             }
                         }
                         runOnUiThread(new Runnable() {
