@@ -159,7 +159,12 @@ public class Index1SubActivity extends BaseActivity {
                                 if (device.mac.toLowerCase().startsWith("8c:")) {
                                     mLocalDeviceList.put(device.mac.toLowerCase(), device.ip);
                                     // 8c改为8e
-                                    String newMac =  device.mac.replace("8c:","8e:");
+                                    String newMac = device.mac.replace("8c:", "8e:");
+                                    mLocalDeviceList.put(newMac.toLowerCase(), device.ip);
+                                } else if (device.mac.toLowerCase().startsWith("8e:")) {
+                                    mLocalDeviceList.put(device.mac.toLowerCase(), device.ip);
+                                    // 8e改为8c
+                                    String newMac = device.mac.replace("8e:", "8c:");
                                     mLocalDeviceList.put(newMac.toLowerCase(), device.ip);
                                 } else {
                                     mLocalDeviceList.put(device.mac.toLowerCase(), device.ip);
@@ -278,6 +283,10 @@ public class Index1SubActivity extends BaseActivity {
             String pre = "";
             for (RenameMac renameMac : mRenameMacs) {
                 if (renameMac.mac.equals(device.getDeviceSN())) {
+                    pre = renameMac.getName();
+                    break;
+                }
+                if (renameMac.mac.replace("8c", "8e").equals(device.getDeviceSN())) {
                     pre = renameMac.getName();
                     break;
                 }

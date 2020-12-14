@@ -215,7 +215,13 @@ public class Index2Fragment extends DelayBaseFragment {
         TextView mac = inflate.findViewById(R.id.tv_item2);
         RenameMac renameMac = new RenameMac();
         renameMac.mac = ip_mac.mMac;
+
+        RenameMac renameMac2 = new RenameMac();
+        renameMac2.mac = ip_mac.mMac.replace("8c","8e");
         if (renameMacs.contains(renameMac)) { // 重命名
+            RenameMac renameMac1 = renameMacs.get(renameMacs.indexOf(renameMac));
+            deviceName.setText("(" + renameMac1.name + ")" + ip_mac.mIp);
+        } else if (renameMacs.contains(renameMac2)) {
             RenameMac renameMac1 = renameMacs.get(renameMacs.indexOf(renameMac));
             deviceName.setText("(" + renameMac1.name + ")" + ip_mac.mIp);
         } else {

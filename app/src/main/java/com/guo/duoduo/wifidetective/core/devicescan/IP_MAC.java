@@ -28,8 +28,12 @@ public class IP_MAC implements Serializable
             return false;
 
         IP_MAC ip_mac = (IP_MAC) o;
-
-        return mMac.toLowerCase().equals(ip_mac.mMac.toLowerCase()) || mMac.toUpperCase().equals(ip_mac.mMac.toUpperCase());
+        // 后面mac10位相同
+        boolean boo =
+                ip_mac.mMac.startsWith("8c:") &&
+                mMac.toLowerCase().equals(ip_mac.mMac.replace("8c:","8e:"));
+        return mMac.toLowerCase().equals(ip_mac.mMac.toLowerCase()) || mMac.toUpperCase().equals(ip_mac.mMac.toUpperCase())
+                || boo;
     }
 
     @Override
