@@ -665,11 +665,6 @@ public class ModelInfoSettingFragment extends BaseFragment {
             RxToast.showToast(getString(R.string.time_set_error));
         }
 
-        if (lastItemModel.getStopHour() >= 23) {
-            RxToast.showToast("不足一个小时");
-            return;
-        }
-
         LightItemMode lightItemMode = new LightItemMode();
         lightItemMode.setIndex(lastItemModel.getIndex() + 1);
         lightItemMode.setModeName("模式" + lightItemMode.getIndex());
