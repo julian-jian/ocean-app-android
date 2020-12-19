@@ -13,6 +13,5 @@ public class LoginResponse {
      */
 
     public int status;
-    public String userID;
     public String result;
 }

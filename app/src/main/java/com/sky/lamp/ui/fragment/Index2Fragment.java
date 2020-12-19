@@ -173,6 +173,9 @@ public class Index2Fragment extends DelayBaseFragment {
                         }
                     }
                     mDevicesFound.removeAll(list);
+                    if (getActivity() == null) {
+                        return;
+                    }
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

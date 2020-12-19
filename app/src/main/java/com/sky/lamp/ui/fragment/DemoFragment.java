@@ -9,7 +9,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.orhanobut.logger.Logger;
-import com.sky.lamp.BuildConfig;
 import com.sky.lamp.R;
 import com.sky.lamp.bean.CommandLightMode;
 import com.sky.lamp.bean.LightItemMode;

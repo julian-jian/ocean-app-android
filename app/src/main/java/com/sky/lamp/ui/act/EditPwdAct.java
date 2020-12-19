@@ -60,7 +60,7 @@ public class EditPwdAct extends BaseActivity {
     }
 
     private void checkAndSubmit() {
-        String email = RxSPUtilTool.getString(this, Constants.USERNAME);
+        final String email = RxSPUtilTool.getString(this, Constants.USERNAME);
         String pwd = etPwd.getText().toString();
         String confirmPwd = etConfirm.getText().toString();
         if (!TAStringUtils.isEmail(email)) {
@@ -107,7 +107,7 @@ public class EditPwdAct extends BaseActivity {
             public void onNext(final LoginResponse response) {
                 if (response.status == Constants.SUCCESS) {
                     RxToast.showToast("修改密码成功");
-                    RxSPUtilTool.putString(EditPwdAct.this,Constants.USER_ID,response.userID);
+                    RxSPUtilTool.putString(EditPwdAct.this,Constants.USER_ID,email);
                 }  else {
                     RxToast.error("操作失败");
                 }

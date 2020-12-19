@@ -129,7 +129,7 @@ public class LoginAct extends BaseActivity {
                 if (response.status == 0) {
                     RxToast.showToast("登录成功");
                     RxSPUtilTool.putString(LoginAct.this, Constants.USERNAME,email);
-                    RxSPUtilTool.putString(LoginAct.this,Constants.USER_ID,response.userID);
+                    RxSPUtilTool.putString(LoginAct.this,Constants.USER_ID,email);
                     EventBus.getDefault().post(new LoginResponse());
                     startActivity(new Intent(LoginAct.this, MainActivity.class));
                     finish();
