@@ -160,7 +160,7 @@ dependencies {
 
 
 greendao {
-    schemaVersion 6
+    schemaVersion 7
     daoPackage 'com.sky.lamp.dao'
     targetGenDir 'src/main/java'
 }

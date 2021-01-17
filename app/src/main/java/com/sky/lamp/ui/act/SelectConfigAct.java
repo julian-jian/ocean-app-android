@@ -123,7 +123,35 @@ public class SelectConfigAct extends BaseActivity {
             }else{
                 itemMode.setStopTime("0" + (i + 6) + ":00");
             }
-
+            switch (t2Name) {
+                case "LPS":
+                    itemMode.setLight1Level(5);
+                    itemMode.setLight2Level(80);
+                    itemMode.setLight3Level(80);
+                    itemMode.setLight4Level(30);
+                    itemMode.setLight5Level(30);
+                    itemMode.setLight6Level(10);
+                    itemMode.setLight7Level(10);
+                    break;
+                case "SPS":
+                    itemMode.setLight1Level(80);
+                    itemMode.setLight2Level(80);
+                    itemMode.setLight3Level(80);
+                    itemMode.setLight4Level(80);
+                    itemMode.setLight5Level(80);
+                    itemMode.setLight6Level(20);
+                    itemMode.setLight7Level(20);
+                    break;
+                case "LPS+SPS":
+                    itemMode.setLight1Level(15);
+                    itemMode.setLight2Level(80);
+                    itemMode.setLight3Level(80);
+                    itemMode.setLight4Level(30);
+                    itemMode.setLight5Level(30);
+                    itemMode.setLight6Level(10);
+                    itemMode.setLight7Level(10);
+                    break;
+            }
             itemMode.parent_id = commandLightMode.id;
             DaoManager.getInstance().getDaoSession().insert(itemMode);
             commandLightMode.mParameters.add(itemMode);
